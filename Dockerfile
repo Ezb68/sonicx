@@ -1,11 +1,11 @@
-FROM tronprotocol/tron-gradle
+FROM SonicXChain/sonicx-gradle
 
 RUN set -o errexit -o nounset \
     && echo "git clone" \
-    && git clone https://github.com/IntegralTeam/java-tron.git \
-    && cd java-tron \
+    && git clone https://github.com/SonicXChain/SonicX.git \
+    && cd SonicX \
     && gradle build
 
-WORKDIR /java-tron
+WORKDIR /SonicX
 
 EXPOSE 18888

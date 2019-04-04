@@ -1,9 +1,9 @@
-# protocol [![Build Status](https://travis-ci.org/tronprotocol/protocol.svg?branch=master)](https://travis-ci.org/tronprotocol/protocol)
+# protocol [![Build Status](https://travis-ci.org/SonicXChain/protocol.svg?branch=master)](https://travis-ci.org/SonicXChain/protocol)
 
 
-# The protocol of Tron including api and message.
+# The protocol of SonicX including api and message.
 
-java-tron, wallet-cli and grpc-gateway
+SonicX, WalletCli and GrpcGateway
 
 git subtree pull --prefix src/main/protos/ protocol master
 

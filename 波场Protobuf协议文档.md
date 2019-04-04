@@ -1,6 +1,6 @@
-# TRON protobuf protocol
+# SONICX protobuf protocol
 
-## TRON使用Google protobuf协议，协议内容涉及到账户，区块，传输多个层面。
+## SONICX使用Google protobuf协议，协议内容涉及到账户，区块，传输多个层面。
 
 +	账户有基本账户、资产发布账户和合约账户三种类型。一个账户包含：账户名称，账户类型，地址，余额，投票，其他资产6种属性。
 +	更进一步的，基本账户可以申请成为验证节点，验证节点具有额外的属性，投票统计数目，公钥，URL，以及历史表现等参数。
@@ -215,7 +215,7 @@
    `end_time`：结束时间——比如：_20170512_。  
    `decav_ratio`：衰减速率。  
    `vote_score`：合约的评分——比如：_12343_。  
-   `description`：合约的描述——比如：_”trondada”_。  
+   `description`：合约的描述——比如：_”sonicxdada”_。  
    `url`：合约的url地址链接。
 
     message AssetIssueContract {   

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Function: to start, stop and restart java-tron.
+# Function: to start, stop and restart SonicX.
 # Usage: bash work.sh start|stop|restart.
 # Note: modify the paths and private key to your own.
 
@@ -18,9 +18,9 @@ fi
 # By default there, JVM initializes with 1g memory and can use 32g at most.
 JVM_OPTIONS="-Xms1g -Xmx32g"
 
-JAR_FILE_PATH="./build/libs/java-tron.jar"
-PID_FILE_PATH="java-tron.pid"
-LOG_FILE_PATH="java-tron.log"
+JAR_FILE_PATH="./build/libs/SonicX.jar"
+PID_FILE_PATH="SonicX.pid"
+LOG_FILE_PATH="SonicX.log"
 
 CONF_FILE_PATH="./build/resources/main/config.conf"
 
@@ -45,9 +45,9 @@ case "${1}" in
             & echo $! > ${PID_FILE_PATH}
 
         if [ $? -eq 0 ]; then
-            echo "Succeeded to start java-tron."
+            echo "Succeeded to start SonicX."
         else
-            echo "Failed to start java-tron."
+            echo "Failed to start SonicX."
         fi
     ;;
     stop)
@@ -55,9 +55,9 @@ case "${1}" in
 
         if [ $? -eq 0 ]; then
             rm ${PID_FILE_PATH}
-            echo "Succeeded to stop java-tron."
+            echo "Succeeded to stop SonicX."
         else
-            echo "Failed to stop java-tron."
+            echo "Failed to stop SonicX."
         fi
     ;;
     restart)

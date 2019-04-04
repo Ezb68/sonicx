@@ -12,7 +12,7 @@ plugins {
     id "org.sonarqube" version "2.6"
 }
 
-group 'org.tron'
+group 'org.sonix'
 version '1.0.0'
 
 apply plugin: 'java'
@@ -28,7 +28,7 @@ shadowJar.enabled = false
 
 sourceCompatibility = 1.8
 [compileJava, compileTestJava]*.options*.encoding = 'UTF-8'
-mainClassName = 'org.tron.program.FullNode'
+mainClassName = 'org.sonicx.program.FullNode'
 
 publishing {
     publications {
@@ -260,7 +260,7 @@ run {
 }
 
 shadowJar {
-    baseName = 'java-tron'
+    baseName = 'Sonicx'
     classifier = null
     version = null
 }
@@ -336,7 +336,7 @@ def binaryRelease(taskName, jarName, mainClass) {
 }
 
 artifacts {
-    archives(binaryRelease('buildSolidityNodeJar', 'SolidityNode', 'org.tron.program.SolidityNode'),
-            binaryRelease('buildFullNodeJar', 'FullNode', 'org.tron.program.FullNode'),
-            binaryRelease('buildKeystoreFactoryJar', 'KeystoreFactory', 'org.tron.program.KeystoreFactory'))
+    archives(binaryRelease('buildSolidityNodeJar', 'SolidityNode', 'org.sonicx.program.SolidityNode'),
+            binaryRelease('buildFullNodeJar', 'FullNode', 'org.sonicx.program.FullNode'),
+            binaryRelease('buildKeystoreFactoryJar', 'KeystoreFactory', 'org.sonicx.program.KeystoreFactory'))
 }
