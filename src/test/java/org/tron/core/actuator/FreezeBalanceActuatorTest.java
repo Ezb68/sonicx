@@ -495,7 +495,7 @@ public class FreezeBalanceActuatorTest {
   }
 
   @Test
-  public void lessThan1TrxTest() {
+  public void lessThan1Wdx() {
     long frozenBalance = 1;
     long duration = 3;
     FreezeBalanceActuator actuator = new FreezeBalanceActuator(
@@ -507,7 +507,7 @@ public class FreezeBalanceActuatorTest {
       fail("cannot run here.");
     } catch (ContractValidateException e) {
       Assert.assertTrue(e instanceof ContractValidateException);
-      Assert.assertEquals("frozenBalance must be more than 1TRX", e.getMessage());
+      Assert.assertEquals("frozenBalance must be more than 1WDX", e.getMessage());
     } catch (ContractExeException e) {
       Assert.assertFalse(e instanceof ContractExeException);
     }

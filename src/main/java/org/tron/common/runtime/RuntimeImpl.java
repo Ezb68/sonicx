@@ -276,7 +276,7 @@ public class RuntimeImpl implements Runtime {
     if (Arrays.equals(creator.getAddress().toByteArray(), caller.getAddress().toByteArray())) {
       // when the creator calls his own contract, this logic will be used.
       // so, the creator must use a BIG feeLimit to call his own contract,
-      // which will cost the feeLimit TRX when the creator's frozen energy is 0.
+      // which will cost the feeLimit WDX when the creator's frozen energy is 0.
       return callerEnergyLimit;
     }
 

@@ -88,7 +88,7 @@ public class BuyStorageActuator extends AbstractActuator {
     }
 
     if (quant < 1000_000L) {
-      throw new ContractValidateException("quantity must be larger than 1TRX");
+      throw new ContractValidateException("quantity must be larger than 1WDX");
     }
 
     if (quant > accountCapsule.getBalance()) {
