@@ -107,7 +107,7 @@ public class BuyStorageActuatorTest {
     Assert.assertEquals(currentPool, 100_000_000_000000L);
     Assert.assertEquals(currentReserved, 128L * 1024 * 1024 * 1024);
 
-    long quant = 2_000_000_000_000L; // 2 million wdx
+    long quant = 2_000_000_000_000L; // 2 million sox
     BuyStorageActuator actuator = new BuyStorageActuator(
         getContract(OWNER_ADDRESS, quant), dbManager);
     TransactionResultCapsule ret = new TransactionResultCapsule();
@@ -139,7 +139,7 @@ public class BuyStorageActuatorTest {
     Assert.assertEquals(currentPool, 100_000_000_000000L);
     Assert.assertEquals(currentReserved, 128L * 1024 * 1024 * 1024);
 
-    long quant = 1_000_000_000_000L; // 1 million wdx
+    long quant = 1_000_000_000_000L; // 1 million sox
 
     BuyStorageActuator actuator = new BuyStorageActuator(
         getContract(OWNER_ADDRESS, quant), dbManager);
@@ -191,7 +191,7 @@ public class BuyStorageActuatorTest {
 //    Assert.assertEquals(currentPool, 100_000_000_000000L);
 //    Assert.assertEquals(currentReserved, 128L * 1024 * 1024 * 1024);
 //
-//    long quant = 1_000_000_000_000L; // 2 million wdx
+//    long quant = 1_000_000_000_000L; // 2 million sox
 //
 //    BuyStorageActuator actuator = new BuyStorageActuator(
 //        getContract(OWNER_ADDRESS, quant), dbManager);
@@ -272,7 +272,7 @@ public class BuyStorageActuatorTest {
 
     } catch (ContractValidateException e) {
       Assert.assertTrue(e instanceof ContractValidateException);
-      Assert.assertEquals("quantity must be larger than 1WDX", e.getMessage());
+      Assert.assertEquals("quantity must be larger than 1SOX", e.getMessage());
     } catch (ContractExeException e) {
       Assert.assertFalse(e instanceof ContractExeException);
     }
@@ -285,7 +285,7 @@ public class BuyStorageActuatorTest {
     Assert.assertEquals(currentPool, 100_000_000_000000L);
     Assert.assertEquals(currentReserved, 128L * 1024 * 1024 * 1024);
 
-    long quant = 9_000_000_000_000_000L; // 9 billion wdx
+    long quant = 9_000_000_000_000_000L; // 9 billion sox
 
     BuyStorageActuator actuator = new BuyStorageActuator(
         getContract(OWNER_ADDRESS, quant), dbManager);

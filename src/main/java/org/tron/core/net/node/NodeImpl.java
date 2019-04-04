@@ -667,7 +667,7 @@ public class NodeImpl extends PeerConnectionDelegate implements Node {
           && !peer.isNeedSyncFromPeer()
           && !peer.isNeedSyncFromUs()) {
 
-        //avoid WDX flood attack here.
+        //avoid SOX flood attack here.
 //        if (msg.getInventoryType().equals(InventoryType.TRX)
 //            && (peer.isAdvInvFull() || isFlooded())) {
 //          logger.warn("A peer is flooding us, stop handle inv, the peer is: " + peer);

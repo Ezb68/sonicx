@@ -32,7 +32,7 @@ public class VMConfig {
 
   public static final int MAX_CODE_LENGTH = 1024 * 1024;
 
-  public static final int MAX_FEE_LIMIT = 1_000_000_000; //1000 wdx
+  public static final int MAX_FEE_LIMIT = 1_000_000_000; //1000 sox
 
   private boolean vmTraceCompressed = false;
   private boolean vmTrace = Args.getInstance().isVmTrace();

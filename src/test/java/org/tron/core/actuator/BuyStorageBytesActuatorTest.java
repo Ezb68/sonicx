@@ -107,7 +107,7 @@ public class BuyStorageBytesActuatorTest {
     Assert.assertEquals(currentPool, 100_000_000_000000L);
     Assert.assertEquals(currentReserved, 128L * 1024 * 1024 * 1024);
 
-    long bytes = 2694881440L; // 2 million wdx
+    long bytes = 2694881440L; // 2 million sox
     long quant = 2_000_000_000_000L;
     BuyStorageBytesActuator actuator = new BuyStorageBytesActuator(
         getContract(OWNER_ADDRESS, bytes), dbManager);
@@ -140,7 +140,7 @@ public class BuyStorageBytesActuatorTest {
     Assert.assertEquals(currentPool, 100_000_000_000000L);
     Assert.assertEquals(currentReserved, 128L * 1024 * 1024 * 1024);
 
-    long quant = 1_000_000_000_000L; // 1 million wdx
+    long quant = 1_000_000_000_000L; // 1 million sox
     long bytes1 = 1360781717L;
     long bytes2 = 2694881439L - bytes1;
 
@@ -193,7 +193,7 @@ public class BuyStorageBytesActuatorTest {
 //    Assert.assertEquals(currentPool, 100_000_000_000000L);
 //    Assert.assertEquals(currentReserved, 128L * 1024 * 1024 * 1024);
 //
-//    long quant = 1_000_000_000_000L; // 2 million wdx
+//    long quant = 1_000_000_000_000L; // 2 million sox
 //
 //    BuyStorageActuator actuator = new BuyStorageActuator(
 //        getContract(OWNER_ADDRESS, quant), dbManager);
@@ -293,7 +293,7 @@ public class BuyStorageBytesActuatorTest {
 
     } catch (ContractValidateException e) {
       Assert.assertTrue(e instanceof ContractValidateException);
-      Assert.assertEquals("quantity must be larger than 1WDX", e.getMessage());
+      Assert.assertEquals("quantity must be larger than 1SOX", e.getMessage());
     } catch (ContractExeException e) {
       Assert.assertFalse(e instanceof ContractExeException);
     }

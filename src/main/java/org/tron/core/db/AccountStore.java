@@ -30,14 +30,14 @@ public class AccountStore extends TronStoreWithRevoking<AccountCapsule> {
   }
 
   /**
-   * Max WDX account.
+   * Max SOX account.
    */
   public AccountCapsule getSun() {
     return getUnchecked(assertsAddress.get("Sun"));
   }
 
   /**
-   * Min WDX account.
+   * Min SOX account.
    */
   public AccountCapsule getBlackhole() {
     return getUnchecked(assertsAddress.get("Blackhole"));

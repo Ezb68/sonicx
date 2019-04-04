@@ -18,7 +18,7 @@
      `type`: what type of this account is – e.g. _0_ stands for type `Normal`.  
      `balance`: balance of this account – e.g. _4213312_.  
      `votes`: received votes on this account – e.g. _{(“0x1b7w…9xj3”,323), (“0x8djq…j12m”,88),…,(“0x82nd…mx6i”,10001)}_.  
-     `asset`: other assets except WDX in this account – e.g. _{<“WishToken”,66666>,<”Dogie”,233>}_.
+     `asset`: other assets except SOX in this account – e.g. _{<“WishToken”,66666>,<”Dogie”,233>}_.
      `latest_operation_time`: the latest operation time of this account.
      
       // Account 

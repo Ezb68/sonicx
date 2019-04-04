@@ -507,7 +507,7 @@ public class FreezeBalanceActuatorTest {
       fail("cannot run here.");
     } catch (ContractValidateException e) {
       Assert.assertTrue(e instanceof ContractValidateException);
-      Assert.assertEquals("frozenBalance must be more than 1WDX", e.getMessage());
+      Assert.assertEquals("frozenBalance must be more than 1SOX", e.getMessage());
     } catch (ContractExeException e) {
       Assert.assertFalse(e instanceof ContractExeException);
     }
