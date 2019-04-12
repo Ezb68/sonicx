@@ -130,7 +130,7 @@ public class ContractTrcToken077 {
     byte[] a = infoById.get().getContractResult(0).toByteArray();
     byte[] b = subByte(a, 11, 1);
     byte[] c = subByte(a, 0, 11);
-    byte[] e = "41".getBytes();
+    byte[] e = "40".getBytes();
     byte[] d = subByte(a, 12, 20);
 
     logger.info("a:" + ByteArray.toHexString(a));
@@ -140,11 +140,11 @@ public class ContractTrcToken077 {
 
     logger.info("d:" + ByteArray.toHexString(d));
 
-    logger.info("41" + ByteArray.toHexString(d));
-    String exceptedResult = "41" + ByteArray.toHexString(d);
+    logger.info("40" + ByteArray.toHexString(d));
+    String exceptedResult = "40" + ByteArray.toHexString(d);
     String realResult = ByteArray.toHexString(b);
     Assert.assertEquals(realResult, "00");
-    Assert.assertNotEquals(realResult, "41");
+    Assert.assertNotEquals(realResult, "40");
 
     Assert.assertEquals(exceptedResult, ByteArray.toHexString(contractAddress));
 

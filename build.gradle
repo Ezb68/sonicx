@@ -260,7 +260,7 @@ run {
 }
 
 shadowJar {
-    baseName = 'Sonicx'
+    baseName = 'sonicx'
     classifier = null
     version = null
 }
