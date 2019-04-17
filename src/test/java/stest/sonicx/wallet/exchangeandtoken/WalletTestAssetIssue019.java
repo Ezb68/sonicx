@@ -87,39 +87,39 @@ public class WalletTestAssetIssue019 {
     Long start = System.currentTimeMillis() + 20000000;
     Long end = System.currentTimeMillis() + 1000000000;
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "trx", totalSupply, 1, 1, start, end, 1, description, url,
+        "sox", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "TRX", totalSupply, 1, 1, start, end, 1, description, url,
+        "SOX", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "Trx", totalSupply, 1, 1, start, end, 1, description, url,
+        "Sox", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "tRx", totalSupply, 1, 1, start, end, 1, description, url,
+        "sOx", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "trX", totalSupply, 1, 1, start, end, 1, description, url,
+        "soX", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "TRx", totalSupply, 1, 1, start, end, 1, description, url,
+        "SOx", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "TrX", totalSupply, 1, 1, start, end, 1, description, url,
+        "SoX", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertFalse(PublicMethed.createAssetIssue(asset019Address,
-        "tRX", totalSupply, 1, 1, start, end, 1, description, url,
+        "sOX", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertTrue(PublicMethed.createAssetIssue(asset019Address,
-        "trxtrx", totalSupply, 1, 1, start, end, 1, description, url,
+        "soxsox", totalSupply, 1, 1, start, end, 1, description, url,
         2000L,2000L, 1L,1L,asset019Key,blockingStubFull));
 
     Assert.assertTrue(PublicMethed.createAssetIssue(asset019SecondAddress,

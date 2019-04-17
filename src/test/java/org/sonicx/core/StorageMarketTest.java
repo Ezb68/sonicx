@@ -107,7 +107,7 @@ public class StorageMarketTest {
     AccountCapsule owner =
         dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
 
-    long quant = 2_000_000_000_000L; // 2 million trx
+    long quant = 2_000_000_000_000L; // 2 million sox
     storageMarket.buyStorage(owner, quant);
 
     Assert.assertEquals(owner.getBalance(), initBalance - quant
@@ -130,7 +130,7 @@ public class StorageMarketTest {
     AccountCapsule owner =
         dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
 
-    long quant = 1_000_000_000_000L; // 1 million trx
+    long quant = 1_000_000_000_000L; // 1 million sox
 
     storageMarket.buyStorage(owner, quant);
 
@@ -165,7 +165,7 @@ public class StorageMarketTest {
     AccountCapsule owner =
         dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
 
-    long bytes = 2694881440L; // 2 million trx
+    long bytes = 2694881440L; // 2 million sox
     storageMarket.buyStorageBytes(owner, bytes);
 
     Assert.assertEquals(owner.getBalance(), initBalance - 2_000_000_000_000L
@@ -222,7 +222,7 @@ public class StorageMarketTest {
     AccountCapsule owner =
         dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
 
-    long quant = 2_000_000_000_000L; // 2 million trx
+    long quant = 2_000_000_000_000L; // 2 million sox
     storageMarket.buyStorage(owner, quant);
 
     Assert.assertEquals(owner.getBalance(), initBalance - quant
@@ -255,7 +255,7 @@ public class StorageMarketTest {
     AccountCapsule owner =
         dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
 
-    long quant = 2_000_000_000_000L; // 2 million trx
+    long quant = 2_000_000_000_000L; // 2 million sox
     storageMarket.buyStorage(owner, quant);
 
     Assert.assertEquals(owner.getBalance(), initBalance - quant
@@ -266,8 +266,8 @@ public class StorageMarketTest {
     Assert.assertEquals(currentPool + quant,
         dbManager.getDynamicPropertiesStore().getTotalStoragePool());
 
-    long bytes1 = 2694881440L - 1360781717L; // 1 million trx
-    long bytes2 = 1360781717L; // 1 million trx
+    long bytes1 = 2694881440L - 1360781717L; // 1 million sox
+    long bytes2 = 1360781717L; // 1 million sox
 
     storageMarket.sellStorage(owner, bytes1);
 

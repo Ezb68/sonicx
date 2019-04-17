@@ -43,7 +43,7 @@ public class HttpTestAccount002 {
   @Test(enabled = true, description = "FreezeBalance for bandwidth by http")
   public void test1FreezebalanceForBandwidth() {
     PublicMethed.printAddress(freezeBalanceKey);
-    //Send trx to test account
+    //Send sox to test account
     response = HttpMethed.sendCoin(httpnode,fromAddress,freezeBalanceAddress,amount,testKey002);
     Assert.assertTrue(HttpMethed.verificationResult(response));
     berforeBalance = HttpMethed.getBalance(httpnode,freezeBalanceAddress);

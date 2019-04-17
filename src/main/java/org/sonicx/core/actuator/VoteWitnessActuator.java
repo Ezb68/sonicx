@@ -135,7 +135,7 @@ public class VoteWitnessActuator extends AbstractActuator {
 
       long sonicxPower = accountCapsule.getSonicxPower();
 
-      sum = LongMath.checkedMultiply(sum, 1000000L); //trx -> drop. The vote count is based on SOX
+      sum = LongMath.checkedMultiply(sum, 1000000L); //sox -> drop. The vote count is based on SOX
       if (sum > sonicxPower) {
         throw new ContractValidateException(
             "The total number of votes[" + sum + "] is greater than the sonicxPower[" + sonicxPower

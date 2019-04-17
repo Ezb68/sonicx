@@ -566,7 +566,7 @@ public enum OpCode {
     /*  System operations   */
 
     /**
-     * (0xd0) Message-call into an account with trc10 token
+     * (0xd0) Message-call into an account with src10 token
      */
     CALLTOKEN(0xd0, 8, 1, OpCode.Tier.SpecialTier, CallFlags.Call, CallFlags.HasValue),
 

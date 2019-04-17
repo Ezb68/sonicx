@@ -843,11 +843,11 @@ public class Wallet {
             .setKey("getTotalEnergyLimit")
             .setValue(dbManager.getDynamicPropertiesStore().getTotalEnergyLimit())
             .build());
-    //    ALLOW_TVM_TRANSFER_TRC10, // 1, 18
+    //    ALLOW_SVM_TRANSFER_SRC10, // 1, 18
     builder.addChainParameter(
         Protocol.ChainParameters.ChainParameter.newBuilder()
-            .setKey("getAllowTvmTransferTrc10")
-            .setValue(dbManager.getDynamicPropertiesStore().getAllowTvmTransferTrc10())
+            .setKey("getAllowSvmTransferSrc10")
+            .setValue(dbManager.getDynamicPropertiesStore().getAllowSvmTransferSrc10())
             .build());
     //    TOTAL_CURRENT_ENERGY_LIMIT, // 50,000,000,000, 19
     builder.addChainParameter(
@@ -1301,7 +1301,7 @@ public class Wallet {
       Runtime runtime = new RuntimeImpl(trxCap.getInstance(), new BlockCapsule(headBlock), deposit,
           new ProgramInvokeFactoryImpl(), true);
       VMConfig.initVmHardFork();
-      VMConfig.initAllowTvmTransferTrc10(dbManager.getDynamicPropertiesStore().getAllowTvmTransferTrc10());
+      VMConfig.initAllowSvmTransferSrc10(dbManager.getDynamicPropertiesStore().getAllowSvmTransferSrc10());
       VMConfig.initAllowMultiSign(dbManager.getDynamicPropertiesStore().getAllowMultiSign());
       runtime.execute();
       runtime.go();

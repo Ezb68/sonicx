@@ -13,7 +13,7 @@ public class InternalTransactionPojo {
 
   @Getter
   @Setter
-  /* the amount of trx to transfer (calculated as sun) */
+  /* the amount of sox to transfer (calculated as dole) */
   private long callValue;
 
   @Getter

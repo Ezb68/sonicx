@@ -46,7 +46,7 @@ public class ExchangeProcessor {
     long out = (long) exchangeBalance;
     long newBalance = balance - out;
 
-//    if (isTRX) {
+//    if (isSOX) {
 //      out = Math.round(exchangeBalance / 100000) * 100000;
 //      logger.info("---out: " + out);
 //    }

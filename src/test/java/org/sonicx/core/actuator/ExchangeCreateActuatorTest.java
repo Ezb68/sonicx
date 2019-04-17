@@ -1291,7 +1291,7 @@ public class ExchangeCreateActuatorTest {
   }
 
   /**
-   * SameTokenName close,not trx,ont token is ok, but the second one is not exist.
+   * SameTokenName close,not sox,ont token is ok, but the second one is not exist.
    */
   @Test
   public void sameTokenNameCloseSecondTokenNotExist() {
@@ -1327,7 +1327,7 @@ public class ExchangeCreateActuatorTest {
 
 
   /**
-   * SameTokenName open,not trx,ont token is ok, but the second one is not exist.
+   * SameTokenName open,not sox,ont token is ok, but the second one is not exist.
    */
   @Test
   public void sameTokenNameOpenSecondTokenNotExist() {

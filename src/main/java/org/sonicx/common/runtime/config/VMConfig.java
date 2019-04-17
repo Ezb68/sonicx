@@ -17,13 +17,10 @@
  */
 package org.sonicx.common.runtime.config;
 
-import lombok.Getter;
 import lombok.Setter;
 import org.sonicx.common.utils.ForkController;
 import org.sonicx.core.config.Parameter.ForkBlockVersionConsts;
-import org.sonicx.core.config.Parameter.ForkBlockVersionEnum;
 import org.sonicx.core.config.args.Args;
-import org.sonicx.core.db.Manager;
 
 /**
  * For developer only
@@ -46,7 +43,7 @@ public class VMConfig {
 //  private static boolean VERSION_3_5_HARD_FORK = false;
 
   @Setter
-  private static boolean ALLOW_TVM_TRANSFER_TRC10 = false;
+  private static boolean ALLOW_SVM_TRANSFER_SRC10 = false;
 
   @Setter
   private static boolean ALLOW_MULTI_SIGN = false;
@@ -79,15 +76,15 @@ public class VMConfig {
     ALLOW_MULTI_SIGN = allow ==1 ;
   }
 
-  public static void initAllowTvmTransferTrc10(long allow) {    ALLOW_TVM_TRANSFER_TRC10 = allow == 1;
+  public static void initAllowSvmTransferSrc10(long allow) {    ALLOW_SVM_TRANSFER_SRC10 = allow == 1;
   }
 
   public static boolean getEnergyLimitHardFork() {
     return ENERGY_LIMIT_HARD_FORK;
   }
 
-  public static boolean allowTvmTransferTrc10() {
-    return ALLOW_TVM_TRANSFER_TRC10;
+  public static boolean allowSvmTransferSrc10() {
+    return ALLOW_SVM_TRANSFER_SRC10;
   }
 
   public static boolean allowMultiSign() {

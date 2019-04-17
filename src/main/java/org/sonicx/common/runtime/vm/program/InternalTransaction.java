@@ -40,7 +40,7 @@ public class InternalTransaction {
   private Transaction transaction;
   private byte[] hash;
   private byte[] parentHash;
-  /* the amount of trx to transfer (calculated as sun) */
+  /* the amount of sox to transfer (calculated as dole) */
   private long value;
   private long tokenValue;
   private Map<String, Long> tokenInfo = new HashMap<>();
@@ -142,12 +142,12 @@ public class InternalTransaction {
     } else {
       this.receiveAddress = ArrayUtils.nullToEmpty(transferToAddress);
     }
-    // in this case, value also can represent a tokenValue when tokenId is not null, otherwise it is a trx callvalue.
+    // in this case, value also can represent a tokenValue when tokenId is not null, otherwise it is a sox callvalue.
     this.value = value;
     this.data = ArrayUtils.nullToEmpty(data);
     this.nonce = nonce;
     this.hash = getHash();
-    // in a contract call contract case, only one value should be used. trx or a token. can't be both. We should avoid using
+    // in a contract call contract case, only one value should be used. sox or a token. can't be both. We should avoid using
     // tokenValue in this case.
     if (tokenInfo != null) {
       this.tokenInfo.putAll(tokenInfo);

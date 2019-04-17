@@ -1216,7 +1216,7 @@ public class Manager {
 
     VMConfig.initVmHardFork();
     VMConfig.initAllowMultiSign(dynamicPropertiesStore.getAllowMultiSign());
-    VMConfig.initAllowTvmTransferTrc10(dynamicPropertiesStore.getAllowTvmTransferTrc10());
+    VMConfig.initAllowSvmTransferSrc10(dynamicPropertiesStore.getAllowSvmTransferSrc10());
     trace.init(blockCap, eventPluginLoaded);
     trace.checkIsConstant();
     trace.exec();
@@ -1624,7 +1624,7 @@ public class Manager {
 
   /**
    * @param block the block update signed witness. set witness who signed block the 1. the latest
-   * block num 2. pay the trx to witness. 3. the latest slot num.
+   * block num 2. pay the sox to witness. 3. the latest slot num.
    */
   public void updateSignedWitness(BlockCapsule block) {
     // TODO: add verification

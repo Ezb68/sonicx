@@ -39,27 +39,27 @@ public class TransactionLogTriggerCapsule extends TriggerCapsule {
     transactionLogTrigger.setLatestSolidifiedBlockNumber(latestSolidifiedBlockNumber);
   }
 
-  public TransactionLogTriggerCapsule(TransactionCapsule trxCasule, BlockCapsule blockCapsule) {
+  public TransactionLogTriggerCapsule(TransactionCapsule trxCapsule, BlockCapsule blockCapsule) {
     transactionLogTrigger = new TransactionLogTrigger();
     if (Objects.nonNull(blockCapsule)) {
       transactionLogTrigger.setBlockHash(blockCapsule.getBlockId().toString());
     }
-    transactionLogTrigger.setTransactionId(trxCasule.getTransactionId().toString());
+    transactionLogTrigger.setTransactionId(trxCapsule.getTransactionId().toString());
     transactionLogTrigger.setTimeStamp(blockCapsule.getTimeStamp());
-    transactionLogTrigger.setBlockNumber(trxCasule.getBlockNum());
+    transactionLogTrigger.setBlockNumber(trxCapsule.getBlockNum());
 
-    TransactionTrace trxTrace = trxCasule.getTrxTrace();
+    TransactionTrace trxTrace = trxCapsule.getTrxTrace();
 
     //result
-    if (Objects.nonNull(trxCasule.getContractRet())){
-      transactionLogTrigger.setResult(trxCasule.getContractRet().toString());
+    if (Objects.nonNull(trxCapsule.getContractRet())){
+      transactionLogTrigger.setResult(trxCapsule.getContractRet().toString());
     }
 
-    if (Objects.nonNull(trxCasule.getInstance().getRawData())){
+    if (Objects.nonNull(trxCapsule.getInstance().getRawData())){
       // feelimit
-      transactionLogTrigger.setFeeLimit(trxCasule.getInstance().getRawData().getFeeLimit());
+      transactionLogTrigger.setFeeLimit(trxCapsule.getInstance().getRawData().getFeeLimit());
 
-      Protocol.Transaction.Contract contract = trxCasule.getInstance().getRawData().getContract(0);
+      Protocol.Transaction.Contract contract = trxCapsule.getInstance().getRawData().getContract(0);
       Any contractParameter = null;
       // contract type
       if (Objects.nonNull(contract)){
@@ -79,7 +79,7 @@ public class TransactionLogTriggerCapsule extends TriggerCapsule {
               TransferContract contractTransfer = contractParameter.unpack(TransferContract.class);
 
               if (Objects.nonNull(contractTransfer)){
-                transactionLogTrigger.setAssetName("trx");
+                transactionLogTrigger.setAssetName("sox");
 
                 if (Objects.nonNull(contractTransfer.getOwnerAddress())){
                   transactionLogTrigger.setFromAddress(Wallet.encode58Check(contractTransfer.getOwnerAddress().toByteArray()));

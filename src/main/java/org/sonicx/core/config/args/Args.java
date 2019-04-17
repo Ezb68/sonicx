@@ -325,7 +325,7 @@ public class Args {
 
   @Getter
   @Setter
-  private long allowTvmTransferTrc10; //committee parameter
+  private long allowSvmTransferSrc10; //committee parameter
 
   @Getter
   @Setter
@@ -468,7 +468,7 @@ public class Args {
     INSTANCE.checkFrozenTime = 1;
     INSTANCE.allowCreationOfContracts = 0;
     INSTANCE.allowAdaptiveEnergy = 0;
-    INSTANCE.allowTvmTransferTrc10 = 0;
+    INSTANCE.allowSvmTransferSrc10 = 0;
     INSTANCE.allowDelegateResource = 0;
     INSTANCE.allowSameTokenName = 0;
     INSTANCE.tcpNettyWorkThreadNum = 0;
@@ -785,9 +785,9 @@ public class Args {
         config.hasPath("committee.allowSameTokenName") ? config
             .getInt("committee.allowSameTokenName") : 0;
 
-    INSTANCE.allowTvmTransferTrc10 =
-        config.hasPath("committee.allowTvmTransferTrc10") ? config
-            .getInt("committee.allowTvmTransferTrc10") : 0;
+    INSTANCE.allowSvmTransferSrc10 =
+        config.hasPath("committee.allowSvmTransferSrc10") ? config
+            .getInt("committee.allowSvmTransferSrc10") : 0;
 
     INSTANCE.tcpNettyWorkThreadNum = config.hasPath("node.tcpNettyWorkThreadNum") ? config
         .getInt("node.tcpNettyWorkThreadNum") : 0;

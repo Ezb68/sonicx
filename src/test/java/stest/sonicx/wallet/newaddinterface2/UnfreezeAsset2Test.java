@@ -193,20 +193,20 @@ public class UnfreezeAsset2Test {
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
         "contract validate error : TotalSupply must greater than 0!");
-    //TrxNum is zero.
+    //SoxNum is zero.
     ret1 = PublicMethed.createAssetIssue2(lowBalAddress, name, totalSupply, 0, 10,
         start, end, 2, description, url, 10000L, 10000L,
         1L, 3652L, lowBalTest, blockingStubFull);
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
-        "contract validate error : TrxNum must greater than 0!");
-    //TrxNum is -1.
+        "contract validate error : SoxNum must greater than 0!");
+    //SoxNum is -1.
     ret1 = PublicMethed.createAssetIssue2(lowBalAddress, name, totalSupply, -1, 10,
         start, end, 2, description, url, 10000L, 10000L,
         1L, 3652L, lowBalTest, blockingStubFull);
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
-        "contract validate error : TrxNum must greater than 0!");
+        "contract validate error : SoxNum must greater than 0!");
     //IcoNum is 0.
     ret1 = PublicMethed.createAssetIssue2(lowBalAddress, name, totalSupply, 1, 0,
         start, end, 2, description, url, 10000L, 10000L,
@@ -346,7 +346,7 @@ public class UnfreezeAsset2Test {
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, Long fronzenAmount, Long frozenDay,
       String priKey) {
@@ -365,7 +365,7 @@ public class UnfreezeAsset2Test {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);

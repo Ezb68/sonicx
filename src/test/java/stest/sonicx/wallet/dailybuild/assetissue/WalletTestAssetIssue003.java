@@ -135,11 +135,11 @@ public class WalletTestAssetIssue003 {
     Assert.assertFalse(PublicMethed.createAssetIssue(fromAddress, name, -1L, 1, 10,
             start, end, 2, description, url, 10000L,10000L,
             1L, 3652L, asset003Key,blockingStubFull));
-    //TrxNum is zero.
+    //SoxNum is zero.
     Assert.assertFalse(PublicMethed.createAssetIssue(fromAddress, name, totalSupply, 0, 10,
             start, end, 2, description, url, 10000L,10000L,
             1L, 3652L, asset003Key,blockingStubFull));
-    //TrxNum is -1.
+    //SoxNum is -1.
     Assert.assertFalse(PublicMethed.createAssetIssue(fromAddress, name, totalSupply, -1, 10,
             start, end, 2, description, url, 10000L,10000L,
             1L, 3652L, asset003Key,blockingStubFull));
@@ -219,7 +219,7 @@ public class WalletTestAssetIssue003 {
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, Long fronzenAmount, Long frozenDay,
       String priKey) {
@@ -238,7 +238,7 @@ public class WalletTestAssetIssue003 {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);

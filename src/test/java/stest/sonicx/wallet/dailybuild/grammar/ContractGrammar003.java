@@ -499,10 +499,10 @@ public class ContractGrammar003 {
   }
 
 
-  @Test(enabled = true, description = "Trx and sun unit conversion.")
+  @Test(enabled = true, description = "Sox and dole unit conversion.")
   public void test7Grammar020() {
 
-    String contractName = "TrxContract";
+    String contractName = "SoxContract";
     String code = Configuration.getByPath("testng.conf")
         .getString("code.code_ContractGrammar003_testGrammar020");
     String abi = Configuration.getByPath("testng.conf")

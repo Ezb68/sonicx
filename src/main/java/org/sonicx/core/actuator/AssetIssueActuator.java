@@ -163,8 +163,8 @@ public class AssetIssueActuator extends AbstractActuator {
 
     if (dbManager.getDynamicPropertiesStore().getAllowSameTokenName() != 0) {
       String name = assetIssueContract.getName().toStringUtf8().toLowerCase();
-      if (name.equals("trx")) {
-        throw new ContractValidateException("assetName can't be trx");
+      if (name.equals("sox")) {
+        throw new ContractValidateException("assetName can't be sox");
       }
     }
 
@@ -212,8 +212,8 @@ public class AssetIssueActuator extends AbstractActuator {
       throw new ContractValidateException("TotalSupply must greater than 0!");
     }
 
-    if (assetIssueContract.getTrxNum() <= 0) {
-      throw new ContractValidateException("TrxNum must greater than 0!");
+    if (assetIssueContract.getSoxNum() <= 0) {
+      throw new ContractValidateException("SoxNum must greater than 0!");
     }
 
     if (assetIssueContract.getNum() <= 0) {

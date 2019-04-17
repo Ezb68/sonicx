@@ -85,7 +85,7 @@ public class VM {
       }
 
       // hard fork for 3.2
-      if (!VMConfig.allowTvmTransferTrc10()) {
+      if (!VMConfig.allowSvmTransferSrc10()) {
         if (op == CALLTOKEN || op == TOKENBALANCE || op == CALLTOKENVALUE || op == CALLTOKENID) {
           throw Program.Exception.invalidOpCode(program.getCurrentOp());
         }

@@ -8,7 +8,7 @@ package protocol;
 
 option java_package = "org.sonicx.protos"; //Specify the name of the package that generated the Java file
 option java_outer_classname = "Protocol"; //Specify the class name of the generated Java file
-option go_package = "github.com/SonicXChain/GrpcGateway/core";
+option go_package = "github.com/SonicXChain/grpc-gateway/core";
 
 enum AccountType {
   Normal = 0;
@@ -70,7 +70,7 @@ message ChainParameters {
 message Account {
   /* frozen balance */
   message Frozen {
-    int64 frozen_balance = 1; // the frozen trx balance
+    int64 frozen_balance = 1; // the frozen sox balance
     int64 expire_time = 2; // the expire time
   }
   // account nick name
@@ -78,7 +78,7 @@ message Account {
   AccountType type = 2;
   // the create address
   bytes address = 3;
-  // the trx balance
+  // the sox balance
   int64 balance = 4;
   // the votes
   repeated Vote votes = 5;
@@ -546,14 +546,14 @@ message InternalTransaction {
   // internalTransaction identity, the root InternalTransaction hash
   // should equals to root transaction id.
   bytes hash = 1;
-  // the one send trx (TBD: or token) via function
+  // the one send sox (TBD: or token) via function
   bytes caller_address = 2;
-  // the one recieve trx (TBD: or token) via function
+  // the one recieve sox (TBD: or token) via function
   bytes transferTo_address = 3;
   message CallValueInfo {
-    // trx (TBD: or token) value
+    // sox (TBD: or token) value
     int64 callValue = 1;
-    // TBD: tokenName, trx should be empty
+    // TBD: tokenName, sox should be empty
     string tokenId = 2;
   }
   repeated CallValueInfo callValueInfo = 4;

@@ -44,10 +44,10 @@ public class ParticipateAssetIssueActuatorTest {
   private static final long OWNER_BALANCE = 99999;
   private static final long TO_BALANCE = 100001;
   private static final long TOTAL_SUPPLY = 10000000000000L;
-  private static final int TRX_NUM = 2;
+  private static final int SOX_NUM = 2;
   private static final int NUM = 2147483647;
   private static final int VOTE_SCORE = 2;
-  private static final String DESCRIPTION = "TRX";
+  private static final String DESCRIPTION = "SOX";
   private static final String URL = "https://wwww.sonicx.org";
 
   static {
@@ -198,7 +198,7 @@ public class ParticipateAssetIssueActuatorTest {
             .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
             .setId(Long.toString(id))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM)
+            .setSoxNum(SOX_NUM)
             .setNum(NUM)
             .setStartTime(startTimestmp)
             .setEndTime(endTimestmp)
@@ -234,7 +234,7 @@ public class ParticipateAssetIssueActuatorTest {
             .setName(ByteString.copyFrom(ByteArray.fromString(assetName)))
             .setId(Long.toString(id))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM)
+            .setSoxNum(SOX_NUM)
             .setNum(NUM)
             .setStartTime(startTimestmp)
             .setEndTime(endTimestmp)
@@ -269,7 +269,7 @@ public class ParticipateAssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(owner)))
             .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM)
+            .setSoxNum(SOX_NUM)
                 .setId(Long.toString(id))
             .setNum(NUM)
             .setStartTime(startTimestmp)
@@ -315,15 +315,15 @@ public class ParticipateAssetIssueActuatorTest {
       Assert.assertEquals(owner.getBalance(), OWNER_BALANCE - 1000);
       Assert.assertEquals(toAccount.getBalance(), TO_BALANCE + 1000);
       //V1
-      Assert.assertEquals(owner.getAssetMap().get(ASSET_NAME).longValue(), (1000L) / TRX_NUM * NUM);
+      Assert.assertEquals(owner.getAssetMap().get(ASSET_NAME).longValue(), (1000L) / SOX_NUM * NUM);
       Assert.assertEquals(toAccount.getAssetMap().get(ASSET_NAME).longValue(),
-          TOTAL_SUPPLY - (1000L) / TRX_NUM * NUM);
+          TOTAL_SUPPLY - (1000L) / SOX_NUM * NUM);
       //V2
       long tokenId = dbManager.getDynamicPropertiesStore().getTokenIdNum();
       Assert.assertEquals(owner.getAssetMapV2().get(String.valueOf(tokenId)).longValue(),
-              (1000L) / TRX_NUM * NUM);
+              (1000L) / SOX_NUM * NUM);
       Assert.assertEquals(toAccount.getAssetMapV2().get(String.valueOf(tokenId)).longValue(),
-              TOTAL_SUPPLY - (1000L) / TRX_NUM * NUM);
+              TOTAL_SUPPLY - (1000L) / SOX_NUM * NUM);
 
     } catch (ContractValidateException e) {
       Assert.assertFalse(e instanceof ContractValidateException);
@@ -359,9 +359,9 @@ public class ParticipateAssetIssueActuatorTest {
       //V2
       long tokenId = dbManager.getDynamicPropertiesStore().getTokenIdNum();
       Assert.assertEquals(owner.getAssetMapV2().get(String.valueOf(tokenId)).longValue(),
-              (1000L) / TRX_NUM * NUM);
+              (1000L) / SOX_NUM * NUM);
       Assert.assertEquals(toAccount.getAssetMapV2().get(String.valueOf(tokenId)).longValue(),
-              TOTAL_SUPPLY - (1000L) / TRX_NUM * NUM);
+              TOTAL_SUPPLY - (1000L) / SOX_NUM * NUM);
 
     } catch (ContractValidateException e) {
       Assert.assertFalse(e instanceof ContractValidateException);
@@ -397,10 +397,10 @@ public class ParticipateAssetIssueActuatorTest {
       //V2
       long id = dbManager.getDynamicPropertiesStore().getTokenIdNum();
       Assert.assertEquals(owner.getAssetMapV2().get( String.valueOf(id) ).longValue(),
-              (1000L) / TRX_NUM * NUM);
+              (1000L) / SOX_NUM * NUM);
       Assert.assertEquals(
               toAccount.getAssetMapV2().get( String.valueOf(id) ).longValue(),
-              TOTAL_SUPPLY - (1000L) / TRX_NUM * NUM);
+              TOTAL_SUPPLY - (1000L) / SOX_NUM * NUM);
     } catch (ContractValidateException e) {
       Assert.assertFalse(e instanceof ContractValidateException);
     } catch (ContractExeException e) {
@@ -557,10 +557,10 @@ public class ParticipateAssetIssueActuatorTest {
       AccountCapsule toAccount =
           dbManager.getAccountStore().get(ByteArray.fromHexString(TO_ADDRESS));
 
-      Assert.assertEquals(owner.getAssetMap().get(ASSET_NAME).longValue(), (999L * NUM) / TRX_NUM);
+      Assert.assertEquals(owner.getAssetMap().get(ASSET_NAME).longValue(), (999L * NUM) / SOX_NUM);
       Assert.assertEquals(
           toAccount.getAssetMap().get(ASSET_NAME).longValue(),
-          TOTAL_SUPPLY - (999L * NUM) / TRX_NUM);
+          TOTAL_SUPPLY - (999L * NUM) / SOX_NUM);
     } catch (ContractValidateException e) {
       Assert.assertFalse(e instanceof ContractValidateException);
     } catch (ContractExeException e) {
@@ -589,10 +589,10 @@ public class ParticipateAssetIssueActuatorTest {
               dbManager.getAccountStore().get(ByteArray.fromHexString(TO_ADDRESS));
       long id = dbManager.getDynamicPropertiesStore().getTokenIdNum();
       Assert.assertEquals(owner.getAssetMapV2().get(String.valueOf(id)).longValue(),
-              (999L * NUM) / TRX_NUM);
+              (999L * NUM) / SOX_NUM);
       Assert.assertEquals(
               toAccount.getAssetMapV2().get(String.valueOf(id)).longValue(),
-              TOTAL_SUPPLY - (999L * NUM) / TRX_NUM);
+              TOTAL_SUPPLY - (999L * NUM) / SOX_NUM);
     } catch (ContractValidateException e) {
       Assert.assertFalse(e instanceof ContractValidateException);
     } catch (ContractExeException e) {
@@ -1064,9 +1064,9 @@ public class ParticipateAssetIssueActuatorTest {
 
       Assert.assertEquals(owner.getBalance(), OWNER_BALANCE - 1000);
       Assert.assertEquals(toAccount.getBalance(), TO_BALANCE + 1000);
-      Assert.assertEquals(owner.getAssetMap().get(assetName).longValue(), (1000L) / TRX_NUM * NUM);
+      Assert.assertEquals(owner.getAssetMap().get(assetName).longValue(), (1000L) / SOX_NUM * NUM);
       Assert.assertEquals(toAccount.getAssetMap().get(assetName).longValue(),
-          TOTAL_SUPPLY - (1000L) / TRX_NUM * NUM);
+          TOTAL_SUPPLY - (1000L) / SOX_NUM * NUM);
     } catch (ContractValidateException e) {
       Assert.assertFalse(e instanceof ContractValidateException);
     } catch (ContractExeException e) {
@@ -1089,9 +1089,9 @@ public class ParticipateAssetIssueActuatorTest {
 
       Assert.assertEquals(owner.getBalance(), OWNER_BALANCE - 2000);
       Assert.assertEquals(toAccount.getBalance(), TO_BALANCE + 2000);
-      Assert.assertEquals(owner.getAssetMap().get(assetName).longValue(), (1000L) / TRX_NUM * NUM);
+      Assert.assertEquals(owner.getAssetMap().get(assetName).longValue(), (1000L) / SOX_NUM * NUM);
       Assert.assertEquals(toAccount.getAssetMap().get(assetName).longValue(),
-          TOTAL_SUPPLY - (1000L) / TRX_NUM * NUM);
+          TOTAL_SUPPLY - (1000L) / SOX_NUM * NUM);
     } catch (ContractValidateException e) {
       Assert.assertFalse(e instanceof ContractValidateException);
     } catch (ContractExeException e) {
@@ -1100,13 +1100,13 @@ public class ParticipateAssetIssueActuatorTest {
   }
 
   /**
-   * SameTokenName close, not enough trx
+   * SameTokenName close, not enough sox
    */
   @Test
-  public void sameTokenNameCloseNotEnoughTrxTest() {
+  public void sameTokenNameCloseNotEnoughSoxTest() {
     initAssetIssue(dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() - 1000,
         dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() + 1000);
-    // First, reduce the owner trx balance. Else can't complete this test case.
+    // First, reduce the owner sox balance. Else can't complete this test case.
     AccountCapsule owner = dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
     owner.setBalance(100);
     dbManager.getAccountStore().put(owner.getAddress().toByteArray(), owner);
@@ -1137,14 +1137,14 @@ public class ParticipateAssetIssueActuatorTest {
 
 
   /**
-   * SameTokenName open, not enough trx
+   * SameTokenName open, not enough sox
    */
   @Test
-  public void sameTokenNameOpenNotEnoughTrxTest() {
+  public void sameTokenNameOpenNotEnoughSoxTest() {
     dbManager.getDynamicPropertiesStore().saveAllowSameTokenName(1);
     initAssetIssue(dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() - 1000,
             dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() + 1000);
-    // First, reduce the owner trx balance. Else can't complete this test case.
+    // First, reduce the owner sox balance. Else can't complete this test case.
     AccountCapsule owner = dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
     owner.setBalance(100);
     dbManager.getAccountStore().put(owner.getAddress().toByteArray(), owner);
@@ -1412,7 +1412,7 @@ public class ParticipateAssetIssueActuatorTest {
   public void sameTokenNameCloseMultiplyOverflowTest() {
     initAssetIssue(dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() - 1000,
         dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() + 1000);
-    // First, increase the owner trx balance. Else can't complete this test case.
+    // First, increase the owner sox balance. Else can't complete this test case.
     AccountCapsule owner = dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
     owner.setBalance(100000000000000L);
     dbManager.getAccountStore().put(owner.getAddress().toByteArray(), owner);
@@ -1457,7 +1457,7 @@ public class ParticipateAssetIssueActuatorTest {
     dbManager.getDynamicPropertiesStore().saveAllowSameTokenName(1);
     initAssetIssue(dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() - 1000,
             dbManager.getDynamicPropertiesStore().getLatestBlockHeaderTimestamp() + 1000);
-    // First, increase the owner trx balance. Else can't complete this test case.
+    // First, increase the owner sox balance. Else can't complete this test case.
     AccountCapsule owner = dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
     owner.setBalance(100000000000000L);
     dbManager.getAccountStore().put(owner.getAddress().toByteArray(), owner);
@@ -1496,7 +1496,7 @@ public class ParticipateAssetIssueActuatorTest {
   }
 
   /**
-   * SameTokenName close, exchangeAmount <= 0 trx, throw exception
+   * SameTokenName close, exchangeAmount <= 0 sox, throw exception
    */
   @Test
   public void sameTokenNameCloseExchangeAmountTest() {
@@ -1507,7 +1507,7 @@ public class ParticipateAssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(TO_ADDRESS)))
             .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(100)
+            .setSoxNum(100)
             .setNum(1)
             .setStartTime(dbManager.getHeadBlockTimeStamp() - 10000)
             .setEndTime(dbManager.getHeadBlockTimeStamp() + 11000000)
@@ -1545,7 +1545,7 @@ public class ParticipateAssetIssueActuatorTest {
 
 
   /**
-   * SameTokenName open, exchangeAmount <= 0 trx, throw exception
+   * SameTokenName open, exchangeAmount <= 0 sox, throw exception
    */
   @Test
   public void sameTokenNameOpenExchangeAmountTest() {
@@ -1558,7 +1558,7 @@ public class ParticipateAssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(TO_ADDRESS_2)))
                     .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(100)
+                    .setSoxNum(100)
                     .setId(String.valueOf(tokenId))
                     .setNum(1)
                     .setStartTime(dbManager.getHeadBlockTimeStamp() - 10000)

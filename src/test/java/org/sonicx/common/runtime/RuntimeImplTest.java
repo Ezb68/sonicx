@@ -1,7 +1,7 @@
 package org.sonicx.common.runtime;
 
-import static org.sonicx.common.runtime.TVMTestUtils.generateDeploySmartContractAndGetTransaction;
-import static org.sonicx.common.runtime.TVMTestUtils.generateTriggerSmartContractAndGetTransaction;
+import static org.sonicx.common.runtime.SVMTestUtils.generateDeploySmartContractAndGetTransaction;
+import static org.sonicx.common.runtime.SVMTestUtils.generateTriggerSmartContractAndGetTransaction;
 
 import java.io.File;
 import lombok.extern.slf4j.Slf4j;
@@ -60,7 +60,7 @@ public class RuntimeImplTest {
         .decode(Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abd");
     dbManager = context.getBean(Manager.class);
     dbManager.getDynamicPropertiesStore().saveLatestBlockHeaderTimestamp(1526647838000L);
-    dbManager.getDynamicPropertiesStore().saveTotalEnergyWeight(5_000_000_000L); // unit is trx
+    dbManager.getDynamicPropertiesStore().saveTotalEnergyWeight(5_000_000_000L); // unit is sox
     deposit = DepositImpl.createRoot(dbManager);
     deposit.createAccount(callerAddress, AccountType.Normal);
     deposit.addBalance(callerAddress, callerTotalBalance);
@@ -160,21 +160,21 @@ public class RuntimeImplTest {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
 
     long value = 0;
-    long feeLimit = 1_000_000_000L; // sun
+    long feeLimit = 1_000_000_000L; // dole
     long consumeUserResourcePercent = 0L;
     long creatorEnergyLimit = 5_000L;
     String contractName = "test";
     String ABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testNotConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
     String code = "608060405234801561001057600080fd5b50610112806100206000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806321964a3914604e5780634c6bb6eb146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a2565b005b348015608357600080fd5b5060a06004803603810190808035906020019092919050505060c4565b005b600080600091505b8282101560bf576001905060018201915060aa565b505050565b600080600091505b8282101560e1576001905060018201915060cc565b5050505600a165627a7a72305820267cf0ebf31051a92ff62bed7490045b8063be9f1e1a22d07dce257654c8c17b0029";
     String libraryAddressPair = null;
-    TVMTestResult result = TVMTestUtils
-        .deployContractWithCreatorEnergyLimitAndReturnTVMTestResult(contractName, creatorAddress,
+    SVMTestResult result = SVMTestUtils
+        .deployContractWithCreatorEnergyLimitAndReturnSVMTestResult(contractName, creatorAddress,
             ABI, code, value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair, dbManager, null,
             creatorEnergyLimit);
 
     byte[] contractAddress = result.getContractAddress();
-    byte[] triggerData = TVMTestUtils.parseABI("testNotConstant()", null);
+    byte[] triggerData = SVMTestUtils.parseABI("testNotConstant()", null);
     Transaction trx = generateTriggerSmartContractAndGetTransaction(callerAddress, contractAddress,
         triggerData, value, feeLimit);
 
@@ -240,21 +240,21 @@ public class RuntimeImplTest {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
 
     long value = 0;
-    long feeLimit = 1_000_000_000L; // sun
+    long feeLimit = 1_000_000_000L; // dole
     long consumeUserResourcePercent = 40L;
     long creatorEnergyLimit = 5_000L;
     String contractName = "test";
     String ABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testNotConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
     String code = "608060405234801561001057600080fd5b50610112806100206000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806321964a3914604e5780634c6bb6eb146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a2565b005b348015608357600080fd5b5060a06004803603810190808035906020019092919050505060c4565b005b600080600091505b8282101560bf576001905060018201915060aa565b505050565b600080600091505b8282101560e1576001905060018201915060cc565b5050505600a165627a7a72305820267cf0ebf31051a92ff62bed7490045b8063be9f1e1a22d07dce257654c8c17b0029";
     String libraryAddressPair = null;
-    TVMTestResult result = TVMTestUtils
-        .deployContractWithCreatorEnergyLimitAndReturnTVMTestResult(contractName, creatorAddress,
+    SVMTestResult result = SVMTestUtils
+        .deployContractWithCreatorEnergyLimitAndReturnSVMTestResult(contractName, creatorAddress,
             ABI, code, value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair, dbManager, null,
             creatorEnergyLimit);
 
     byte[] contractAddress = result.getContractAddress();
-    byte[] triggerData = TVMTestUtils.parseABI("testNotConstant()", null);
+    byte[] triggerData = SVMTestUtils.parseABI("testNotConstant()", null);
     Transaction trx = generateTriggerSmartContractAndGetTransaction(callerAddress, contractAddress,
         triggerData, value, feeLimit);
 
@@ -300,21 +300,21 @@ public class RuntimeImplTest {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
 
     long value = 0;
-    long feeLimit = 1_000_000_000L; // sun
+    long feeLimit = 1_000_000_000L; // dole
     long consumeUserResourcePercent = 100L;
     long creatorEnergyLimit = 5_000L;
     String contractName = "test";
     String ABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testNotConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
     String code = "608060405234801561001057600080fd5b50610112806100206000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806321964a3914604e5780634c6bb6eb146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a2565b005b348015608357600080fd5b5060a06004803603810190808035906020019092919050505060c4565b005b600080600091505b8282101560bf576001905060018201915060aa565b505050565b600080600091505b8282101560e1576001905060018201915060cc565b5050505600a165627a7a72305820267cf0ebf31051a92ff62bed7490045b8063be9f1e1a22d07dce257654c8c17b0029";
     String libraryAddressPair = null;
-    TVMTestResult result = TVMTestUtils
-        .deployContractWithCreatorEnergyLimitAndReturnTVMTestResult(contractName, creatorAddress,
+    SVMTestResult result = SVMTestUtils
+        .deployContractWithCreatorEnergyLimitAndReturnSVMTestResult(contractName, creatorAddress,
             ABI, code, value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair, dbManager, null,
             creatorEnergyLimit);
 
     byte[] contractAddress = result.getContractAddress();
-    byte[] triggerData = TVMTestUtils.parseABI("testNotConstant()", null);
+    byte[] triggerData = SVMTestUtils.parseABI("testNotConstant()", null);
     Transaction trx = generateTriggerSmartContractAndGetTransaction(callerAddress, contractAddress,
         triggerData, value, feeLimit);
 

@@ -68,9 +68,9 @@ public class HttpTestSmartContract001 {
 
     contractName = "transferTokenContract";
     String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_ContractTrcToken001_transferTokenContract");
+        .getString("code.code_ContractSrcToken001_transferTokenContract");
     String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_ContractTrcToken001_transferTokenContract");
+        .getString("abi.abi_ContractSrcToken001_transferTokenContract");
 
     long tokenValue = 100000;
     long callValue = 5000;
@@ -128,7 +128,7 @@ public class HttpTestSmartContract001 {
     logger.info(tokenValueParam);
     String param = addressParam + tokenIdParam + tokenValueParam;
     String txid = HttpMethed.triggerContractGetTxid(httpnode,assetOwnerAddress,contractAddress,
-        "TransferTokenTo(address,trcToken,uint256)",
+        "TransferTokenTo(address,srcToken,uint256)",
         param,1000000000L,10L,Integer.parseInt(assetIssueId),20L,assetOwnerKey);
 
 

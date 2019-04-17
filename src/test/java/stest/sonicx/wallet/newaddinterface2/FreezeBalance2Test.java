@@ -82,11 +82,11 @@ public class FreezeBalance2Test {
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
         "contract validate error : frozenBalance must be less than accountBalance");
-    //Freeze failed when freeze amount less than 1Trx
+    //Freeze failed when freeze amount less than 1Sox
     ret1 = freezeBalance2(fromAddress, 999999L, 3L, testKey002);
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
-        "contract validate error : frozenBalance must be more than 1TRX");
+        "contract validate error : frozenBalance must be more than 1SOX");
     //Freeze failed when freeze duration isn't 3 days.
     ret1 = freezeBalance2(fromAddress, 1000000L, 2L, testKey002);
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);

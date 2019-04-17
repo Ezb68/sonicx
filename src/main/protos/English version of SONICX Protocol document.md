@@ -19,7 +19,7 @@
      `type`: what type of this account is – e.g. _0_ stands for type `Normal`.  
      `balance`: balance of this account – e.g. _4213312_.  
      `votes`: received votes on this account – e.g. _{(“0x1b7w…9xj3”,323), (“0x8djq…j12m”,88),…,(“0x82nd…mx6i”,10001)}_.  
-     `asset`: other assets expect TRX in this account – e.g. _{<“WishToken”,66666>,<”Dogie”,233>}_.
+     `asset`: other assets expect SOX in this account – e.g. _{<“WishToken”,66666>,<”Dogie”,233>}_.
      `latest_operation_time`: the latest operation time of this account.
      
       // Account 
@@ -137,7 +137,7 @@
           }
      
      A `TransferContract` contains 3 parameters:  
-     `amount`: the amount of TRX – e.g. _12534_.  
+     `amount`: the amount of SOX – e.g. _12534_.  
      `to_address`: the receiver address – e.g. “_0xu82h…7237_”.  
      `owner_address`: the address of contract owner – e.g. “_0xu82h…7237_”.
 
@@ -210,7 +210,7 @@
      `owner_address`: the address for contract owner – e.g. “_0xu82h…7237_”.  
      `name`: the name for this contract – e.g. “Billscontract”.  
      `total_supply`: the maximum supply of this asset – e.g. _1000000000_.  
-     `trx_num`: the number of TRONIX – e.g._232241_.  
+     `sox_num`: the number of SONICX – e.g._232241_.  
      `num`: number of corresponding asset.  
      `start_time`: the starting date of this contract – e.g._20170312_.  
      `end_time`: the expiring date of this contract – e.g. _20170512_.  
@@ -222,7 +222,7 @@
            bytes owner_address = 1;   
            bytes name = 2;   
            int64 total_supply = 4;   
-           int32 trx_num = 6;   
+           int32 sox_num = 6;   
            int32 num = 8;   
            int64 start_time = 9;   
            int64 end_time = 10;  

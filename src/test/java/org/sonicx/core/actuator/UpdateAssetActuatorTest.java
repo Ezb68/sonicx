@@ -39,7 +39,7 @@ public class UpdateAssetActuatorTest {
   private static final String SECOND_ACCOUNT_ADDRESS;
   private static final String OWNER_ADDRESS_NOTEXIST;
   private static final String OWNER_ADDRESS_INVALID = "aaaa";
-  private static final String NAME = "trx-my";
+  private static final String NAME = "sox-my";
   private static final long TOTAL_SUPPLY = 10000L;
   private static final String DESCRIPTION = "myCoin";
   private static final String URL = "sonicx-my.com";
@@ -109,7 +109,7 @@ public class UpdateAssetActuatorTest {
         .setName(ByteString.copyFromUtf8(NAME))
         .setTotalSupply(TOTAL_SUPPLY)
         .setId(String.valueOf(tokenId))
-        .setTrxNum(100)
+        .setSoxNum(100)
         .setNum(10)
         .setStartTime(nowTime)
         .setEndTime(nowTime + 24 * 3600 * 1000)

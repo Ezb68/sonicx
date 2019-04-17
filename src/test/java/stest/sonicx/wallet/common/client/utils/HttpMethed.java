@@ -446,7 +446,7 @@ public class HttpMethed {
    * constructor.
    */
   public static HttpResponse assetIssue(String httpNode, byte[] ownerAddress, String name,
-      String abbr, Long totalSupply,Integer trxNum, Integer num,Long startTime, Long endTime,
+      String abbr, Long totalSupply,Integer soxNum, Integer num,Long startTime, Long endTime,
       Integer voteScore, Integer precision, String description, String url,Long freeAssetNetLimit,
       Long publicFreeAssetNetLimit,String fromKey) {
     try {
@@ -456,7 +456,7 @@ public class HttpMethed {
       userBaseObj2.addProperty("name", str2hex(name));
       userBaseObj2.addProperty("abbr", str2hex(abbr));
       userBaseObj2.addProperty("total_supply", totalSupply);
-      userBaseObj2.addProperty("trx_num", trxNum);
+      userBaseObj2.addProperty("sox_num", soxNum);
       userBaseObj2.addProperty("num", num);
       userBaseObj2.addProperty("precision", precision);
       userBaseObj2.addProperty("start_time", startTime);

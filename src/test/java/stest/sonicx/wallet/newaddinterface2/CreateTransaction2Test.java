@@ -127,7 +127,7 @@ public class CreateTransaction2Test {
     Assert.assertEquals(ret1.getCode(), Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
         "contract validate error : Amount must greater than 0.");
-    //Send coin failed due to the amount is -1Trx.
+    //Send coin failed due to the amount is -1Sox.
     ret1 = PublicMethed
         .sendcoin2(receiptAccountAddress, -1000000L, sendAccountAddress, sendAccountKey,
             blockingStubFull);
@@ -140,7 +140,7 @@ public class CreateTransaction2Test {
         blockingStubFull);
     Assert.assertEquals(ret1.getCode(), Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
-        "contract validate error : Cannot transfer trx to yourself.");
+        "contract validate error : Cannot transfer sox to yourself.");
     //transfer all balance
     ret1 = PublicMethed.sendcoin2(receiptAccountAddress, 40119900000L,
         sendAccountAddress, sendAccountKey, blockingStubFull);

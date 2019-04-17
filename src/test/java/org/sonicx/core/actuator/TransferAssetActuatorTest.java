@@ -20,7 +20,6 @@ import static junit.framework.TestCase.fail;
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
 import java.io.File;
-import java.util.Map;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.AfterClass;
@@ -53,24 +52,24 @@ public class TransferAssetActuatorTest {
   private static Manager dbManager;
   private static Any contract;
   private static final String dbPath = "output_transferasset_test";
-  private static final String ASSET_NAME = "trx";
+  private static final String ASSET_NAME = "sox";
   private static final String OWNER_ADDRESS;
   private static final String TO_ADDRESS;
   private static final String NOT_EXIT_ADDRESS;
   private static final String NOT_EXIT_ADDRESS_2;
   private static final long OWNER_ASSET_BALANCE = 99999;
   private static final String ownerAsset_ADDRESS;
-  private static final String ownerASSET_NAME = "trxtest";
+  private static final String ownerASSET_NAME = "soxtest";
   private static final long OWNER_ASSET_Test_BALANCE = 99999;
   private static final String OWNER_ADDRESS_INVALID = "cccc";
   private static final String TO_ADDRESS_INVALID = "dddd";
   private static final long TOTAL_SUPPLY = 10L;
-  private static final int TRX_NUM = 10;
+  private static final int SOX_NUM = 10;
   private static final int NUM = 1;
   private static final long START_TIME = 1;
   private static final long END_TIME = 2;
   private static final int VOTE_SCORE = 2;
-  private static final String DESCRIPTION = "TRX";
+  private static final String DESCRIPTION = "SOX";
   private static final String URL = "https://wwww.sonicx.org";
 
   static {
@@ -140,7 +139,7 @@ public class TransferAssetActuatorTest {
             .setName(ByteString.copyFrom(ByteArray.fromString(assetName)))
             .setId(Long.toString(id))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM)
+            .setSoxNum(SOX_NUM)
             .setNum(NUM)
             .setStartTime(START_TIME)
             .setEndTime(END_TIME)
@@ -215,7 +214,7 @@ public class TransferAssetActuatorTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
                     .setId(Long.toString(id))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(START_TIME)
                     .setEndTime(END_TIME)
@@ -248,7 +247,7 @@ public class TransferAssetActuatorTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
                     .setId(Long.toString(id))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(START_TIME)
                     .setEndTime(END_TIME)
@@ -1046,7 +1045,7 @@ public class TransferAssetActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(ownerAsset_ADDRESS)))
             .setName(ByteString.copyFrom(ByteArray.fromString(ownerASSET_NAME)))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM)
+            .setSoxNum(SOX_NUM)
             .setNum(NUM)
             .setStartTime(START_TIME)
             .setEndTime(END_TIME)
@@ -1105,7 +1104,7 @@ public class TransferAssetActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(ownerAsset_ADDRESS)))
                     .setName(ByteString.copyFrom(ByteArray.fromString(ownerASSET_NAME)))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setId(String.valueOf(tokenIdNum))
                     .setNum(NUM)
                     .setStartTime(START_TIME)
@@ -1161,7 +1160,7 @@ public class TransferAssetActuatorTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
                     .setId(Long.toString(id))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(START_TIME)
                     .setEndTime(END_TIME)

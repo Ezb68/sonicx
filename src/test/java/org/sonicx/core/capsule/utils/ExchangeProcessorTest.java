@@ -63,7 +63,7 @@ public class ExchangeProcessorTest {
   public void testExchange() {
     long sellBalance = 100_000_000_000000L;
     long buyBalance = 128L * 1024 * 1024 * 1024;
-    long sellQuant = 2_000_000_000_000L; // 2 million trx
+    long sellQuant = 2_000_000_000_000L; // 2 million sox
 
     long result = processor.exchange(sellBalance, buyBalance, sellQuant);
 
@@ -74,7 +74,7 @@ public class ExchangeProcessorTest {
   public void testExchange2() {
     long sellBalance = 100_000_000_000000L;
     long buyBalance = 128L * 1024 * 1024 * 1024;
-    long sellQuant = 1_000_000_000_000L; // 2 million trx
+    long sellQuant = 1_000_000_000_000L; // 2 million sox
 
     long result = processor.exchange(sellBalance, buyBalance, sellQuant);
     Assert.assertEquals(1360781717L, result);
@@ -92,7 +92,7 @@ public class ExchangeProcessorTest {
   public void testSellAndBuy() {
     long sellBalance = 100_000_000_000000L;
     long buyBalance = 128L * 1024 * 1024 * 1024;
-    long sellQuant = 2_000_000_000_000L; // 2 million trx
+    long sellQuant = 2_000_000_000_000L; // 2 million sox
 
     long result = processor.exchange(sellBalance, buyBalance, sellQuant);
     Assert.assertEquals(2694881440L, result);
@@ -109,7 +109,7 @@ public class ExchangeProcessorTest {
   public void testSellAndBuy2() {
     long sellBalance = 100_000_000_000000L;
     long buyBalance = 128L * 1024 * 1024 * 1024;
-    long sellQuant = 2_000_000_000_000L; // 2 million trx
+    long sellQuant = 2_000_000_000_000L; // 2 million sox
 
     long result = processor.exchange(sellBalance, buyBalance, sellQuant);
     Assert.assertEquals(2694881440L, result);
@@ -135,7 +135,7 @@ public class ExchangeProcessorTest {
   public void testInject() {
     long sellBalance = 1_000_000_000000L;
     long buyBalance = 10_000_000L;
-    long sellQuant = 10_000_000L; // 10 trx
+    long sellQuant = 10_000_000L; // 10 sox
 
     long result = processor.exchange(sellBalance, buyBalance, sellQuant);
     Assert.assertEquals(99L, result);
@@ -153,7 +153,7 @@ public class ExchangeProcessorTest {
   public void testWithdraw() {
     long sellBalance = 1_000_000_000000L;
     long buyBalance = 10_000_000L;
-    long sellQuant = 10_000_000L; // 10 trx
+    long sellQuant = 10_000_000L; // 10 sox
 
     long result = processor.exchange(sellBalance, buyBalance, sellQuant);
     Assert.assertEquals(99L, result);

@@ -83,7 +83,7 @@ public class ContractScenario014 {
 
     Assert.assertTrue(PublicMethed.sendcoin(contract014Address, 5000000000L, fromAddress,
         testKey002, blockingStubFull));
-    //Deploy contract1, contract1 has a function to transaction 5 sun to target account
+    //Deploy contract1, contract1 has a function to transaction 5 dole to target account
     String contractName = "Contract1";
     String code = Configuration.getByPath("testng.conf")
         .getString("code.code_ContractScenario014_testTripleTrigger");
@@ -97,7 +97,7 @@ public class ContractScenario014 {
     Assert.assertTrue(infoById.get().getResultValue() == 0);
     contractAddress1 = infoById.get().getContractAddress().toByteArray();
 
-    //Deploy contract2, contract2 has a function to call contract1 transaction sun function.
+    //Deploy contract2, contract2 has a function to call contract1 transaction dole function.
     // and has a revert function.
     String code1 = Configuration.getByPath("testng.conf")
         .getString("code.code1_ContractScenario014_testTripleTrigger");
@@ -113,7 +113,7 @@ public class ContractScenario014 {
     Assert.assertTrue(infoById.get().getResultValue() == 0);
     contractAddress2 = infoById.get().getContractAddress().toByteArray();
 
-    //Deploy contract3, trigger contrct2 function.
+    //Deploy contract3, trigger contract2 function.
     String code2 = Configuration.getByPath("testng.conf")
         .getString("code.code2_ContractScenario014_testTripleTrigger");
     String abi2 = Configuration.getByPath("testng.conf")

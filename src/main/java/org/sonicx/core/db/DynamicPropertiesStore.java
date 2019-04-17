@@ -160,7 +160,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
   private static final byte[] TOKEN_UPDATE_DONE = "TOKEN_UPDATE_DONE".getBytes();
 
   //This value is only allowed to be 0, 1, -1
-  private static final byte[] ALLOW_TVM_TRANSFER_TRC10 = "ALLOW_TVM_TRANSFER_TRC10".getBytes();
+  private static final byte[] ALLOW_SVM_TRANSFER_SRC10 = "ALLOW_SVM_TRANSFER_SRC10".getBytes();
 
   private static final byte[] AVAILABLE_CONTRACT_TYPE = "AVAILABLE_CONTRACT_TYPE".getBytes();
   private static final byte[] ACTIVE_DEFAULT_OPERATIONS = "ACTIVE_DEFAULT_OPERATIONS".getBytes();
@@ -365,7 +365,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getEnergyFee();
     } catch (IllegalArgumentException e) {
-      this.saveEnergyFee(100L);// 100 sun per energy
+      this.saveEnergyFee(100L);// 100 dole per energy
     }
 
     try {
@@ -395,7 +395,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getTransactionFee();
     } catch (IllegalArgumentException e) {
-      this.saveTransactionFee(10L); // 10sun/byte
+      this.saveTransactionFee(10L); // 10dole/byte
     }
 
     try {
@@ -485,9 +485,9 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     }
 
     try {
-      this.getAllowTvmTransferTrc10();
+      this.getAllowSvmTransferSrc10();
     } catch (IllegalArgumentException e) {
-      this.saveAllowTvmTransferTrc10(Args.getInstance().getAllowTvmTransferTrc10());
+      this.saveAllowSvmTransferSrc10(Args.getInstance().getAllowSvmTransferSrc10());
     }
 
     try {
@@ -1152,9 +1152,9 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
             () -> new IllegalArgumentException("not found TOTAL_CREATE_WITNESS_COST"));
   }
 
-  public void saveTotalStoragePool(long trx) {
+  public void saveTotalStoragePool(long sox) {
     this.put(TOTAL_STORAGE_POOL,
-        new BytesCapsule(ByteArray.fromLong(trx)));
+        new BytesCapsule(ByteArray.fromLong(sox)));
   }
 
   public long getTotalStoragePool() {
@@ -1165,9 +1165,9 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
             () -> new IllegalArgumentException("not found TOTAL_STORAGE_POOL"));
   }
 
-  public void saveTotalStorageTax(long trx) {
+  public void saveTotalStorageTax(long sox) {
     this.put(TOTAL_STORAGE_TAX,
-        new BytesCapsule(ByteArray.fromLong(trx)));
+        new BytesCapsule(ByteArray.fromLong(sox)));
   }
 
   public long getTotalStorageTax() {
@@ -1243,17 +1243,17 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
             () -> new IllegalArgumentException("not found ALLOW_ADAPTIVE_ENERGY"));
   }
 
-  public void saveAllowTvmTransferTrc10(long value) {
-    this.put(ALLOW_TVM_TRANSFER_TRC10,
+  public void saveAllowSvmTransferSrc10(long value) {
+    this.put(ALLOW_SVM_TRANSFER_SRC10,
         new BytesCapsule(ByteArray.fromLong(value)));
   }
 
-  public long getAllowTvmTransferTrc10() {
-    return Optional.ofNullable(getUnchecked(ALLOW_TVM_TRANSFER_TRC10))
+  public long getAllowSvmTransferSrc10() {
+    return Optional.ofNullable(getUnchecked(ALLOW_SVM_TRANSFER_SRC10))
         .map(BytesCapsule::getData)
         .map(ByteArray::toLong)
         .orElseThrow(
-            () -> new IllegalArgumentException("not found ALLOW_TVM_TRANSFER_TRC10"));
+            () -> new IllegalArgumentException("not found ALLOW_SVM_TRANSFER_SRC10"));
   }
 
   public void saveAvailableContractType(byte[] value) {
@@ -1528,14 +1528,14 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     );
   }
 
-  //The unit is trx
+  //The unit is sox
   public void addTotalNetWeight(long amount) {
     long totalNetWeight = getTotalNetWeight();
     totalNetWeight += amount;
     saveTotalNetWeight(totalNetWeight);
   }
 
-  //The unit is trx
+  //The unit is sox
   public void addTotalEnergyWeight(long amount) {
     long totalEnergyWeight = getTotalEnergyWeight();
     totalEnergyWeight += amount;

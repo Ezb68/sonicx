@@ -156,7 +156,7 @@ public class TestTransferTokenInContract {
         + "d094505050505015801560b0573d6000803e3d6000fd5b505050505600a165627a7a723058200ba246bdb58b"
         + "e0f221ad07e1b19de843ab541150b329ddd01558c2f1cefe1e270029";
     String abi = "[{\"constant\":false,\"inputs\":[{\"name\":\"toAddress\",\"type\":\"address\"},"
-        + "{\"name\":\"id\",\"type\":\"trcToken\"},{\"name\":\"amount\",\"type\":\"uint256\"}],"
+        + "{\"name\":\"id\",\"type\":\"srcToken\"},{\"name\":\"amount\",\"type\":\"uint256\"}],"
         + "\"name\":\"TransferTokenTo\",\"outputs\":[],\"payable\":true,\"stateMutability\":"
         + "\"payable\",\"type\":\"function\"},{\"inputs\":[],\"payable\":true,\"stateMutability\""
         + ":\"payable\",\"type\":\"constructor\"}]";
@@ -195,7 +195,7 @@ public class TestTransferTokenInContract {
         + "15590565b600054815600a165627a7a723058202b6235122df66c062c2e723ad58a9fea93346f3bc19898971"
         + "8f211aa1dbd2d7a0029";
     abi = "[{\"constant\":false,\"inputs\":[{\"name\":\"toAddress\",\"type\":\"address\"},"
-        + "{\"name\":\"tokenId\",\"type\":\"trcToken\"}],\"name\":\"getTokenBalnce\",\"outputs\":"
+        + "{\"name\":\"tokenId\",\"type\":\"srcToken\"}],\"name\":\"getTokenBalnce\",\"outputs\":"
         + "[{\"name\":\"b\",\"type\":\"uint256\"}],\"payable\":true,\"stateMutability\":"
         + "\"payable\",\"type\":\"function\"},{\"constant\":true,\"inputs\":[],\"name\":"
         + "\"balance\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,"
@@ -238,7 +238,7 @@ public class TestTransferTokenInContract {
           + "\",\"5\"";
 
       String triggerTxid = PublicMethed.triggerContract(transferTokenContractAddress,
-          "TransferTokenTo(address,trcToken,uint256)",
+          "TransferTokenTo(address,srcToken,uint256)",
           param, false, 0, 100000000L, tokenId.toStringUtf8(),
           10, user001Address, user001Key,
           blockingStubFull);
@@ -256,7 +256,7 @@ public class TestTransferTokenInContract {
               + "\",\"5\"";
 
       triggerTxid = PublicMethed.triggerContract(transferTokenContractAddress,
-          "TransferTokenTo(address,trcToken,uint256)",
+          "TransferTokenTo(address,srcToken,uint256)",
           param, false, 0, 100000000L, user001Address,
           user001Key, blockingStubFull);
 
@@ -274,7 +274,7 @@ public class TestTransferTokenInContract {
               + "\"";
 
       triggerTxid = PublicMethed
-          .triggerContract(tokenBalanceContractAddress, "getTokenBalnce(address,trcToken)",
+          .triggerContract(tokenBalanceContractAddress, "getTokenBalnce(address,srcToken)",
               param, false, 0, 1000000000L, user001Address,
               user001Key, blockingStubFull);
 
@@ -293,7 +293,7 @@ public class TestTransferTokenInContract {
       param = "\"" + Base58.encode58Check(dev001Address) + "\",\"" + tokenId.toStringUtf8() + "\"";
 
       triggerTxid = PublicMethed
-          .triggerContract(tokenBalanceContractAddress, "getTokenBalnce(address,trcToken)",
+          .triggerContract(tokenBalanceContractAddress, "getTokenBalnce(address,srcToken)",
               param, false, 0, 1000000000L, user001Address,
               user001Key, blockingStubFull);
 

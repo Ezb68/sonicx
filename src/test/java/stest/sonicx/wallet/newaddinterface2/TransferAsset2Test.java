@@ -158,7 +158,7 @@ public class TransferAsset2Test {
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, String priKey) {
     ECKey temKey = null;
@@ -175,7 +175,7 @@ public class TransferAsset2Test {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);

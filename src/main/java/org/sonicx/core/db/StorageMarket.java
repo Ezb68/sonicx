@@ -14,15 +14,15 @@ public class StorageMarket {
     this.dbManager = manager;
   }
 
-  private long exchange_to_supply(boolean isTRX, long quant) {
-    logger.info("isTRX: " + isTRX);
-    long balance = isTRX ? dbManager.getDynamicPropertiesStore().getTotalStoragePool() :
+  private long exchange_to_supply(boolean isSOX, long quant) {
+    logger.info("isSOX: " + isSOX);
+    long balance = isSOX ? dbManager.getDynamicPropertiesStore().getTotalStoragePool() :
         dbManager.getDynamicPropertiesStore().getTotalStorageReserved();
     logger.info("balance: " + balance);
     long newBalance = balance + quant;
     logger.info("balance + quant: " + (balance + quant));
 
-//    if (isTRX) {
+//    if (isSOX) {
 //      dbManager.getDynamicPropertiesStore().saveTotalStoragePool(newBalance);
 //    } else {
 //      dbManager.getDynamicPropertiesStore().saveTotalStorageReserved(newBalance);
@@ -36,15 +36,15 @@ public class StorageMarket {
     return out;
   }
 
-  private long exchange_to_supply2(boolean isTRX, long quant) {
-    logger.info("isTRX: " + isTRX);
-    long balance = isTRX ? dbManager.getDynamicPropertiesStore().getTotalStoragePool() :
+  private long exchange_to_supply2(boolean isSOX, long quant) {
+    logger.info("isSOX: " + isSOX);
+    long balance = isSOX ? dbManager.getDynamicPropertiesStore().getTotalStoragePool() :
         dbManager.getDynamicPropertiesStore().getTotalStorageReserved();
     logger.info("balance: " + balance);
     long newBalance = balance - quant;
     logger.info("balance - quant: " + (balance - quant));
 
-//    if (isTRX) {
+//    if (isSOX) {
 //      dbManager.getDynamicPropertiesStore().saveTotalStoragePool(newBalance);
 //    } else {
 //      dbManager.getDynamicPropertiesStore().saveTotalStorageReserved(newBalance);
@@ -58,8 +58,8 @@ public class StorageMarket {
     return out;
   }
 
-  private long exchange_from_supply(boolean isTRX, long supplyQuant) {
-    long balance = isTRX ? dbManager.getDynamicPropertiesStore().getTotalStoragePool() :
+  private long exchange_from_supply(boolean isSOX, long supplyQuant) {
+    long balance = isSOX ? dbManager.getDynamicPropertiesStore().getTotalStoragePool() :
         dbManager.getDynamicPropertiesStore().getTotalStorageReserved();
     supply -= supplyQuant;
 
@@ -69,7 +69,7 @@ public class StorageMarket {
     long out = (long) exchangeBalance;
     long newBalance = balance - out;
 
-    if (isTRX) {
+    if (isSOX) {
       out = Math.round(exchangeBalance / 100000) * 100000;
       logger.info("---out: " + out);
     }
@@ -77,9 +77,9 @@ public class StorageMarket {
     return out;
   }
 
-  public long exchange(long from, boolean isTRX) {
-    long relay = exchange_to_supply(isTRX, from);
-    return exchange_from_supply(!isTRX, relay);
+  public long exchange(long from, boolean isSOX) {
+    long relay = exchange_to_supply(isSOX, from);
+    return exchange_from_supply(!isSOX, relay);
   }
 
   public long calculateTax(long duration, long limit) {

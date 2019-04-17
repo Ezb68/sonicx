@@ -16,9 +16,9 @@
    一个`Account`包含7种参数：  
    `account_name`：该账户的名称——比如： ”_SicCongsAccount_”。  
    `type`:该账户的类型——比如：  _0_ 代表的账户类型是`Normal`。  
-   `balance`:该账户的TRX余额——比如：_4213312_。  
+   `balance`:该账户的SOX余额——比如：_4213312_。  
    `votes`:账户所得投票数——比如：_{(“0x1b7w…9xj3”,323),(“0x8djq…j12m”,88),…,(“0x82nd…mx6i”,10001)}_。  
-   `asset`：除TRX以外账户上的其他资产——比如：_{<”WishToken”,66666>,<”Dogie”,233>}_。
+   `asset`：除SOX以外账户上的其他资产——比如：_{<”WishToken”,66666>,<”Dogie”,233>}_。
    `latest_operation_time`: 该账户的最新活跃时间。
    
     // Account 
@@ -136,7 +136,7 @@
      }
      
    `TransferContract`包含3种参数：  
-   `amount`：TRX数量——比如：_12534_。  
+   `amount`：SOX数量——比如：_12534_。  
    `to_address`： 接收方地址——比如：_“0xu82h…7237”_。  
    `owner_address`：合约持有人地址——比如：_“0xu82h…7237”_。
 
@@ -209,7 +209,7 @@
    `name`：合约名称——比如：_“SiCongcontract”_。  
    `total_supply`：合约的赞成总票数——比如：_100000000_。  
    `owner_address`：合约持有人地址——比如：_“0xu82h…7237”_。  
-   `trx_num`：对应TRX数量——比如：_232241_。  
+   `sox_num`：对应SOX数量——比如：_232241_。  
    `num`： 对应的自定义资产数目。  
    `start_time`：开始时间——比如：_20170312_。  
    `end_time`：结束时间——比如：_20170512_。  
@@ -221,7 +221,7 @@
       bytes owner_address = 1;   
       bytes name = 2;   
       int64 total_supply = 4;   
-      int32 trx_num = 6;   
+      int32 sox_num = 6;   
       int32 num = 8;   
       int64 start_time = 9;   
       int64 end_time = 10; 

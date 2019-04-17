@@ -59,7 +59,7 @@ public class AbiUtil {
         return new CoderBool();
       case "bytes":
         return new CoderDynamicBytes();
-      case "trcToken":
+      case "srcToken":
         return new CoderNumber();
     }
 
@@ -395,7 +395,7 @@ public class AbiUtil {
     String arrayMethod2 = "test(uint,uint256[])";
     String arrayMethod3 = "test(uint,address[])";
     String byteMethod1 = "test(bytes32,bytes11)";
-    String tokenMethod = "test(trcToken,uint256)";
+    String tokenMethod = "test(srcToken,uint256)";
     String tokenParams = "\"nmb\",111";
 
     System.out.println("token:" + parseMethod(tokenMethod, tokenParams));

@@ -16,8 +16,6 @@ import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.runtime.vm.DataWord;
 import org.sonicx.common.runtime.vm.program.InternalTransaction;
 import org.sonicx.common.storage.DepositImpl;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.ByteString;
 import org.sonicx.common.utils.FileUtil;
 import org.sonicx.core.Constant;
 import org.sonicx.core.Wallet;
@@ -35,7 +33,6 @@ import org.sonicx.core.exception.VMIllegalException;
 import org.sonicx.protos.Protocol;
 import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.Transaction;
-import org.sonicx.protos.Protocol.TransactionInfo;
 
 
 @Slf4j
@@ -125,8 +122,8 @@ public class ProgramResultTest {
     byte[] calledContractAddress = deployCalledContractAndGetItsAddress();
     byte[] contractAAddress = deployContractAAndGetItsAddress(calledContractAddress);
     /* =================================== CALL create() =================================== */
-    byte[] triggerData1 = TVMTestUtils.parseABI("create()", "");
-    runtime = TVMTestUtils
+    byte[] triggerData1 = SVMTestUtils.parseABI("create()", "");
+    runtime = SVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             contractAAddress, triggerData1,
             0, 100000000, deposit, null);
@@ -156,7 +153,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -230,7 +227,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -291,11 +288,11 @@ public class ProgramResultTest {
         "0000000000000000000000000000000000000000000000000000000000000000";
 
     // ======================================= Test Success =======================================
-    byte[] triggerData1 = TVMTestUtils.parseABI("transfer(address,bool)",
+    byte[] triggerData1 = SVMTestUtils.parseABI("transfer(address,bool)",
         params);
-    Transaction trx1 = TVMTestUtils.generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
+    Transaction trx1 = SVMTestUtils.generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
         triggerData1, 0, 100000000);
-    TransactionTrace traceSuccess = TVMTestUtils.processTransactionAndReturnTrace(trx1, deposit, null);
+    TransactionTrace traceSuccess = SVMTestUtils.processTransactionAndReturnTrace(trx1, deposit, null);
     runtime = traceSuccess.getRuntime();
     byte[] bContract = runtime.getResult().getHReturn();
     List<InternalTransaction> internalTransactionsList = runtime.getResult().getInternalTransactions();
@@ -325,11 +322,11 @@ public class ProgramResultTest {
     // set revert == true
     params = Hex.toHexString(new DataWord(new DataWord(cContract).getLast20Bytes()).getData()) +
         "0000000000000000000000000000000000000000000000000000000000000001";
-    byte[] triggerData2 = TVMTestUtils.parseABI("transfer(address,bool)",
+    byte[] triggerData2 = SVMTestUtils.parseABI("transfer(address,bool)",
         params);
-    Transaction trx2 = TVMTestUtils.generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
+    Transaction trx2 = SVMTestUtils.generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
         triggerData2, 0, 100000000);
-    TransactionTrace traceFailed = TVMTestUtils.processTransactionAndReturnTrace(trx2, deposit, null);
+    TransactionTrace traceFailed = SVMTestUtils.processTransactionAndReturnTrace(trx2, deposit, null);
     runtime = traceFailed.getRuntime();
     byte[] bContract2 = Wallet.generateContractAddress(new TransactionCapsule(trx2).getTransactionId().getBytes(), 0);
     List<InternalTransaction> internalTransactionsListFail = runtime.getResult().getInternalTransactions();
@@ -369,7 +366,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -409,7 +406,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -436,11 +433,11 @@ public class ProgramResultTest {
 
 
     // ======================================= Test Suicide =======================================
-    byte[] triggerData1 = TVMTestUtils.parseABI("suicide(address)",
+    byte[] triggerData1 = SVMTestUtils.parseABI("suicide(address)",
         params);
-    Transaction trx = TVMTestUtils.generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), suicideContract,
+    Transaction trx = SVMTestUtils.generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), suicideContract,
         triggerData1, 0, 100000000);
-    TransactionTrace trace = TVMTestUtils.processTransactionAndReturnTrace(trx, deposit, null);
+    TransactionTrace trace = SVMTestUtils.processTransactionAndReturnTrace(trx, deposit, null);
     runtime = trace.getRuntime();
     List<InternalTransaction> internalTransactionsList = runtime.getResult().getInternalTransactions();
     Assert.assertEquals(dbManager.getAccountStore().get(Hex.decode(TRANSFER_TO)).getBalance(), 1000);
@@ -470,7 +467,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);

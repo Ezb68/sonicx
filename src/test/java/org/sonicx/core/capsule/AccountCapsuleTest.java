@@ -32,14 +32,14 @@ public class AccountCapsuleTest {
   private static final Manager dbManager;
   private static final SonicxApplicationContext context;
   private static final String OWNER_ADDRESS;
-  private static final String ASSET_NAME = "trx";
+  private static final String ASSET_NAME = "sox";
   private static final long TOTAL_SUPPLY = 10000L;
-  private static final int TRX_NUM = 10;
+  private static final int SOX_NUM = 10;
   private static final int NUM = 1;
   private static final long START_TIME = 1;
   private static final long END_TIME = 2;
   private static final int VOTE_SCORE = 2;
-  private static final String DESCRIPTION = "TRX";
+  private static final String DESCRIPTION = "SOX";
   private static final String URL = "https://wwww.sonicx.org";
 
 
@@ -158,7 +158,7 @@ public class AccountCapsuleTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
                     .setId(Long.toString(id))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(START_TIME)
                     .setEndTime(END_TIME)
@@ -175,7 +175,7 @@ public class AccountCapsuleTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString("abc")))
                     .setId(Long.toString(id+1))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(START_TIME)
                     .setEndTime(END_TIME)
@@ -242,7 +242,7 @@ public class AccountCapsuleTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString(ASSET_NAME)))
                     .setId(Long.toString(id))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(START_TIME)
                     .setEndTime(END_TIME)
@@ -259,7 +259,7 @@ public class AccountCapsuleTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString("abc")))
                     .setId(Long.toString(id+1))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(START_TIME)
                     .setEndTime(END_TIME)

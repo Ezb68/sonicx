@@ -130,7 +130,7 @@ public class WalletTestTransfer001 {
     Assert.assertFalse(sendcoin(toAddress, 9199999999999999999L, fromAddress, testKey002));
     //Send coin failed due to the amount is 0.
     Assert.assertFalse(sendcoin(toAddress, 0L, fromAddress, testKey002));
-    //Send coin failed due to the amount is -1Trx.
+    //Send coin failed due to the amount is -1Sox.
     Assert.assertFalse(sendcoin(toAddress, -1000000L, fromAddress, testKey002));
   }
   /**

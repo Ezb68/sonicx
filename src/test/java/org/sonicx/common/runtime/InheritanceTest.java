@@ -93,13 +93,13 @@ public class InheritanceTest {
     long fee = 100000000;
     long consumeUserResourcePercent = 0;
 
-    byte[] contractAddress = TVMTestUtils.deployContractWholeProcessReturnContractAddress(
+    byte[] contractAddress = SVMTestUtils.deployContractWholeProcessReturnContractAddress(
         contractName,callerAddress,ABI,code,value,fee,consumeUserResourcePercent,null,deposit,null);
 
 
     /* =================================== CALL getName() return child value =================================== */
-    byte[] triggerData1 = TVMTestUtils.parseABI("getName()","");
-    runtime = TVMTestUtils.triggerContractWholeProcessReturnContractAddress(callerAddress,contractAddress,triggerData1,
+    byte[] triggerData1 = SVMTestUtils.parseABI("getName()","");
+    runtime = SVMTestUtils.triggerContractWholeProcessReturnContractAddress(callerAddress,contractAddress,triggerData1,
         0,1000000,deposit,null);
 
     //0x20 => pointer position, 0x3 => size,  626172 => "bar"
@@ -109,8 +109,8 @@ public class InheritanceTest {
         + "6261720000000000000000000000000000000000000000000000000000000000");
 
     /* =================================== CALL getNumber() return parent value=================================== */
-    byte[] triggerData2 = TVMTestUtils.parseABI("getNumber()","");
-    runtime = TVMTestUtils.triggerContractWholeProcessReturnContractAddress(callerAddress,contractAddress,triggerData2,
+    byte[] triggerData2 = SVMTestUtils.parseABI("getNumber()","");
+    runtime = SVMTestUtils.triggerContractWholeProcessReturnContractAddress(callerAddress,contractAddress,triggerData2,
         0,1000000,deposit,null);
 
     //0x64 =>100
@@ -118,8 +118,8 @@ public class InheritanceTest {
         "0000000000000000000000000000000000000000000000000000000000000064");
 
     /* =================================== CALL getId() call child function return parent field value=================================== */
-    byte[] triggerData3 = TVMTestUtils.parseABI("getId()","");
-    runtime = TVMTestUtils.triggerContractWholeProcessReturnContractAddress(callerAddress,contractAddress,triggerData3,
+    byte[] triggerData3 = SVMTestUtils.parseABI("getId()","");
+    runtime = SVMTestUtils.triggerContractWholeProcessReturnContractAddress(callerAddress,contractAddress,triggerData3,
         0,1000000,deposit,null);
 
     //0x64 =>100

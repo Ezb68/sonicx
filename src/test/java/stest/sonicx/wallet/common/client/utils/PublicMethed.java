@@ -75,7 +75,7 @@ public class PublicMethed {
    */
 
   public static Boolean createAssetIssue(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull) {
@@ -93,7 +93,7 @@ public class PublicMethed {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -138,7 +138,7 @@ public class PublicMethed {
    */
 
   public static Boolean createAssetIssue(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, int precision, Long startTime, Long endTime,
+      Integer soxNum, Integer icoNum, int precision, Long startTime, Long endTime,
       Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
@@ -157,7 +157,7 @@ public class PublicMethed {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -203,7 +203,7 @@ public class PublicMethed {
    */
 
   public static Return createAssetIssue2(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull) {
@@ -222,7 +222,7 @@ public class PublicMethed {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -3118,7 +3118,7 @@ public class PublicMethed {
     if (needBalance < 1000000L) {
       needBalance = 1000000L;
       logger.info(
-          "getFreezeBalanceCount, needBalance less than 1 TRX, modify to: " + needBalance);
+          "getFreezeBalanceCount, needBalance less than 1 SOX, modify to: " + needBalance);
     }
     return needBalance;
   }

@@ -41,9 +41,9 @@ public class AssetIssueActuatorTest {
   private static final String dbPath = "output_assetIssue_test";
   private static final String OWNER_ADDRESS;
   private static final String OWNER_ADDRESS_SECOND;
-  private static final String NAME = "trx-my";
+  private static final String NAME = "sox-my";
   private static final long TOTAL_SUPPLY = 10000L;
-  private static final int TRX_NUM = 10000;
+  private static final int SOX_NUM = 10000;
   private static final int NUM = 100000;
   private static final String DESCRIPTION = "myCoin";
   private static final String URL = "sonicx-my.com";
@@ -128,7 +128,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -161,7 +161,7 @@ public class AssetIssueActuatorTest {
       Assert.assertNotNull(assetIssueCapsule);
       Assert.assertEquals(6, assetIssueCapsule.getPrecision());
       Assert.assertEquals(NUM, assetIssueCapsule.getNum());
-      Assert.assertEquals(TRX_NUM, assetIssueCapsule.getTrxNum());
+      Assert.assertEquals(SOX_NUM, assetIssueCapsule.getSoxNum());
       Assert.assertEquals(owner.getAssetMap().get(NAME).longValue(), TOTAL_SUPPLY);
       // check V2
       long tokenIdNum = dbManager.getDynamicPropertiesStore().getTokenIdNum();
@@ -170,7 +170,7 @@ public class AssetIssueActuatorTest {
       Assert.assertNotNull(assetIssueCapsuleV2);
       Assert.assertEquals(0, assetIssueCapsuleV2.getPrecision());
       Assert.assertEquals(NUM, assetIssueCapsuleV2.getNum());
-      Assert.assertEquals(TRX_NUM, assetIssueCapsuleV2.getTrxNum());
+      Assert.assertEquals(SOX_NUM, assetIssueCapsuleV2.getSoxNum());
       Assert.assertEquals(owner.getAssetMapV2().get(String.valueOf(tokenIdNum)).longValue(), TOTAL_SUPPLY);
 
     } catch (ContractValidateException e) {
@@ -210,7 +210,7 @@ public class AssetIssueActuatorTest {
       Assert.assertNotNull(assetIssueCapsuleV2);
       Assert.assertEquals(6, assetIssueCapsuleV2.getPrecision());
       Assert.assertEquals(NUM, assetIssueCapsuleV2.getNum());
-      Assert.assertEquals(TRX_NUM, assetIssueCapsuleV2.getTrxNum());
+      Assert.assertEquals(SOX_NUM, assetIssueCapsuleV2.getSoxNum());
       Assert.assertEquals(owner.getAssetMapV2().get(String.valueOf(tokenIdNum)).longValue(), TOTAL_SUPPLY);
 
     } catch (ContractValidateException e) {
@@ -248,7 +248,7 @@ public class AssetIssueActuatorTest {
       Assert.assertNotNull(assetIssueCapsuleV2);
       Assert.assertEquals(6, assetIssueCapsuleV2.getPrecision());
       Assert.assertEquals(NUM, assetIssueCapsuleV2.getNum());
-      Assert.assertEquals(TRX_NUM, assetIssueCapsuleV2.getTrxNum());
+      Assert.assertEquals(SOX_NUM, assetIssueCapsuleV2.getSoxNum());
       Assert.assertEquals(owner.getAssetMapV2().get(String.valueOf(tokenIdNum)).longValue(),
               TOTAL_SUPPLY);
 
@@ -272,7 +272,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(-TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -318,7 +318,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(0)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -355,16 +355,16 @@ public class AssetIssueActuatorTest {
 
   @Test
   /*
-    Trx num must greater than zero.Else can't asset issue and balance do not change.
+    Sox num must greater than zero.Else can't asset issue and balance do not change.
    */
-  public void negativeTrxNumTest() {
+  public void negativeSoxNumTest() {
     long nowTime = new Date().getTime();
     Any contract = Any.pack(
             Contract.AssetIssueContract.newBuilder()
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(-TRX_NUM)
+                    .setSoxNum(-SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -381,7 +381,7 @@ public class AssetIssueActuatorTest {
       Assert.assertTrue(false);
     } catch (ContractValidateException e) {
       Assert.assertTrue(e instanceof ContractValidateException);
-      Assert.assertTrue("TrxNum must greater than 0!".equals(e.getMessage()));
+      Assert.assertTrue("SoxNum must greater than 0!".equals(e.getMessage()));
       AccountCapsule owner =
               dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
       AssetIssueCapsule assetIssueCapsule =
@@ -401,16 +401,16 @@ public class AssetIssueActuatorTest {
 
   @Test
   /*
-    Trx num must greater than zero.Else can't asset issue and balance do not change.
+    Sox num must greater than zero.Else can't asset issue and balance do not change.
    */
-  public void zeroTrxNumTest() {
+  public void zeroSoxNumTest() {
     long nowTime = new Date().getTime();
     Any contract = Any.pack(
             Contract.AssetIssueContract.newBuilder()
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(0)
+                    .setSoxNum(0)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -427,7 +427,7 @@ public class AssetIssueActuatorTest {
       Assert.assertTrue(false);
     } catch (ContractValidateException e) {
       Assert.assertTrue(e instanceof ContractValidateException);
-      Assert.assertTrue("TrxNum must greater than 0!".equals(e.getMessage()));
+      Assert.assertTrue("SoxNum must greater than 0!".equals(e.getMessage()));
       AccountCapsule owner =
               dbManager.getAccountStore().get(ByteArray.fromHexString(OWNER_ADDRESS));
       AssetIssueCapsule assetIssueCapsule =
@@ -456,7 +456,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(-NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -493,7 +493,7 @@ public class AssetIssueActuatorTest {
 
   @Test
   /*
-    Trx num must greater than zero.Else can't asset issue and balance do not change.
+    Sox num must greater than zero.Else can't asset issue and balance do not change.
    */
   public void zeroNumTest() {
     long nowTime = new Date().getTime();
@@ -502,7 +502,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(0)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -549,7 +549,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.EMPTY)
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -587,7 +587,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8("testname0123456789abcdefghijgklmo"))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -624,7 +624,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8("t e"))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -661,7 +661,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFrom(ByteArray.fromHexString("E6B58BE8AF95")))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -698,7 +698,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8("testname0123456789abcdefghijgklm"))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -736,7 +736,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8("0"))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -780,7 +780,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -819,7 +819,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -856,7 +856,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -893,7 +893,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -930,7 +930,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(DESCRIPTION))
@@ -975,7 +975,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(description200Bytes + "0"))
@@ -1013,7 +1013,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(description200Bytes))
@@ -1051,7 +1051,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.EMPTY)
@@ -1088,7 +1088,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(nowTime)
             .setEndTime(nowTime + 24 * 3600 * 1000)
             .setDescription(ByteString.copyFromUtf8(" "))
@@ -1134,7 +1134,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1177,7 +1177,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1224,7 +1224,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1269,7 +1269,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1315,7 +1315,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1360,7 +1360,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1395,7 +1395,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
             .setUrl(ByteString.copyFromUtf8(URL))
@@ -1420,7 +1420,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setDescription(ByteString.copyFromUtf8("description"))
             .setUrl(ByteString.copyFromUtf8(URL))
@@ -1445,7 +1445,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(now)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1471,7 +1471,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(now - 1)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1497,7 +1497,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setEndTime(startTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1523,7 +1523,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(endTime)
             .setEndTime(startTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1549,7 +1549,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1583,7 +1583,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1604,7 +1604,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(ASSET_NAME_SECOND))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1628,13 +1628,13 @@ public class AssetIssueActuatorTest {
   }
 
   @Test
-  public void assetIssueTRXNameTest() {
+  public void assetIssueSOXNameTest() {
     dbManager.getDynamicPropertiesStore().saveAllowSameTokenName(1);
     Any contract = Any.pack(Contract.AssetIssueContract.newBuilder()
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
-            .setName(ByteString.copyFromUtf8("TRX"))
+            .setName(ByteString.copyFromUtf8("SOX"))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1648,7 +1648,7 @@ public class AssetIssueActuatorTest {
       Assert.assertTrue(false);
     } catch (ContractValidateException e) {
       Assert.assertTrue(e instanceof ContractValidateException);
-      Assert.assertEquals("assetName can't be trx", e.getMessage());
+      Assert.assertEquals("assetName can't be sox", e.getMessage());
     } catch (ContractExeException e) {
       Assert.assertFalse(e instanceof ContractExeException);
     } finally {
@@ -1673,7 +1673,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1708,7 +1708,7 @@ public class AssetIssueActuatorTest {
             .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
             .setName(ByteString.copyFromUtf8(NAME))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM).setNum(NUM)
+            .setSoxNum(SOX_NUM).setNum(NUM)
             .setStartTime(startTime)
             .setEndTime(endTime)
             .setDescription(ByteString.copyFromUtf8("description"))
@@ -1743,7 +1743,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString("12312315345345")))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1779,7 +1779,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1821,7 +1821,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1868,7 +1868,7 @@ public class AssetIssueActuatorTest {
                     .setName(ByteString.copyFrom(ByteArray.fromString(NAME)))
                     .setId(Long.toString(id))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(1)
                     .setEndTime(100)
@@ -1951,7 +1951,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -1980,7 +1980,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -2009,7 +2009,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -2054,7 +2054,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)
@@ -2087,7 +2087,7 @@ public class AssetIssueActuatorTest {
                     .setOwnerAddress(ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS)))
                     .setName(ByteString.copyFromUtf8(NAME))
                     .setTotalSupply(TOTAL_SUPPLY)
-                    .setTrxNum(TRX_NUM)
+                    .setSoxNum(SOX_NUM)
                     .setNum(NUM)
                     .setStartTime(nowTime)
                     .setEndTime(nowTime + 24 * 3600 * 1000)

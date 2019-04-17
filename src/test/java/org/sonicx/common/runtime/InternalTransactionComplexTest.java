@@ -57,7 +57,7 @@ public class InternalTransactionComplexTest {
   /**
    * pragma solidity 0.4.24;
    *
-   * // this is to test wither the TVM is returning vars from one contract calling another //
+   * // this is to test wither the SVM is returning vars from one contract calling another //
    * contract's functions.
    *
    * contract callerContract { // lets set up our instance of the new contract calledContract
@@ -81,15 +81,15 @@ public class InternalTransactionComplexTest {
     byte[] callerContractAddress = deployCallerContractAndGetItsAddress(calledContractAddress);
 
     /* =================================== CALL makeTheCall =================================== */
-    byte[] triggerData1 = TVMTestUtils.parseABI("makeTheCall()", "");
-    runtime = TVMTestUtils
+    byte[] triggerData1 = SVMTestUtils.parseABI("makeTheCall()", "");
+    runtime = SVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             callerContractAddress, triggerData1,
             0, 100000000, deposit, null);
 
     /* =================================== CALL testCallbackReturns_ to check data =================================== */
-    byte[] triggerData2 = TVMTestUtils.parseABI("testCallbackReturns_()", "");
-    runtime = TVMTestUtils
+    byte[] triggerData2 = SVMTestUtils.parseABI("testCallbackReturns_()", "");
+    runtime = SVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             callerContractAddress, triggerData2,
             0, 100000000, deposit, null);
@@ -125,7 +125,7 @@ public class InternalTransactionComplexTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -159,7 +159,7 @@ public class InternalTransactionComplexTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);

@@ -183,8 +183,8 @@ public class Program {
   }
 
   /**
-   * @param transferAddress the address send trx to.
-   * @param value the trx value transferred in the internaltransaction
+   * @param transferAddress the address send sox to.
+   * @param value the sox value transferred in the internaltransaction
    */
   private InternalTransaction addInternalTx(DataWord energyLimit, byte[] senderAddress,
       byte[] transferAddress,
@@ -414,14 +414,14 @@ public class Program {
       // if owner == obtainer just zeroing account according to Yellow Paper
       getContractState().addBalance(owner, -balance);
       byte[] blackHoleAddress = getContractState().getBlackHoleAddress();
-      if (VMConfig.allowTvmTransferTrc10()) {
+      if (VMConfig.allowSvmTransferSrc10()) {
         getContractState().addBalance(blackHoleAddress, balance);
         transferAllToken(getContractState(), owner, blackHoleAddress);
       }
     } else {
       try {
         transfer(getContractState(), owner, obtainer, balance);
-        if (VMConfig.allowTvmTransferTrc10()) {
+        if (VMConfig.allowSvmTransferSrc10()) {
           transferAllToken(getContractState(), owner, obtainer);
         }
       } catch (ContractValidateException e) {
@@ -621,7 +621,7 @@ public class Program {
 
     // 2.1 PERFORM THE VALUE (endowment) PART
     long endowment = msg.getEndowment().value().longValueExact();
-    // transfer trx validation
+    // transfer sox validation
     byte[] tokenId = null;
 
     checkTokenId(msg);
@@ -636,7 +636,7 @@ public class Program {
         return;
       }
     }
-    // transfer trc10 token validation
+    // transfer src10 token validation
     else {
       tokenId = String.valueOf(msg.getTokenId().longValue()).getBytes();
       long senderBalance = deposit.getTokenBalance(senderAddress, tokenId);
@@ -653,7 +653,7 @@ public class Program {
     byte[] programCode =
         accountCapsule != null ? getContractState().getCode(codeAddress) : EMPTY_BYTE_ARRAY;
 
-    // only for trx, not for token
+    // only for sox, not for token
     long contextBalance = 0L;
     if (byTestingSuite()) {
       // This keeps track of the calls created for a test
@@ -1314,11 +1314,11 @@ public class Program {
 
     checkTokenId(msg);
     boolean isTokenTransfer = isTokenTransfer(msg);
-    // transfer trx validation
+    // transfer sox validation
     if (!isTokenTransfer) {
       senderBalance = deposit.getBalance(senderAddress);
     }
-    // transfer trc10 token validation
+    // transfer src10 token validation
     else {
       tokenId = String.valueOf(msg.getTokenId().longValue()).getBytes();
       senderBalance = deposit.getTokenBalance(senderAddress, tokenId);
@@ -1408,7 +1408,7 @@ public class Program {
    * [Long.Min, 0)        Not possible                               error
    * ---------------------------------------------------------------------------------------------
    * 0                   allowed and only allowed                    error
-   *                    (guaranteed in CALLTOKEN)   transfertoken id=0 should not transfer trx）
+   *                    (guaranteed in CALLTOKEN)   transfertoken id=0 should not transfer sox）
    * ---------------------------------------------------------------------------------------------
    * (0-100_0000]          Not possible                              error
    * ---------------------------------------------------------------------------------------------

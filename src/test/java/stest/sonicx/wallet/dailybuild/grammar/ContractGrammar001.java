@@ -141,7 +141,7 @@ public class ContractGrammar001 {
     String abi1 = Configuration.getByPath("testng.conf")
         .getString("abi.abi1_ContractGrammar001_testGrammar002");
     String libraryAddress =
-        "browser/TvmTest_p1_Grammar_002.sol:S:" + Base58.encode58Check(contractAddress);
+        "browser/SvmTest_p1_Grammar_002.sol:S:" + Base58.encode58Check(contractAddress);
     contractAddress1 = PublicMethed.deployContract(contractName1, abi1, code1, "", maxFeeLimit,
         0L, 100, libraryAddress, testKeyForGrammarAddress,
         grammarAddress, blockingStubFull);
@@ -177,7 +177,7 @@ public class ContractGrammar001 {
     String abi1 = Configuration.getByPath("testng.conf")
         .getString("abi.abi1_ContractGrammar001_testGrammar003");
     String libraryAddress =
-        "browser/TvmTest_p1_Grammar_003.sol:S:" + Base58.encode58Check(contractAddress);
+        "browser/SvmTest_p1_Grammar_003.sol:S:" + Base58.encode58Check(contractAddress);
     contractAddress1 = PublicMethed.deployContract(contractName1, abi1, code1, "", maxFeeLimit,
         0L, 100, libraryAddress, testKeyForGrammarAddress,
         grammarAddress, blockingStubFull);
@@ -213,7 +213,7 @@ public class ContractGrammar001 {
         .getString("abi.abi1_ContractGrammar001_testGrammar004");
     String libraryAddress = null;
     libraryAddress =
-        "browser/TvmTest_p1_Grammar_004.sol:S:" + Base58.encode58Check(contractAddress);
+        "browser/SvmTest_p1_Grammar_004.sol:S:" + Base58.encode58Check(contractAddress);
     contractAddress1 = PublicMethed.deployContract(contractName1, abi1, code1, "", maxFeeLimit,
         0L, 100, libraryAddress, testKeyForGrammarAddress,
         grammarAddress, blockingStubFull);
