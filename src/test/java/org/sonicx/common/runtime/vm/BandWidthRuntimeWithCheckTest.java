@@ -81,9 +81,9 @@ public class BandWidthRuntimeWithCheckTest {
   private static AnnotationConfigApplicationContext context;
   private static Manager dbManager;
 
-  private static String OwnerAddress = "TCWHANtDDdkZCTo2T2peyEq3Eg9c2XB7ut";
-  private static String TriggerOwnerAddress = "TCSgeWapPJhCqgWRxXCKb6jJ5AgNWSGjPA";
-  private static String TriggerOwnerTwoAddress = "TPMBUANrTwwQAPwShn7ZZjTJz1f3F8jknj";
+  private static String OwnerAddress = "SjGcTdsQchbALEStRZ8H5Cj76QxjjwaZ8k";
+  private static String TriggerOwnerAddress = "SfJ9HW9CGWU2HF9XyVB243pfKQe1WZXfcZ";
+  private static String TriggerOwnerTwoAddress = "ScHQeftcswpnj7oS3UwCNGep1fXyJ6SpwC";
 
   static {
     Args.setParam(
