@@ -2,15 +2,13 @@ package org.sonicx.program;
 
 import static org.sonicx.core.config.Parameter.ChainConstant.BLOCK_PRODUCED_INTERVAL;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.Level;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.ApplicationContext;
-import org.springframework.util.StringUtils;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
 import org.sonicx.common.application.SonicxApplicationContext;
@@ -26,6 +24,8 @@ import org.sonicx.core.db.Manager;
 import org.sonicx.core.services.RpcApiService;
 import org.sonicx.core.services.http.solidity.SolidityNodeHttpApiService;
 import org.sonicx.protos.Protocol.Block;
+import org.springframework.util.StringUtils;
+import org.springframework.context.ApplicationContext;
 
 @Slf4j(topic = "app")
 public class SolidityNode {
