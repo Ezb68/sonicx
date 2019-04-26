@@ -124,7 +124,7 @@ public class SolidityNode {
           logger.warn("Get block id not the same , {}, {}.", num, blockNum);
           sleep(exceptionSleepTime);
         }
-      }catch (Exception e){
+      }catch (Exception e) {
         logger.error("Failed to get block: {}, reason: {}.", blockNum, e.getMessage());
         sleep(exceptionSleepTime);
       }

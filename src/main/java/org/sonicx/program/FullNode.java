@@ -23,10 +23,10 @@ import org.sonicx.core.services.interfaceOnSolidity.http.solidity.HttpApiOnSolid
 @Slf4j(topic = "app")
 public class FullNode {
 
-  public static void load (String path){
+  public static void load (String path) {
     try{
       File file = new File(path);
-      if (!file.exists() || !file.isFile() || !file.canRead()){
+      if (!file.exists() || !file.isFile() || !file.canRead()) {
         return;
       }
       LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();

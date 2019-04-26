@@ -561,7 +561,7 @@ public class Wallet {
           throw new PermissionException("Permission type is error");
         }
         //check oprations
-        if (!checkPermissionOprations(permission, contract)){
+        if (!checkPermissionOprations(permission, contract)) {
           throw new PermissionException("Permission denied");
         }
       }

@@ -382,8 +382,8 @@ public class WitnessController {
     }
   }
 
-  public void tryRemoveThePowerOfTheGr(){
-    if(manager.getDynamicPropertiesStore().getRemoveThePowerOfTheGr() == 1){
+  public void tryRemoveThePowerOfTheGr() {
+    if(manager.getDynamicPropertiesStore().getRemoveThePowerOfTheGr() == 1) {
 
       WitnessStore witnessStore = manager.getWitnessStore();
 

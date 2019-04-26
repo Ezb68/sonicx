@@ -940,32 +940,32 @@ public class Args {
     }
   }
 
-  private static EventPluginConfig getEventPluginConfig(final com.typesafe.config.Config config){
+  private static EventPluginConfig getEventPluginConfig(final com.typesafe.config.Config config) {
     EventPluginConfig eventPluginConfig = new EventPluginConfig();
 
-    if (config.hasPath("event.subscribe.path")){
+    if (config.hasPath("event.subscribe.path")) {
       String pluginPath = config.getString("event.subscribe.path");
-      if (StringUtils.isNotEmpty(pluginPath)){
+      if (StringUtils.isNotEmpty(pluginPath)) {
         eventPluginConfig.setPluginPath(pluginPath.trim());
       }
     }
 
 
-    if (config.hasPath("event.subscribe.server")){
+    if (config.hasPath("event.subscribe.server")) {
       String serverAddress = config.getString("event.subscribe.server");
-      if (StringUtils.isNotEmpty(serverAddress)){
+      if (StringUtils.isNotEmpty(serverAddress)) {
         eventPluginConfig.setServerAddress(serverAddress.trim());
       }
     }
 
-    if (config.hasPath("event.subscribe.dbconfig")){
+    if (config.hasPath("event.subscribe.dbconfig")) {
       String dbConfig = config.getString("event.subscribe.dbconfig");
-      if (StringUtils.isNotEmpty(dbConfig)){
+      if (StringUtils.isNotEmpty(dbConfig)) {
         eventPluginConfig.setDbConfig(dbConfig.trim());
       }
     }
 
-    if (config.hasPath("event.subscribe.topics")){
+    if (config.hasPath("event.subscribe.topics")) {
       List<TriggerConfig> triggerConfigList = config.getObjectList("event.subscribe.topics").stream()
               .map(Args::createTriggerConfig)
               .collect(Collectors.toCollection(ArrayList::new));
@@ -976,8 +976,8 @@ public class Args {
     return eventPluginConfig;
   }
 
-  private static TriggerConfig createTriggerConfig(ConfigObject triggerObject){
-    if (Objects.isNull(triggerObject)){
+  private static TriggerConfig createTriggerConfig(ConfigObject triggerObject) {
+    if (Objects.isNull(triggerObject)) {
       return null;
     }
 
@@ -995,14 +995,14 @@ public class Args {
     return triggerConfig;
   }
 
-  private static FilterQuery getEventFilter(final com.typesafe.config.Config config){
+  private static FilterQuery getEventFilter(final com.typesafe.config.Config config) {
     FilterQuery filter = new FilterQuery();
     long fromBlockLong = 0,  toBlockLong = 0;
 
     String fromBlock = config.getString("event.subscribe.filter.fromblock").trim();
     try {
        fromBlockLong = FilterQuery.parseFromBlockNumber(fromBlock);
-    } catch (Exception e){
+    } catch (Exception e) {
       logger.error("{}", e);
       return null;
     }
@@ -1011,7 +1011,7 @@ public class Args {
     String toBlock = config.getString("event.subscribe.filter.toblock").trim();
     try {
       toBlockLong = FilterQuery.parseToBlockNumber(toBlock);
-    } catch (Exception e){
+    } catch (Exception e) {
       logger.error("{}", e);
       return null;
     }

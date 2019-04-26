@@ -18,7 +18,6 @@ package org.sonicx.common.application;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.db.BlockStore;
 import org.sonicx.core.db.Manager;
-import org.sonicx.core.net.node.Node;
 
 public interface Application {
 
@@ -35,8 +34,6 @@ public interface Application {
   void startServices();
 
   void shutdownServices();
-
-  Node getP2pNode();
 
   BlockStore getBlockStoreS();
 

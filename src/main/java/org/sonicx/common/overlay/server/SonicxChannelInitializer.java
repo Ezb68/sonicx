@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
-import org.sonicx.core.net.node.NodeImpl;
 import org.sonicx.core.net.peer.PeerConnection;
 
 /**
@@ -45,8 +44,6 @@ public class SonicxChannelInitializer extends ChannelInitializer<NioSocketChanne
   @Autowired
   ChannelManager channelManager;
 
-  private NodeImpl p2pNode;
-
   private String remoteId;
 
   private boolean peerDiscoveryMode = false;
@@ -60,7 +57,7 @@ public class SonicxChannelInitializer extends ChannelInitializer<NioSocketChanne
     try {
       final Channel channel = ctx.getBean(PeerConnection.class);
 
-      channel.init(ch.pipeline(), remoteId, peerDiscoveryMode, channelManager, p2pNode);
+      channel.init(ch.pipeline(), remoteId, peerDiscoveryMode, channelManager);
 
       // limit the size of receiving buffer to 1024
       ch.config().setRecvByteBufAllocator(new FixedRecvByteBufAllocator(256 * 1024));
@@ -86,9 +83,5 @@ public class SonicxChannelInitializer extends ChannelInitializer<NioSocketChanne
 
   public void setPeerDiscoveryMode(boolean peerDiscoveryMode) {
     this.peerDiscoveryMode = peerDiscoveryMode;
-  }
-
-  public void setNodeImpl(NodeImpl p2pNode) {
-    this.p2pNode = p2pNode;
   }
 }

@@ -526,7 +526,7 @@ public class JsonFormat {
         handleMissingField(tokenizer, extensionRegistry, builder);
       } while (tokenizer.tryConsume(","));
       tokenizer.consume("]");
-    } else { //if (!",".equals(tokenizer.currentToken)){
+    } else { //if (!",".equals(tokenizer.currentToken)) {
       // Primitive value
       if ("null".equals(tokenizer.currentToken())) {
         tokenizer.consume("null");

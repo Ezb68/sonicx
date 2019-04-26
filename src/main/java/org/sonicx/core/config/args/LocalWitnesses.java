@@ -96,7 +96,7 @@ public class LocalWitnesses {
 
   //get the first one recently
   public String getPrivateKey() {
-    if(CollectionUtils.isEmpty(privateKeys)){
+    if(CollectionUtils.isEmpty(privateKeys)) {
       logger.warn("privateKey is null");
       return null;
     }

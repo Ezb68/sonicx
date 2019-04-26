@@ -17,7 +17,6 @@ package org.sonicx.common.application;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.db.BlockStore;
 import org.sonicx.core.db.Manager;
-import org.sonicx.core.net.node.Node;
 
 public class CliApplication implements Application {
 
@@ -27,7 +26,7 @@ public class CliApplication implements Application {
   }
 
   @Override
-  public void init( Args args) {
+  public void init(Args args) {
 
   }
 
@@ -54,11 +53,6 @@ public class CliApplication implements Application {
   @Override
   public void shutdownServices() {
 
-  }
-
-  @Override
-  public Node getP2pNode() {
-    return null;
   }
 
   @Override

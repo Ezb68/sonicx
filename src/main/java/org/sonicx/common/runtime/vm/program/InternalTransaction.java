@@ -42,7 +42,7 @@ public class InternalTransaction {
   private byte[] parentHash;
   /* the amount of sox to transfer (calculated as dole) */
   private long value;
-  private long tokenValue;
+
   private Map<String, Long> tokenInfo = new HashMap<>();
 
   /* the address of the destination account (for message)

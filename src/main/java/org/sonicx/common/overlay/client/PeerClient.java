@@ -13,13 +13,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.overlay.discover.node.Node;
 import org.sonicx.common.overlay.discover.node.NodeHandler;
 import org.sonicx.common.overlay.server.SonicxChannelInitializer;
 import org.sonicx.core.config.args.Args;
-import org.sonicx.core.net.node.NodeImpl;
 import org.sonicx.protos.Protocol.ReasonCode;
 
 @Slf4j(topic = "net")
@@ -28,10 +26,6 @@ public class PeerClient {
 
   @Autowired
   private ApplicationContext ctx;
-
-  @Autowired
-  @Lazy
-  private NodeImpl node;
 
   private EventLoopGroup workerGroup;
 
@@ -61,7 +55,7 @@ public class PeerClient {
     return connectAsync(node.getHost(), node.getPort(), node.getHexId(), discoveryMode)
         .addListener((ChannelFutureListener) future -> {
           if (!future.isSuccess()) {
-            logger.error("connect to {}:{} fail,cause:{}", node.getHost(), node.getPort(),
+            logger.warn("connect to {}:{} fail,cause:{}", node.getHost(), node.getPort(),
                 future.cause().getMessage());
             nodeHandler.getNodeStatistics().nodeDisconnectedLocal(ReasonCode.CONNECT_FAIL);
             nodeHandler.getNodeStatistics().notifyDisconnect();
@@ -70,14 +64,14 @@ public class PeerClient {
         });
   }
 
-  public ChannelFuture connectAsync(String host, int port, String remoteId, boolean discoveryMode) {
+  private ChannelFuture connectAsync(String host, int port, String remoteId,
+      boolean discoveryMode) {
 
     logger.info("connect peer {} {} {}", host, port, remoteId);
 
     SonicxChannelInitializer sonicxChannelInitializer = ctx
         .getBean(SonicxChannelInitializer.class, remoteId);
     sonicxChannelInitializer.setPeerDiscoveryMode(discoveryMode);
-    sonicxChannelInitializer.setNodeImpl(node);
 
     Bootstrap b = new Bootstrap();
     b.group(workerGroup);

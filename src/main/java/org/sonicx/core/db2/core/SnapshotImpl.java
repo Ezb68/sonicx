@@ -25,7 +25,7 @@ public class SnapshotImpl extends AbstractSnapshot<Key, Value> {
     root = snapshot.getRoot();
     previous = snapshot;
     snapshot.setNext(this);
-    synchronized (this){
+    synchronized (this) {
       db = new HashDB();
     }
 

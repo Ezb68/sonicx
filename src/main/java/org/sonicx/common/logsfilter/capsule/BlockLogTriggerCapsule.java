@@ -7,6 +7,7 @@ import org.sonicx.common.logsfilter.trigger.BlockLogTrigger;
 import org.sonicx.core.capsule.BlockCapsule;
 
 public class BlockLogTriggerCapsule extends TriggerCapsule {
+
   @Getter
   @Setter
   BlockLogTrigger blockLogTrigger;

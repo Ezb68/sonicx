@@ -1,4 +1,4 @@
-package org.sonicx.core.net.peer;
+package org.sonicx.core.net;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
@@ -10,7 +10,7 @@ import org.sonicx.core.net.message.SonicxMessage;
 
 @Component
 @Scope("prototype")
-public class SonicxHandler extends SimpleChannelInboundHandler<SonicxMessage> {
+public class SonicxNetHandler extends SimpleChannelInboundHandler<SonicxMessage> {
 
   protected PeerConnection peer;
 

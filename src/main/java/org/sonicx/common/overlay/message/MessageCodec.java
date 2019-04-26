@@ -20,7 +20,8 @@ public class MessageCodec extends ByteToMessageDecoder {
   private SonicxMessageFactory sonicxMessageFactory = new SonicxMessageFactory();
 
   @Override
-  protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out) throws Exception {
+  protected void decode(ChannelHandlerContext ctx, ByteBuf buffer, List<Object> out)
+      throws Exception {
     int length = buffer.readableBytes();
     byte[] encoded = new byte[length];
     buffer.readBytes(encoded);

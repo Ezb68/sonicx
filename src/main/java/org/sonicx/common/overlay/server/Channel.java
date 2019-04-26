@@ -22,6 +22,7 @@ import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.protobuf.ProtobufVarint32LengthFieldPrepender;
 import io.netty.handler.timeout.ReadTimeoutException;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+import java.io.IOException;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.SocketAddress;
@@ -39,8 +40,7 @@ import org.sonicx.common.overlay.message.MessageCodec;
 import org.sonicx.common.overlay.message.StaticMessages;
 import org.sonicx.core.db.ByteArrayWrapper;
 import org.sonicx.core.exception.P2pException;
-import org.sonicx.core.net.peer.PeerConnectionDelegate;
-import org.sonicx.core.net.peer.SonicxHandler;
+import org.sonicx.core.net.SonicxNetHandler;
 import org.sonicx.protos.Protocol.ReasonCode;
 
 @Slf4j(topic = "net")
@@ -70,7 +70,7 @@ public class Channel {
   private P2pHandler p2pHandler;
 
   @Autowired
-  private SonicxHandler sonicxHandler;
+  private SonicxNetHandler sonicxNetHandler;
 
   private ChannelManager channelManager;
 
@@ -81,8 +81,6 @@ public class Channel {
   private Node node;
 
   private long startTime;
-
-  private PeerConnectionDelegate peerDel;
 
   private SonicxState sonicxState = SonicxState.INIT;
 
@@ -98,8 +96,10 @@ public class Channel {
 
   private boolean isTrustPeer;
 
+  private boolean isFastForwardPeer;
+
   public void init(ChannelPipeline pipeline, String remoteId, boolean discoveryMode,
-      ChannelManager channelManager, PeerConnectionDelegate peerDel) {
+      ChannelManager channelManager) {
 
     this.channelManager = channelManager;
 
@@ -113,32 +113,29 @@ public class Channel {
     pipeline.addLast("readTimeoutHandler", new ReadTimeoutHandler(60, TimeUnit.SECONDS));
     pipeline.addLast(stats.tcp);
     pipeline.addLast("protoPender", new ProtobufVarint32LengthFieldPrepender());
-    pipeline.addLast("lengthDecode", new TrxProtobufVarint32FrameDecoder(this));
+    pipeline.addLast("lengthDecode", new ProtobufVarint32FrameDecoder(this));
 
     //handshake first
     pipeline.addLast("handshakeHandler", handshakeHandler);
-
-    this.peerDel = peerDel;
 
     messageCodec.setChannel(this);
     msgQueue.setChannel(this);
     handshakeHandler.setChannel(this, remoteId);
     p2pHandler.setChannel(this);
-    sonicxHandler.setChannel(this);
+    sonicxNetHandler.setChannel(this);
 
     p2pHandler.setMsgQueue(msgQueue);
-    sonicxHandler.setMsgQueue(msgQueue);
-    sonicxHandler.setPeerDel(peerDel);
-
+    sonicxNetHandler.setMsgQueue(msgQueue);
   }
 
   public void publicHandshakeFinished(ChannelHandlerContext ctx, HelloMessage msg) {
-    isTrustPeer = channelManager.getTrustPeers().containsKey(getInetAddress());
+    isTrustPeer = channelManager.getTrustNodes().containsKey(getInetAddress());
+    isFastForwardPeer = channelManager.getFastForwardNodes().containsKey(getInetAddress());
     ctx.pipeline().remove(handshakeHandler);
     msgQueue.activate(ctx);
     ctx.pipeline().addLast("messageCodec", messageCodec);
     ctx.pipeline().addLast("p2p", p2pHandler);
-    ctx.pipeline().addLast("data", sonicxHandler);
+    ctx.pipeline().addLast("data", sonicxNetHandler);
     setStartTime(msg.getTimestamp());
     setSonicxState(SonicxState.HANDSHAKE_FINISHED);
     getNodeStatistics().p2pHandShake.add();
@@ -158,7 +155,10 @@ public class Channel {
     this.isDisconnect = true;
     channelManager.processDisconnect(this, reason);
     DisconnectMessage msg = new DisconnectMessage(reason);
-    logger.info("Send to {}, {}", ctx.channel().remoteAddress(), msg);
+    logger.info("Send to {} online-time {}s, {}",
+        ctx.channel().remoteAddress(),
+        (System.currentTimeMillis() - startTime) / 1000,
+        msg);
     getNodeStatistics().nodeDisconnectedLocal(reason);
     ctx.writeAndFlush(msg.getSendData()).addListener(future -> close());
   }
@@ -168,17 +168,15 @@ public class Channel {
     while (baseThrowable.getCause() != null) {
       baseThrowable = baseThrowable.getCause();
     }
-    String errMsg = throwable.getMessage();
     SocketAddress address = ctx.channel().remoteAddress();
-    if (throwable instanceof ReadTimeoutException) {
-      logger.error("Read timeout, {}", address);
+    if (throwable instanceof ReadTimeoutException ||
+        throwable instanceof IOException) {
+      logger.warn("Close peer {}, reason: {}", address, throwable.getMessage());
     } else if (baseThrowable instanceof P2pException) {
-      logger.error("type: {}, info: {}, {}", ((P2pException) baseThrowable).getType(),
-          baseThrowable.getMessage(), address);
-    } else if (errMsg != null && errMsg.contains("Connection reset by peer")) {
-      logger.error("{}, {}", errMsg, address);
+      logger.warn("Close peer {}, type: {}, info: {}",
+          address, ((P2pException) baseThrowable).getType(), baseThrowable.getMessage());
     } else {
-      logger.error("exception caught, {}", address, throwable);
+      logger.error("Close peer {}, exception caught", address, throwable);
     }
     close();
   }
@@ -224,10 +222,6 @@ public class Channel {
     this.inetSocketAddress = ctx == null ? null : (InetSocketAddress) ctx.channel().remoteAddress();
   }
 
-  public ChannelHandlerContext getChannelHandlerContext() {
-    return this.ctx;
-  }
-
   public InetAddress getInetAddress() {
     return ctx == null ? null : ((InetSocketAddress) ctx.channel().remoteAddress()).getAddress();
   }
@@ -246,10 +240,7 @@ public class Channel {
 
   public void setSonicxState(SonicxState sonicxState) {
     this.sonicxState = sonicxState;
-  }
-
-  public SonicxState getSonicxState() {
-    return sonicxState;
+    logger.info("Peer {} status change to {}.", inetSocketAddress, sonicxState);
   }
 
   public boolean isActive() {
@@ -260,13 +251,14 @@ public class Channel {
     return isDisconnect;
   }
 
-  public boolean isProtocolsInitialized() {
-    return sonicxState.ordinal() > SonicxState.INIT.ordinal();
-  }
-
   public boolean isTrustPeer() {
     return isTrustPeer;
   }
+
+  public boolean isFastForwardPeer() {
+    return isFastForwardPeer;
+  }
+
 
   @Override
   public boolean equals(Object o) {

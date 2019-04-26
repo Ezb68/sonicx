@@ -4,7 +4,7 @@ public class P2pException extends Exception {
 
     private TypeEnum type;
 
-    public P2pException(TypeEnum type, String errMsg){
+    public P2pException(TypeEnum type, String errMsg) {
         super(errMsg);
         this.type = type;
     }
@@ -36,7 +36,7 @@ public class P2pException extends Exception {
         }
 
         @Override
-        public String toString(){
+        public String toString() {
             return value + ", " + desc;
         }
     }

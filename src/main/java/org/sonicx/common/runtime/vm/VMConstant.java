@@ -7,5 +7,6 @@ public class VMConstant {
   public static final int CONTRACT_NAME_LENGTH = 32;
   public static final int MIN_TOKEN_ID = 1000_000;
 
-  private VMConstant() {}
+  private VMConstant() {
+  }
 }

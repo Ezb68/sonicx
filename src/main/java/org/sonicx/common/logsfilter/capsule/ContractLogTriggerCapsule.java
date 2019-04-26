@@ -7,6 +7,7 @@ import org.sonicx.common.logsfilter.FilterQuery;
 import org.sonicx.common.logsfilter.trigger.ContractLogTrigger;
 
 public class ContractLogTriggerCapsule extends TriggerCapsule {
+
   @Getter
   @Setter
   ContractLogTrigger contractLogTrigger;
