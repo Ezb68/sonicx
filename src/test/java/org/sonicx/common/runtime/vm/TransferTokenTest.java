@@ -133,7 +133,8 @@ public class TransferTokenTest {
     Assert.assertEquals(1000, dbManager.getAccountStore().get(contractAddress).getBalance());
 
     String selectorStr = "TransferTokenTo(address,srcToken,uint256)";
-    String params = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc" +
+    String params = "000000000000000000000000" +
+        TRANSFER_TO.substring(Wallet.getAddressPreFixString().length()) +
         Hex.toHexString(new DataWord(id).getData()) +
         "0000000000000000000000000000000000000000000000000000000000000009"; //TRANSFER_TO, 100001, 9
     byte[] triggerData = SVMTestUtils.parseABI(selectorStr, params);
