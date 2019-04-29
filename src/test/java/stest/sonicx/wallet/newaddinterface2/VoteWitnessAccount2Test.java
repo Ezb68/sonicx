@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.newaddinterface2;
+package stest.tron.wallet.newaddinterface2;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,27 +14,27 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Contract.FreezeBalanceContract;
-import org.sonicx.protos.Contract.UnfreezeBalanceContract;
-import org.sonicx.protos.Protocol;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Contract.FreezeBalanceContract;
+import org.tron.protos.Contract.UnfreezeBalanceContract;
+import org.tron.protos.Protocol;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class VoteWitnessAccount2Test {
@@ -155,6 +155,7 @@ public class VoteWitnessAccount2Test {
     Assert.assertEquals(ret1.getMessage().toStringUtf8(), "");
 
   }
+
   /**
    * constructor.
    */
@@ -168,6 +169,7 @@ public class VoteWitnessAccount2Test {
       searchChannelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -243,6 +245,7 @@ public class VoteWitnessAccount2Test {
     }
     return true;
   }
+
   /**
    * constructor.
    */
@@ -292,6 +295,7 @@ public class VoteWitnessAccount2Test {
     return ret;
 
   }
+
   /**
    * constructor.
    */
@@ -386,6 +390,7 @@ public class VoteWitnessAccount2Test {
     }
     return ret;
   }
+
   /**
    * constructor.
    */
@@ -480,6 +485,7 @@ public class VoteWitnessAccount2Test {
 
 
   }
+
   /**
    * constructor.
    */
@@ -548,6 +554,7 @@ public class VoteWitnessAccount2Test {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -557,6 +564,7 @@ public class VoteWitnessAccount2Test {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

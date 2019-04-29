@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.manual;
+package stest.tron.wallet.dailybuild.manual;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,17 +10,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.SmartContract;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.SmartContract;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractScenario002 {
@@ -68,13 +68,12 @@ public class ContractScenario002 {
 
   }
 
-  @Test(enabled = true,description = "Deploy contract with SonicX support interface")
-  public void deploySonicxNative() {
+  @Test(enabled = true, description = "Deploy contract with java-tron support interface")
+  public void deployTronNative() {
     ECKey ecKey1 = new ECKey(Utils.getRandom());
     byte[] contract002Address = ecKey1.getAddress();
     String contract002Key = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
-    logger.info("From balance is "
-        + PublicMethed.queryAccount(fromAddress, blockingStubFull).getBalance());
+
     Assert.assertTrue(PublicMethed.sendcoin(contract002Address, 50000000L, fromAddress,
         testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
@@ -91,7 +90,7 @@ public class ContractScenario002 {
     logger.info("before energy usage is " + Long.toString(energyUsage));
     logger.info("before balance is " + Long.toString(balanceBefore));
 
-    String contractName = "sonicxNative";
+    String contractName = "tronNative";
     String code = "608060405260008054600160a060020a03199081166201000117909155600180548216620100021"
         + "790556002805482166201000317905560038054821662010004179055600480548216620100051790556005"
         + "8054821662010006179055600680549091166201000717905534801561007757600080fd5b506104ce80610"
@@ -194,7 +193,7 @@ public class ContractScenario002 {
 
   }
 
-  @Test(enabled = true,description = "Get smart contract with invalid address")
+  @Test(enabled = true, description = "Get smart contract with invalid address")
   public void getContractWithInvalidAddress() {
     byte[] contractAddress = contract002Address;
     SmartContract smartContract = PublicMethed.getContract(contractAddress, blockingStubFull);

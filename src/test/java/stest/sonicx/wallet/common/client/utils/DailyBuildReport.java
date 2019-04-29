@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.common.client.utils;
+package stest.tron.wallet.common.client.utils;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -55,14 +55,14 @@ public class DailyBuildReport extends TestListenerAdapter {
   @Override
   public void onFinish(ITestContext testContext) {
     StringBuilder sb = new StringBuilder();
-    sb.append("Total: " + (passedNum + failedNum + skippedNum) +  ",  " + "Passed: " + passedNum
+    sb.append("Total: " + (passedNum + failedNum + skippedNum) + ",  " + "Passed: " + passedNum
         + ",  " + "Failed: " + failedNum + ",  " + "Skipped: " + skippedNum + "\n");
     sb.append("------------------------------------------------------------------------------\n");
     sb.append("Passed list " + "\n");
     //sb.append("Passed case List: " + "\n");
     sb.append(passedDescriptionList.toString());
     sb.append("------------------------------------------------------------------------------\n");
-    sb.append("Failed list: " +  "\n");
+    sb.append("Failed list: " + "\n");
     //sb.append("Failed case List: " + "\n");
     sb.append(failedDescriptionList.toString());
     sb.append("------------------------------------------------------------------------------\n");

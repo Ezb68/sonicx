@@ -3,7 +3,7 @@ package org.sonicx.core.net.message;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-import org.apache.commons.collections4.CollectionUtils;
+
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
 import org.sonicx.protos.Protocol;
 import org.sonicx.protos.Protocol.BlockInventory;

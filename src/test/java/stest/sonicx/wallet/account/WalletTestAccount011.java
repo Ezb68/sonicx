@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.account;
+package stest.tron.wallet.account;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -9,18 +9,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.GrpcAPI.EmptyMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.GrpcAPI.EmptyMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestAccount011 {
@@ -48,6 +48,7 @@ public class WalletTestAccount011 {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */

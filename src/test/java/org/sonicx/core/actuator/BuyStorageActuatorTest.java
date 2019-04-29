@@ -260,7 +260,7 @@ public class BuyStorageActuatorTest {
   }
 
   @Test
-  public void buyLessThan1Wdx() {
+  public void buyLessThan1Sox() {
     long quant = 200_000L;
     BuyStorageActuator actuator = new BuyStorageActuator(
         getContract(OWNER_ADDRESS, quant), dbManager);

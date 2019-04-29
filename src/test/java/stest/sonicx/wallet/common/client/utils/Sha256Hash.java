@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.common.client.utils;
+package stest.tron.wallet.common.client.utils;
 
 /*
  * Copyright 2011 Google Inc.
@@ -31,7 +31,7 @@ import java.math.BigInteger;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import org.sonicx.common.utils.ByteArray;
+import org.tron.common.utils.ByteArray;
 
 
 /**
@@ -66,6 +66,7 @@ public class Sha256Hash implements Serializable, Comparable<Sha256Hash> {
   public long getBlockNum() {
     return blockNum;
   }
+
   /**
    * constructor.
    */
@@ -76,6 +77,7 @@ public class Sha256Hash implements Serializable, Comparable<Sha256Hash> {
     this.bytes = rawHashBytes;
     this.blockNum = num;
   }
+
   /**
    * constructor.
    */

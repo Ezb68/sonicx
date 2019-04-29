@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.assetissue;
+package stest.tron.wallet.dailybuild.assetissue;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -10,18 +10,18 @@ import org.spongycastle.util.encoders.Hex;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestAssetIssue006 {
@@ -58,6 +58,7 @@ public class WalletTestAssetIssue006 {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -152,6 +153,7 @@ public class WalletTestAssetIssue006 {
     Assert.assertTrue(getAssetIssueListByTimestamp.get().getAssetIssueCount() == 0);
 
   }*/
+
   /**
    * constructor.
    */
@@ -165,6 +167,7 @@ public class WalletTestAssetIssue006 {
       channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -192,6 +195,7 @@ public class WalletTestAssetIssue006 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -201,6 +205,7 @@ public class WalletTestAssetIssue006 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

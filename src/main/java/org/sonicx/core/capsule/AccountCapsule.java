@@ -431,7 +431,7 @@ public class AccountCapsule implements ProtoCapsule<Account>, Comparable<Account
     }
   }
 
-  //sp:Sonicx_Power
+  //tp:Sonicx_Power
   public long getSonicxPower() {
     long tp = 0;
     for (int i = 0; i < account.getFrozenCount(); ++i) {

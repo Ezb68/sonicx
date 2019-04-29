@@ -39,7 +39,7 @@ public class WitnessUpdateActuatorTest {
   private static final String OWNER_ADDRESS_NOT_WITNESS;
   private static final String OWNER_ADDRESS_NOT_WITNESS_ACCOUNT_NAME = "test_account1";
   private static final String OWNER_ADDRESS_NOTEXIST;
-  private static final String URL = "https://wwww.sonicx.org";
+  private static final String URL = "https://sonicx.org";
   private static final String NewURL = "https://sonicx.org";
   private static final String OWNER_ADDRESS_INVALID = "aaaa";
 

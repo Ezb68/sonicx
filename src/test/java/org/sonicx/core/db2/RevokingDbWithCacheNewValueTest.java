@@ -218,7 +218,7 @@ public class RevokingDbWithCacheNewValueTest {
 
     Set<ProtoCapsuleTest> result =
         sonicxDatabase.getRevokingDB().getValuesNext(
-          new ProtoCapsuleTest("getValuesNext2".getBytes()).getData(), 3
+            new ProtoCapsuleTest("getValuesNext2".getBytes()).getData(), 3
         ).stream().map(ProtoCapsuleTest::new).collect(Collectors.toSet());
 
     for (int i = 2; i < 5; i++) {
@@ -230,8 +230,7 @@ public class RevokingDbWithCacheNewValueTest {
 
   public static class TestRevokingSonicxStore extends SonicxStoreWithRevoking<ProtoCapsuleTest> {
 
-    protected TestRevokingSonicxStore(String dbName) {
-      super(dbName);
+    protected TestRevokingSonicxStore(String dbName) {super(dbName);
     }
 
     @Override

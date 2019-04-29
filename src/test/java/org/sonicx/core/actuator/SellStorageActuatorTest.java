@@ -323,7 +323,7 @@ public class SellStorageActuatorTest {
   }
 
   @Test
-  public void sellLessThan1Wdx() {
+  public void sellLessThan1Sox() {
     long currentPool = dbManager.getDynamicPropertiesStore().getTotalStoragePool();
     long currentReserved = dbManager.getDynamicPropertiesStore().getTotalStorageReserved();
     Assert.assertEquals(currentPool, 100_000_000_000000L);

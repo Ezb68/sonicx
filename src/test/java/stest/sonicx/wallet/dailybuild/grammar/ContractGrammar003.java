@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.grammar;
+package stest.tron.wallet.dailybuild.grammar;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,19 +10,19 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.crypto.Hash;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.crypto.Hash;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractGrammar003 {
@@ -86,10 +86,9 @@ public class ContractGrammar003 {
     ecKey1 = new ECKey(Utils.getRandom());
     grammarAddress3 = ecKey1.getAddress();
     testKeyForGrammarAddress3 = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
-
-    PublicMethed
+    Assert.assertTrue(PublicMethed
         .sendcoin(grammarAddress3, 100000000000L, testNetAccountAddress, testNetAccountKey,
-            blockingStubFull);
+            blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     String contractName = "aContract";
     String code = Configuration.getByPath("testng.conf")
@@ -158,7 +157,6 @@ public class ContractGrammar003 {
     String txid6 = PublicMethed.triggerContract(contractAddress1,
         "getnumberForB()", "#", false,
         0, maxFeeLimit, grammarAddress3, testKeyForGrammarAddress3, blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     Optional<TransactionInfo> infoById6 = null;
@@ -489,20 +487,22 @@ public class ContractGrammar003 {
     byte[] contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, testKeyForGrammarAddress3,
         grammarAddress3, blockingStubFull);
+    PublicMethed.waitProduceNextBlock(blockingStubFull1);
     String txid = PublicMethed.triggerContract(contractAddress,
         "timetest()", "#", false,
         0, maxFeeLimit, grammarAddress3, testKeyForGrammarAddress3, blockingStubFull);
+    PublicMethed.waitProduceNextBlock(blockingStubFull1);
     Optional<TransactionInfo> infoById = null;
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull1);
-    Assert.assertTrue(infoById.get().getResultValue() == 0);
+    Assert.assertTrue(infoById.get().getResultValue() == 1);
 
   }
 
 
-  @Test(enabled = true, description = "Sox and dole unit conversion.")
+  @Test(enabled = true, description = "Trx and sun unit conversion.")
   public void test7Grammar020() {
 
-    String contractName = "SoxContract";
+    String contractName = "TrxContract";
     String code = Configuration.getByPath("testng.conf")
         .getString("code.code_ContractGrammar003_testGrammar020");
     String abi = Configuration.getByPath("testng.conf")

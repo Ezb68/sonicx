@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.transfer;
+package stest.tron.wallet.transfer;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,29 +13,30 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.GrpcAPI.TimePaginatedMessage;
-import org.sonicx.api.GrpcAPI.TransactionList;
-import org.sonicx.api.WalletExtensionGrpc;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.GrpcAPI.TimePaginatedMessage;
+import org.tron.api.GrpcAPI.TransactionList;
+import org.tron.api.WalletExtensionGrpc;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 
 @Slf4j
 public class WalletTestTransfer004 {
+
   private final String testKey002 = Configuration.getByPath("testng.conf")
       .getString("foundationAccount.key1");
   private final byte[] fromAddress = PublicMethed.getFinalAddress(testKey002);
@@ -227,6 +228,7 @@ public class WalletTestTransfer004 {
 
 
   }*/
+
   /**
    * constructor.
    */
@@ -240,11 +242,12 @@ public class WalletTestTransfer004 {
       channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
-  public Account queryAccount(ECKey ecKey,WalletGrpc.WalletBlockingStub blockingStubFull) {
+  public Account queryAccount(ECKey ecKey, WalletGrpc.WalletBlockingStub blockingStubFull) {
     byte[] address;
     if (ecKey == null) {
       String pubKey = loadPubKey(); //04 PubKey[128]
@@ -267,6 +270,7 @@ public class WalletTestTransfer004 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -276,6 +280,7 @@ public class WalletTestTransfer004 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.account;
+package stest.tron.wallet.account;
 
 import com.google.protobuf.ByteString;
 import com.googlecode.cqengine.query.simple.In;
@@ -15,22 +15,22 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 
 @Slf4j
 public class WalletTestAccount001 {
+
   private final String testKey002 = Configuration.getByPath("testng.conf")
       .getString("foundationAccount.key1");
   private final byte[] fromAddress = PublicMethed.getFinalAddress(testKey002);
@@ -113,6 +113,7 @@ public class WalletTestAccount001 {
 
 
   }
+
   /**
    * constructor.
    */
@@ -126,6 +127,7 @@ public class WalletTestAccount001 {
       channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -188,6 +190,7 @@ public class WalletTestAccount001 {
     return grpcQueryAccountSolidity(ecKey.getAddress(), blockingStubSolidity);
     //return grpcQueryAccountSolidity(address,blockingStubSolidity);
   }
+
   /**
    * constructor.
    */
@@ -200,6 +203,7 @@ public class WalletTestAccount001 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -211,6 +215,7 @@ public class WalletTestAccount001 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.manual;
+package stest.tron.wallet.dailybuild.manual;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -11,19 +11,19 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.SmartContract;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.SmartContract;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractScenario011 {
@@ -81,15 +81,19 @@ public class ContractScenario011 {
     blockingStubFull = WalletGrpc.newBlockingStub(channelFull);
     Assert.assertTrue(PublicMethed.sendcoin(deployAddress, 50000000000L, fromAddress,
         testKey002, blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
+
     Assert.assertTrue(PublicMethed.sendcoin(triggerAddress, 50000000000L, fromAddress,
         testKey002, blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
+
     channelFull1 = ManagedChannelBuilder.forTarget(fullnode1)
         .usePlaintext(true)
         .build();
     blockingStubFull1 = WalletGrpc.newBlockingStub(channelFull1);
   }
 
-  @Test(enabled = true,description = "Deploy Erc721 contract \"Kitty Core\"")
+  @Test(enabled = true, description = "Deploy Erc721 contract \"Kitty Core\"")
   public void deployErc721KittyCore() {
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(deployAddress, 100000000L,
         0, 1, deployKey, blockingStubFull));
@@ -139,7 +143,7 @@ public class ContractScenario011 {
         + "000000000000000000100";
   }
 
-  @Test(enabled = true,description = "Deploy Erc721 contract \"Sale Clock Auction\"")
+  @Test(enabled = true, description = "Deploy Erc721 contract \"Sale Clock Auction\"")
   public void deploySaleClockAuction() {
     AccountResourceMessage accountResource = PublicMethed.getAccountResource(deployAddress,
         blockingStubFull);
@@ -173,7 +177,7 @@ public class ContractScenario011 {
     logger.info("after cpu usage is " + Long.toString(cpuUsage));
   }
 
-  @Test(enabled = true,description = "Deploy Erc721 contract \"Siring Clock Auction\"")
+  @Test(enabled = true, description = "Deploy Erc721 contract \"Siring Clock Auction\"")
   public void deploySiringClockAuction() {
     AccountResourceMessage accountResource = PublicMethed.getAccountResource(deployAddress,
         blockingStubFull);
@@ -207,7 +211,7 @@ public class ContractScenario011 {
     logger.info("after cpu usage is " + Long.toString(cpuUsage));
   }
 
-  @Test(enabled = true,description = "Deploy Erc721 contract \"Gene Science Interface\"")
+  @Test(enabled = true, description = "Deploy Erc721 contract \"Gene Science Interface\"")
   public void deployGeneScienceInterface() {
     AccountResourceMessage accountResource = PublicMethed.getAccountResource(deployAddress,
         blockingStubFull);
@@ -241,7 +245,8 @@ public class ContractScenario011 {
     logger.info("after cpu usage is " + Long.toString(cpuUsage));
   }
 
-  @Test(enabled = true,description = "Set three contract address for Kitty Core, set three CXO roles")
+  @Test(enabled = true, description = "Set three contract address for Kitty Core, "
+      + "set three CXO roles")
   public void triggerToSetThreeContractAddressToKittyCore() {
     //Set SaleAuctionAddress to kitty core.
     String saleContractString = "\"" + Base58.encode58Check(saleClockAuctionContractAddress) + "\"";
@@ -339,7 +344,7 @@ public class ContractScenario011 {
     Assert.assertTrue(infoById.get().getResultValue() == 0);
   }
 
-  @Test(enabled = true,description = "Create Gen0 cat")
+  @Test(enabled = true, description = "Create Gen0 cat")
   public void triggerUseTriggerEnergyUsage() {
     ECKey ecKey3 = new ECKey(Utils.getRandom());
     byte[] triggerUseTriggerEnergyUsageAddress = ecKey3.getAddress();

@@ -9,11 +9,11 @@ import org.junit.Test;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
 import org.sonicx.common.application.SonicxApplicationContext;
-import org.sonicx.common.storage.leveldb.LevelDbDataSourceImpl;
 import org.sonicx.common.utils.FileUtil;
 import org.sonicx.core.Constant;
 import org.sonicx.core.config.DefaultConfig;
 import org.sonicx.core.config.args.Args;
+import org.sonicx.core.db.CheckTmpStore;
 import org.sonicx.core.db2.RevokingDbWithCacheNewValueTest.TestRevokingSonicxStore;
 import org.sonicx.core.db2.RevokingDbWithCacheNewValueTest.TestSnapshotManager;
 import org.sonicx.core.db2.SnapshotRootTest.ProtoCapsuleTest;
@@ -40,10 +40,7 @@ public class SnapshotManagerTest {
     revokingDatabase.enable();
     sonicxDatabase = new TestRevokingSonicxStore("testSnapshotManager-test");
     revokingDatabase.add(sonicxDatabase.getRevokingDB());
-    LevelDbDataSourceImpl tmpLevelDbDataSource  =
-      new LevelDbDataSourceImpl(Args.getInstance().getOutputDirectoryByDbName("testSnapshotManager-tmp"), "testSnapshotManagerTmp");
-    tmpLevelDbDataSource.initDB();
-    revokingDatabase.setTmpLevelDbDataSource(tmpLevelDbDataSource);
+    revokingDatabase.setCheckTmpStore(context.getBean(CheckTmpStore.class));
   }
 
   @After
@@ -54,7 +51,7 @@ public class SnapshotManagerTest {
     context.destroy();
     sonicxDatabase.close();
     FileUtil.deleteDir(new File("output_revokingStore_test"));
-    revokingDatabase.getTmpLevelDbDataSource().closeDB();
+    revokingDatabase.getCheckTmpStore().getDbSource().closeDB();
     sonicxDatabase.close();
   }
 

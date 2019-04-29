@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.manual;
+package stest.tron.wallet.dailybuild.manual;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,17 +10,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractLinkage005 {
@@ -86,13 +86,14 @@ public class ContractLinkage005 {
 
   @Test(enabled = true, description = "Every same trigger use same energy and net")
   public void testEnergyCostDetail() {
+    PublicMethed.waitProduceNextBlock(blockingStubFull1);
     Assert.assertTrue(PublicMethed.sendcoin(linkage005Address, 5000000000000L, fromAddress,
         testKey003, blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Assert.assertTrue(PublicMethed.freezeBalance(linkage005Address, 250000000000L,
         0, linkage005Key, blockingStubFull));
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(linkage005Address, 250000000000L,
         0, 1, linkage005Key, blockingStubFull));
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     contractName = "EnergyCost";
@@ -153,7 +154,7 @@ public class ContractLinkage005 {
         linkage005Address, blockingStubFull);
 
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull1);
+
     Optional<TransactionInfo> infoById = null;
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
     Account infoafter = PublicMethed.queryAccount(linkage005Address, blockingStubFull1);

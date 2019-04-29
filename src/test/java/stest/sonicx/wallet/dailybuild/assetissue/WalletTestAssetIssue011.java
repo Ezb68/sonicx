@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.assetissue;
+package stest.tron.wallet.dailybuild.assetissue;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -10,15 +10,15 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestAssetIssue011 {
@@ -39,7 +39,7 @@ public class WalletTestAssetIssue011 {
   Long freeAssetNetLimit = 10000L;
   Long publicFreeAssetNetLimit = 10000L;
   String description = "just-test";
-  String url = "https://github.com/SonicXChain/WalletCli/";
+  String url = "https://github.com/tronprotocol/wallet-cli/";
 
 
   private ManagedChannel channelFull = null;
@@ -78,13 +78,12 @@ public class WalletTestAssetIssue011 {
     blockingStubFull = WalletGrpc.newBlockingStub(channelFull);
   }
 
-  @Test(enabled = true,description = "Transfer asset to create account")
+  @Test(enabled = true, description = "Transfer asset to create account")
   public void testTransferAssetCreateAccount() {
     //get account
     ecKey1 = new ECKey(Utils.getRandom());
     asset011Address = ecKey1.getAddress();
     testKeyForAssetIssue011 = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
-
 
     ecKey2 = new ECKey(Utils.getRandom());
     transferAssetCreateAddress = ecKey2.getAddress();
@@ -106,9 +105,8 @@ public class WalletTestAssetIssue011 {
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     Account getAssetIdFromThisAccount;
-    getAssetIdFromThisAccount = PublicMethed.queryAccount(asset011Address,blockingStubFull);
+    getAssetIdFromThisAccount = PublicMethed.queryAccount(asset011Address, blockingStubFull);
     ByteString assetAccountId = getAssetIdFromThisAccount.getAssetIssuedID();
-
 
     //Transfer asset to create an account.
     Assert.assertTrue(PublicMethed

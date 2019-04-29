@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.newaddinterface2;
+package stest.tron.wallet.newaddinterface2;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,25 +14,25 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.WitnessList;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.WitnessList;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
-//import stest.sonicx.wallet.common.client.AccountComparator;
+//import stest.tron.wallet.common.client.AccountComparator;
 
 @Slf4j
 public class CreateaAndUpdateWitness2Test {
@@ -146,6 +146,7 @@ public class CreateaAndUpdateWitness2Test {
       logger.info("Update witness case had been test.This time skip it.");
     }
   }
+
   /**
    * constructor.
    */
@@ -156,6 +157,7 @@ public class CreateaAndUpdateWitness2Test {
       channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -188,6 +190,7 @@ public class CreateaAndUpdateWitness2Test {
     }
 
   }
+
   /**
    * constructor.
    */
@@ -237,6 +240,7 @@ public class CreateaAndUpdateWitness2Test {
     return ret;
 
   }
+
   /**
    * constructor.
    */
@@ -271,6 +275,7 @@ public class CreateaAndUpdateWitness2Test {
     }
 
   }
+
   /**
    * constructor.
    */
@@ -320,6 +325,7 @@ public class CreateaAndUpdateWitness2Test {
     }
     return ret;
   }
+
   /**
    * constructor.
    */
@@ -393,6 +399,7 @@ public class CreateaAndUpdateWitness2Test {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -402,6 +409,7 @@ public class CreateaAndUpdateWitness2Test {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

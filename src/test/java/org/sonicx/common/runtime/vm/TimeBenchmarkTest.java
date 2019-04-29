@@ -6,13 +6,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sonicx.common.runtime.SVMTestUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.SonicxApplicationContext;
-import org.sonicx.common.runtime.SVMTestResult;
+import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.runtime.TVMTestResult;
+import org.sonicx.common.runtime.TVMTestUtils;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.FileUtil;
 import org.sonicx.core.Constant;
@@ -31,7 +31,7 @@ import org.sonicx.protos.Protocol.AccountType;
 public class TimeBenchmarkTest {
 
   private Manager dbManager;
-  private SonicxApplicationContext context;
+  private TronApplicationContext context;
   private DepositImpl deposit;
   private String dbPath = "output_TimeBenchmarkTest";
   private String OWNER_ADDRESS;
@@ -46,7 +46,7 @@ public class TimeBenchmarkTest {
   public void init() {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug"},
         Constant.TEST_CONF);
-    context = new SonicxApplicationContext(DefaultConfig.class);
+    context = new TronApplicationContext(DefaultConfig.class);
     AppT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
     dbManager = context.getBean(Manager.class);
@@ -92,7 +92,7 @@ public class TimeBenchmarkTest {
   public void timeBenchmark()
       throws ContractExeException, ContractValidateException, ReceiptCheckErrException, VMIllegalException {
     long value = 0;
-    long feeLimit = 200_000_000L; // dole
+    long feeLimit = 200_000_000L; // sun
     long consumeUserResourcePercent = 100;
 
     String contractName = "timeBenchmark";
@@ -101,8 +101,8 @@ public class TimeBenchmarkTest {
     String code = "608060405234801561001057600080fd5b506101ba806100206000396000f30060806040526004361061004c576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680633c7fdc701461005157806361047ff414610092575b600080fd5b34801561005d57600080fd5b5061007c600480360381019080803590602001909291905050506100d3565b6040518082815260200191505060405180910390f35b34801561009e57600080fd5b506100bd60048036038101908080359060200190929190505050610124565b6040518082815260200191505060405180910390f35b60006100de82610124565b90507f71e71a8458267085d5ab16980fd5f114d2d37f232479c245d523ce8d23ca40ed8282604051808381526020018281526020019250505060405180910390a1919050565b60008060008060008086141561013d5760009450610185565b600186141561014f5760019450610185565b600093506001925060009150600290505b85811115156101815782840191508293508192508080600101915050610160565b8194505b505050509190505600a165627a7a72305820637e163344c180cd57f4b3a01b07a5267ad54811a5a2858b5d67330a2724ee680029";
     String libraryAddressPair = null;
 
-    SVMTestResult result = SVMTestUtils
-        .deployContractAndReturnSVMTestResult(contractName, address, ABI, code,
+    TVMTestResult result = TVMTestUtils
+        .deployContractAndReturnTVMTestResult(contractName, address, ABI, code,
             value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair,
             dbManager, null);
@@ -114,9 +114,9 @@ public class TimeBenchmarkTest {
     byte[] contractAddress = result.getContractAddress();
 
     /* ====================================================================== */
-    byte[] triggerData = SVMTestUtils.parseABI("fibonacciNotify(uint)", "");
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    byte[] triggerData = TVMTestUtils.parseABI("fibonacciNotify(uint)", "");
+    result = TVMTestUtils
+        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, feeLimit, dbManager, null);
 
     long expectEnergyUsageTotal2 = 110;

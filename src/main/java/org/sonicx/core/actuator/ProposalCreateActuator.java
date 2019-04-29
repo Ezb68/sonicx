@@ -229,11 +229,11 @@ public class ProposalCreateActuator extends AbstractActuator {
       case (18): {
         if (entry.getValue() != 1) {
           throw new ContractValidateException(
-              "This value[ALLOW_SVM_TRANSFER_SRC10] is only allowed to be 1");
+              "This value[ALLOW_TVM_TRANSFER_TRC10] is only allowed to be 1");
         }
         if (dbManager.getDynamicPropertiesStore().getAllowSameTokenName() == 0) {
           throw new ContractValidateException("[ALLOW_SAME_TOKEN_NAME] proposal must be approved "
-              + "before [ALLOW_SVM_TRANSFER_SRC10] can be proposed");
+              + "before [ALLOW_TVM_TRANSFER_TRC10] can be proposed");
         }
         break;
       }
@@ -269,7 +269,8 @@ public class ProposalCreateActuator extends AbstractActuator {
       }
       case (22): {
         if (!dbManager.getForkController().pass(ForkBlockVersionEnum.VERSION_3_5)) {
-          throw new ContractValidateException("Bad chain parameter id: UPDATE_ACCOUNT_PERMISSION_FEE");
+          throw new ContractValidateException(
+              "Bad chain parameter id: UPDATE_ACCOUNT_PERMISSION_FEE");
         }
         if (entry.getValue() < 0 || entry.getValue() > 100_000_000_000L) {
           throw new ContractValidateException(

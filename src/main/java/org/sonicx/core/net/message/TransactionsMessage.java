@@ -2,7 +2,6 @@ package org.sonicx.core.net.message;
 
 import java.util.List;
 
-import org.sonicx.core.exception.P2pException;
 import org.sonicx.protos.Protocol;
 import org.sonicx.protos.Protocol.Transaction;
 

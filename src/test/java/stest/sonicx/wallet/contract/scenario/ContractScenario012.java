@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.contract.scenario;
+package stest.tron.wallet.contract.scenario;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,18 +10,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.SmartContract;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.SmartContract;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractScenario012 {
@@ -58,6 +58,7 @@ public class ContractScenario012 {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -78,8 +79,8 @@ public class ContractScenario012 {
     contract012Address = ecKey1.getAddress();
     contract012Key = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
 
-    Assert.assertTrue(PublicMethed.sendcoin(contract012Address,2000000000L,fromAddress,
-        testKey002,blockingStubFull));
+    Assert.assertTrue(PublicMethed.sendcoin(contract012Address, 2000000000L, fromAddress,
+        testKey002, blockingStubFull));
     AccountResourceMessage accountResource = PublicMethed.getAccountResource(contract012Address,
         blockingStubFull);
     Long energyLimit = accountResource.getEnergyLimit();
@@ -89,12 +90,12 @@ public class ContractScenario012 {
     logger.info("before energy usage is " + Long.toString(energyUsage));
     String contractName = "TransactionCoin";
     String code = Configuration.getByPath("testng.conf")
-            .getString("code.code_ContractScenario012_deployTransactionCoin");
+        .getString("code.code_ContractScenario012_deployTransactionCoin");
     String abi = Configuration.getByPath("testng.conf")
-            .getString("abi.abi_ContractScenario012_deployTransactionCoin");
-    contractAddress = PublicMethed.deployContract(contractName,abi,code,"",maxFeeLimit,
-        0L, 100,null,contract012Key,contract012Address,blockingStubFull);
-    SmartContract smartContract = PublicMethed.getContract(contractAddress,blockingStubFull);
+        .getString("abi.abi_ContractScenario012_deployTransactionCoin");
+    contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
+        0L, 100, null, contract012Key, contract012Address, blockingStubFull);
+    SmartContract smartContract = PublicMethed.getContract(contractAddress, blockingStubFull);
     Assert.assertTrue(smartContract.getAbi() != null);
   }
 
@@ -118,23 +119,22 @@ public class ContractScenario012 {
   }
 
 
-
   @Test(enabled = true)
   public void test3TriggerTransactionCanNotCreateAccount() {
     ecKey2 = new ECKey(Utils.getRandom());
     receiverAddress = ecKey2.getAddress();
     receiverKey = ByteArray.toHexString(ecKey2.getPrivKeyBytes());
 
-    //Send some sox to the contract account.
-    Assert.assertTrue(PublicMethed.sendcoin(contractAddress,1000000000L,toAddress,
-            testKey003,blockingStubFull));
+    //Send some trx to the contract account.
+    Assert.assertTrue(PublicMethed.sendcoin(contractAddress, 1000000000L, toAddress,
+        testKey003, blockingStubFull));
 
     receiveAddressParam = "\"" + Base58.encode58Check(receiverAddress)
         + "\"";
     //In smart contract, you can't create account
     txid = PublicMethed.triggerContract(contractAddress,
-            "sendToAddress2(address)", receiveAddressParam, false,
-            0, 100000000L, contract012Address, contract012Key, blockingStubFull);
+        "sendToAddress2(address)", receiveAddressParam, false,
+        0, 100000000L, contract012Address, contract012Key, blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     logger.info(txid);
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
@@ -147,17 +147,16 @@ public class ContractScenario012 {
   }
 
 
-
   @Test(enabled = true)
   public void test4TriggerTransactionCoin() {
     receiveAddressParam = "\"" + Base58.encode58Check(receiverAddress)
         + "\"";
     //This time, trigger the methed sendToAddress2 is OK.
-    Assert.assertTrue(PublicMethed.sendcoin(receiverAddress,10000000L,toAddress,
-        testKey003,blockingStubFull));
+    Assert.assertTrue(PublicMethed.sendcoin(receiverAddress, 10000000L, toAddress,
+        testKey003, blockingStubFull));
     txid = PublicMethed.triggerContract(contractAddress,
-            "sendToAddress2(address)", receiveAddressParam, false,
-            0, 100000000L, contract012Address, contract012Key, blockingStubFull);
+        "sendToAddress2(address)", receiveAddressParam, false,
+        0, 100000000L, contract012Address, contract012Key, blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     logger.info(txid);
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);

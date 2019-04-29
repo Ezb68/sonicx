@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.newaddinterface2;
+package stest.tron.wallet.newaddinterface2;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,18 +13,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
 
-//import stest.sonicx.wallet.common.client.AccountComparator;
+//import stest.tron.wallet.common.client.AccountComparator;
 
 @Slf4j
 public class GetNowBlock2Test {
@@ -43,6 +43,7 @@ public class GetNowBlock2Test {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -103,6 +104,7 @@ public class GetNowBlock2Test {
     logger.info("test getcurrentblock in soliditynode is " + Long
         .toString(currentBlock.getBlockHeader().getRawData().getNumber()));
   }
+
   /**
    * constructor.
    */
@@ -116,6 +118,7 @@ public class GetNowBlock2Test {
       channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -153,6 +156,7 @@ public class GetNowBlock2Test {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -162,6 +166,7 @@ public class GetNowBlock2Test {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.manual;
+package stest.tron.wallet.dailybuild.manual;
 
 import static org.hamcrest.core.StringContains.containsString;
 
@@ -12,18 +12,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractUnknownException {
@@ -86,11 +86,12 @@ public class ContractUnknownException {
         .getBalance()));
   }
 
-  @Test(enabled = true)
+  @Test(enabled = true, description = "trigger selfdestruct method")
   public void testGrammar001() {
     Assert.assertTrue(PublicMethed
         .sendcoin(grammarAddress, 1000000000L, testNetAccountAddress, testNetAccountKey,
             blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(grammarAddress, 204800000,
         0, 1, testKeyForGrammarAddress, blockingStubFull));
     Account info;
@@ -148,11 +149,12 @@ public class ContractUnknownException {
 
   }
 
-  @Test(enabled = true)
+  @Test(enabled = true, description = "trigger revert method")
   public void testGrammar002() {
-    PublicMethed
+    Assert.assertTrue(PublicMethed
         .sendcoin(grammarAddress2, 100000000L, testNetAccountAddress, testNetAccountKey,
-            blockingStubFull);
+            blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(grammarAddress2, 10000000L,
         0, 1, testKeyForGrammarAddress2, blockingStubFull));
     Account info;
@@ -216,11 +218,12 @@ public class ContractUnknownException {
 
   }
 
-  @Test(enabled = true)
+  @Test(enabled = true, description = "trigger assert method")
   public void testGrammar003() {
-    PublicMethed
+    Assert.assertTrue(PublicMethed
         .sendcoin(grammarAddress3, 100000000000L, testNetAccountAddress, testNetAccountKey,
-            blockingStubFull);
+            blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(grammarAddress3, 1000000000L,
         0, 1, testKeyForGrammarAddress3, blockingStubFull));
     Account info;
@@ -282,11 +285,12 @@ public class ContractUnknownException {
   }
 
 
-  @Test(enabled = true)
+  @Test(enabled = true, description = "trigger require method")
   public void testGrammar004() {
-    PublicMethed
+    Assert.assertTrue(PublicMethed
         .sendcoin(grammarAddress4, 100000000000L, testNetAccountAddress, testNetAccountKey,
-            blockingStubFull);
+            blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(grammarAddress4, 100000000L,
         0, 1, testKeyForGrammarAddress4, blockingStubFull));
     Account info;

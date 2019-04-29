@@ -42,7 +42,7 @@ public class ProposalCreateActuatorTest {
   private static final String OWNER_ADDRESS_FIRST;
   private static final String ACCOUNT_NAME_SECOND = "ownerS";
   private static final String OWNER_ADDRESS_SECOND;
-  private static final String URL = "https://wwww.sonicx.org";
+  private static final String URL = "https://sonicx.org";
   private static final String OWNER_ADDRESS_INVALID = "aaaa";
   private static final String OWNER_ADDRESS_NOACCOUNT;
   private static final String OWNER_ADDRESS_BALANCENOTSUFFIENT;

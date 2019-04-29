@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.newaddinterface2;
+package stest.tron.wallet.newaddinterface2;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,22 +14,22 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class UnfreezeAsset2Test {
@@ -76,7 +76,7 @@ public class UnfreezeAsset2Test {
           + "xswedcvqazxswedcvqazxswedcvqazxswedcv";
   private static final long totalSupply = now;
   String description = "just-test";
-  String url = "https://github.com/SonicXChain/WalletCli/";
+  String url = "https://github.com/tronprotocol/wallet-cli/";
 
   private ManagedChannel channelFull = null;
   private WalletGrpc.WalletBlockingStub blockingStubFull = null;
@@ -193,20 +193,20 @@ public class UnfreezeAsset2Test {
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
         "contract validate error : TotalSupply must greater than 0!");
-    //SoxNum is zero.
+    //TrxNum is zero.
     ret1 = PublicMethed.createAssetIssue2(lowBalAddress, name, totalSupply, 0, 10,
         start, end, 2, description, url, 10000L, 10000L,
         1L, 3652L, lowBalTest, blockingStubFull);
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
-        "contract validate error : SoxNum must greater than 0!");
-    //SoxNum is -1.
+        "contract validate error : TrxNum must greater than 0!");
+    //TrxNum is -1.
     ret1 = PublicMethed.createAssetIssue2(lowBalAddress, name, totalSupply, -1, 10,
         start, end, 2, description, url, 10000L, 10000L,
         1L, 3652L, lowBalTest, blockingStubFull);
     Assert.assertEquals(ret1.getCode(), GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
-        "contract validate error : SoxNum must greater than 0!");
+        "contract validate error : TrxNum must greater than 0!");
     //IcoNum is 0.
     ret1 = PublicMethed.createAssetIssue2(lowBalAddress, name, totalSupply, 1, 0,
         start, end, 2, description, url, 10000L, 10000L,
@@ -332,6 +332,7 @@ public class UnfreezeAsset2Test {
     assetIssueList.getSerializedSize();
 
   }
+
   /**
    * constructor.
    */
@@ -342,11 +343,12 @@ public class UnfreezeAsset2Test {
       channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, Long fronzenAmount, Long frozenDay,
       String priKey) {
@@ -365,7 +367,7 @@ public class UnfreezeAsset2Test {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setSoxNum(soxNum);
+      builder.setTrxNum(trxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -400,6 +402,7 @@ public class UnfreezeAsset2Test {
       return false;
     }
   }
+
   /**
    * constructor.
    */
@@ -427,6 +430,7 @@ public class UnfreezeAsset2Test {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -436,6 +440,7 @@ public class UnfreezeAsset2Test {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */
@@ -455,6 +460,7 @@ public class UnfreezeAsset2Test {
     transaction = TransactionUtils.setTimestamp(transaction);
     return TransactionUtils.sign(transaction, ecKey);
   }
+
   /**
    * constructor.
    */
@@ -494,6 +500,7 @@ public class UnfreezeAsset2Test {
     }
 
   }
+
   /**
    * constructor.
    */
@@ -534,6 +541,7 @@ public class UnfreezeAsset2Test {
       return true;
     }
   }
+
   /**
    * constructor.
    */
@@ -586,6 +594,7 @@ public class UnfreezeAsset2Test {
       return true;
     }
   }
+
   /**
    * constructor.
    */

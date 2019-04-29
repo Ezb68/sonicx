@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.witness;
+package stest.tron.wallet.witness;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -16,25 +16,25 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
-//import stest.sonicx.wallet.common.client.WitnessComparator;
+//import stest.tron.wallet.common.client.WitnessComparator;
 
-//import stest.sonicx.wallet.common.client.WitnessComparator;
+//import stest.tron.wallet.common.client.WitnessComparator;
 
 @Slf4j
 public class WalletTestWitness002 {
@@ -152,6 +152,7 @@ public class WalletTestWitness002 {
           .compare(((Protocol.Witness) o2).getVoteCount(), ((Protocol.Witness) o1).getVoteCount());
     }
   }
+
   /**
    * constructor.
    */
@@ -189,6 +190,7 @@ public class WalletTestWitness002 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

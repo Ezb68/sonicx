@@ -2,11 +2,13 @@ package org.sonicx.core.net;
 
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.overlay.server.Channel;
 import org.sonicx.common.overlay.server.MessageQueue;
 import org.sonicx.core.net.message.SonicxMessage;
+import org.sonicx.core.net.peer.PeerConnection;
 
 @Component
 @Scope("prototype")
@@ -14,18 +16,20 @@ public class SonicxNetHandler extends SimpleChannelInboundHandler<SonicxMessage>
 
   protected PeerConnection peer;
 
-  private MessageQueue msgQueue = null;
+  private MessageQueue msgQueue;
 
-  public PeerConnectionDelegate peerDel;
+  @Autowired
+  private SonicxNetService sonicxNetService;
 
-  public void setPeerDel(PeerConnectionDelegate peerDel) {
-    this.peerDel = peerDel;
-  }
+//  @Autowired
+//  private SonicxNetHandler (final ApplicationContext ctx){
+//    sonicxNetService = ctx.getBean(SonicxNetService.class);
+//  }
 
   @Override
   public void channelRead0(final ChannelHandlerContext ctx, SonicxMessage msg) throws Exception {
     msgQueue.receivedMessage(msg);
-    peerDel.onMessage(peer, msg);
+    sonicxNetService.onMessage(peer, msg);
   }
 
   @Override

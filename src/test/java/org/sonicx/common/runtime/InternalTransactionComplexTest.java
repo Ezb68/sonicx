@@ -9,7 +9,7 @@ import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.SonicxApplicationContext;
+import org.sonicx.common.application.TronApplicationContext;
 import org.sonicx.common.runtime.vm.DataWord;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.FileUtil;
@@ -29,7 +29,7 @@ public class InternalTransactionComplexTest {
 
   private static Runtime runtime;
   private static Manager dbManager;
-  private static SonicxApplicationContext context;
+  private static TronApplicationContext context;
   private static Application appT;
   private static DepositImpl deposit;
   private static final String dbPath = "output_InternalTransactionComplexTest";
@@ -38,7 +38,7 @@ public class InternalTransactionComplexTest {
   static {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug", "--support-constant"},
         Constant.TEST_CONF);
-    context = new SonicxApplicationContext(DefaultConfig.class);
+    context = new TronApplicationContext(DefaultConfig.class);
     appT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
   }
@@ -57,7 +57,7 @@ public class InternalTransactionComplexTest {
   /**
    * pragma solidity 0.4.24;
    *
-   * // this is to test wither the SVM is returning vars from one contract calling another //
+   * // this is to test wither the TVM is returning vars from one contract calling another //
    * contract's functions.
    *
    * contract callerContract { // lets set up our instance of the new contract calledContract
@@ -81,15 +81,15 @@ public class InternalTransactionComplexTest {
     byte[] callerContractAddress = deployCallerContractAndGetItsAddress(calledContractAddress);
 
     /* =================================== CALL makeTheCall =================================== */
-    byte[] triggerData1 = SVMTestUtils.parseABI("makeTheCall()", "");
-    runtime = SVMTestUtils
+    byte[] triggerData1 = TVMTestUtils.parseABI("makeTheCall()", "");
+    runtime = TVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             callerContractAddress, triggerData1,
             0, 100000000, deposit, null);
 
     /* =================================== CALL testCallbackReturns_ to check data =================================== */
-    byte[] triggerData2 = SVMTestUtils.parseABI("testCallbackReturns_()", "");
-    runtime = SVMTestUtils
+    byte[] triggerData2 = TVMTestUtils.parseABI("testCallbackReturns_()", "");
+    runtime = TVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             callerContractAddress, triggerData2,
             0, 100000000, deposit, null);
@@ -125,7 +125,7 @@ public class InternalTransactionComplexTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return TVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -159,7 +159,7 @@ public class InternalTransactionComplexTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return TVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);

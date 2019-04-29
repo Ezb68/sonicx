@@ -1,23 +1,35 @@
 package org.sonicx.common.runtime.vm;
 
+import java.io.File;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sonicx.common.runtime.SVMTestUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
-import org.sonicx.common.runtime.SVMTestResult;
+import org.sonicx.common.application.ApplicationFactory;
+import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.runtime.TVMTestResult;
+import org.sonicx.common.runtime.TVMTestUtils;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.storage.Deposit;
 import org.sonicx.common.storage.DepositImpl;
+import org.sonicx.common.utils.FileUtil;
+import org.sonicx.core.Constant;
 import org.sonicx.core.Wallet;
+import org.sonicx.core.config.DefaultConfig;
 import org.sonicx.core.config.Parameter.ForkBlockVersionConsts;
+import org.sonicx.core.config.args.Args;
+import org.sonicx.core.db.Manager;
 import org.sonicx.core.exception.ContractExeException;
 import org.sonicx.core.exception.ContractValidateException;
 import org.sonicx.core.exception.ReceiptCheckErrException;
 import org.sonicx.core.exception.VMIllegalException;
+import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.common.runtime.Runtime;
 
 @Slf4j
 public class StorageTest extends VMTestBase {
@@ -65,7 +77,8 @@ public class StorageTest extends VMTestBase {
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, nullKey));
     rootDeposit.commit();
-    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1), storageVal1);
+    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1),
+        storageVal1);
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, nullKey));
   }
 
@@ -95,10 +108,10 @@ public class StorageTest extends VMTestBase {
     long consumeUserResourcePercent = 0;
 
     // deploy contract
-    Transaction trx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction trx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
         contractName, address, ABI, code, value, fee, consumeUserResourcePercent, null);
     byte[] contractAddress = Wallet.generateContractAddress(trx);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(trx, rootDeposit, null);
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(trx, rootDeposit, null);
     Assert.assertNull(runtime.getRuntimeError());
 
     // write storage
@@ -106,19 +119,18 @@ public class StorageTest extends VMTestBase {
     // 1,"abc"
     String params1 = "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000036162630000000000000000000000000000000000000000000000000000000000";
     String params2 = "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000033132330000000000000000000000000000000000000000000000000000000000";
-    byte[] triggerData = SVMTestUtils.parseABI("testPut(uint256,string)", params1);
-    SVMTestResult result =  SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    byte[] triggerData = TVMTestUtils.parseABI("testPut(uint256,string)", params1);
+    TVMTestResult result = TVMTestUtils
+        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
 
     Assert.assertNull(result.getRuntime().getRuntimeError());
 
-
     // overwrite storage with same value
     // testPut(uint256,string) 1,"abc"
-    triggerData = SVMTestUtils.parseABI("testPut(uint256,string)", params1);
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    triggerData = TVMTestUtils.parseABI("testPut(uint256,string)", params1);
+    result = TVMTestUtils
+        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
 
     Assert.assertNull(result.getRuntime().getRuntimeError());
@@ -127,10 +139,9 @@ public class StorageTest extends VMTestBase {
     // overwrite storage with same value
     // testPut(uint256,string) 1,"123"
 
-
-    triggerData = SVMTestUtils.parseABI("testPut(uint256,string)", params2);
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    triggerData = TVMTestUtils.parseABI("testPut(uint256,string)", params2);
+    result = TVMTestUtils
+        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
 
     Assert.assertNull(result.getRuntime().getRuntimeError());
@@ -138,9 +149,10 @@ public class StorageTest extends VMTestBase {
 
     // delete storage
     // testDelete(uint256) 1
-    triggerData = SVMTestUtils.parseABI("testDelete(uint256)", "0000000000000000000000000000000000000000000000000000000000000001");
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    triggerData = TVMTestUtils.parseABI("testDelete(uint256)",
+        "0000000000000000000000000000000000000000000000000000000000000001");
+    result = TVMTestUtils
+        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
     Assert.assertNull(result.getRuntime().getRuntimeError());
     Assert.assertNull(result.getRuntime().getResult().getException());
@@ -152,7 +164,8 @@ public class StorageTest extends VMTestBase {
   public void testParentChild() {
     byte[] stats = new byte[27];
     Arrays.fill(stats, (byte) 1);
-    this.manager.getDynamicPropertiesStore().statsByVersion(ForkBlockVersionConsts.ENERGY_LIMIT, stats);
+    this.manager.getDynamicPropertiesStore()
+        .statsByVersion(ForkBlockVersionConsts.ENERGY_LIMIT, stats);
     VMConfig.initVmHardFork();
     byte[] address = Hex.decode(OWNER_ADDRESS);
     DataWord storageKey1 = new DataWord("key1".getBytes());
@@ -165,7 +178,7 @@ public class StorageTest extends VMTestBase {
     DataWord storageParentVal1 = new DataWord("parent_val1".getBytes());
     DataWord storageParentZeroKey = new DataWord("parent_zero_key1".getBytes());
 
-    Deposit chlidDeposit= rootDeposit.newDepositChild();
+    Deposit chlidDeposit = rootDeposit.newDepositChild();
 
     // write to root cache
     rootDeposit.putStorageValue(address, storageParentKey1, storageParentVal1);
@@ -178,7 +191,8 @@ public class StorageTest extends VMTestBase {
     // check child cache
     Assert.assertEquals(chlidDeposit.getStorageValue(address, storageKey1), storageVal1);
     Assert.assertEquals(chlidDeposit.getStorageValue(address, zeroKey), zeroValue);
-    Assert.assertEquals(chlidDeposit.getStorageValue(address, storageParentKey1), storageParentVal1);
+    Assert
+        .assertEquals(chlidDeposit.getStorageValue(address, storageParentKey1), storageParentVal1);
     Assert.assertEquals(chlidDeposit.getStorageValue(address, storageParentZeroKey), zeroValue);
 
     chlidDeposit.putStorageValue(address, storageParentKey1, parentChangedVal);
@@ -195,7 +209,8 @@ public class StorageTest extends VMTestBase {
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, zeroKey));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1));
-    Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
+    Assert
+        .assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
 
     // commit child cache
     chlidDeposit.commit();
@@ -211,13 +226,17 @@ public class StorageTest extends VMTestBase {
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, zeroKey));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1));
-    Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
+    Assert
+        .assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
 
     rootDeposit.commit();
-    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1), storageVal1);
+    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1),
+        storageVal1);
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, zeroKey));
-    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1), parentChangedVal);
-    Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
+    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1),
+        parentChangedVal);
+    Assert
+        .assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
     VMConfig.setENERGY_LIMIT_HARD_FORK(false);
   }
 
@@ -225,7 +244,8 @@ public class StorageTest extends VMTestBase {
   public void testParentChildOldVersion() {
     byte[] stats = new byte[27];
     Arrays.fill(stats, (byte) 0);
-    this.manager.getDynamicPropertiesStore().statsByVersion(ForkBlockVersionConsts.ENERGY_LIMIT, stats);
+    this.manager.getDynamicPropertiesStore()
+        .statsByVersion(ForkBlockVersionConsts.ENERGY_LIMIT, stats);
     byte[] address = Hex.decode(OWNER_ADDRESS);
     DataWord storageKey1 = new DataWord("key1".getBytes());
     DataWord storageVal1 = new DataWord("val1".getBytes());
@@ -237,8 +257,7 @@ public class StorageTest extends VMTestBase {
     DataWord storageParentVal1 = new DataWord("parent_val1".getBytes());
     DataWord storageParentZeroKey = new DataWord("parent_zero_key1".getBytes());
 
-    Deposit chlidDeposit =  rootDeposit.newDepositChild();
-
+    Deposit chlidDeposit = rootDeposit.newDepositChild();
 
     // write to root cache
     rootDeposit.putStorageValue(address, storageParentKey1, storageParentVal1);
@@ -251,7 +270,8 @@ public class StorageTest extends VMTestBase {
     // check child cache
     Assert.assertEquals(chlidDeposit.getStorageValue(address, storageKey1), storageVal1);
     Assert.assertEquals(chlidDeposit.getStorageValue(address, zeroKey), zeroValue);
-    Assert.assertEquals(chlidDeposit.getStorageValue(address, storageParentKey1), storageParentVal1);
+    Assert
+        .assertEquals(chlidDeposit.getStorageValue(address, storageParentKey1), storageParentVal1);
     Assert.assertEquals(chlidDeposit.getStorageValue(address, storageParentZeroKey), zeroValue);
 
     chlidDeposit.putStorageValue(address, storageParentKey1, parentChangedVal);
@@ -265,17 +285,21 @@ public class StorageTest extends VMTestBase {
     Assert.assertEquals(rootDeposit.getStorageValue(address, storageParentZeroKey), zeroValue);
 
     // check parent deposit == child deposit
-    Assert.assertEquals(rootDeposit.getStorageValue(address, storageKey1), chlidDeposit.getStorageValue(address, storageKey1));
-    Assert.assertEquals(rootDeposit.getStorageValue(address, zeroKey), chlidDeposit.getStorageValue(address, zeroKey));
-    Assert.assertEquals(rootDeposit.getStorageValue(address, storageParentKey1), chlidDeposit.getStorageValue(address, storageParentKey1));
-    Assert.assertEquals(rootDeposit.getStorageValue(address, storageParentZeroKey),  chlidDeposit.getStorageValue(address, storageParentZeroKey));
-
+    Assert.assertEquals(rootDeposit.getStorageValue(address, storageKey1),
+        chlidDeposit.getStorageValue(address, storageKey1));
+    Assert.assertEquals(rootDeposit.getStorageValue(address, zeroKey),
+        chlidDeposit.getStorageValue(address, zeroKey));
+    Assert.assertEquals(rootDeposit.getStorageValue(address, storageParentKey1),
+        chlidDeposit.getStorageValue(address, storageParentKey1));
+    Assert.assertEquals(rootDeposit.getStorageValue(address, storageParentZeroKey),
+        chlidDeposit.getStorageValue(address, storageParentZeroKey));
 
     // check db
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, zeroKey));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1));
-    Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
+    Assert
+        .assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
 
     // didn't commit child cache
     //    chlidDeposit.commit();
@@ -292,13 +316,17 @@ public class StorageTest extends VMTestBase {
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, zeroKey));
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1));
-    Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
+    Assert
+        .assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
 
     rootDeposit.commit();
-    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1), storageVal1);
+    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageKey1),
+        storageVal1);
     Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, zeroKey));
-    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1), parentChangedVal);
-    Assert.assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
+    Assert.assertEquals(DepositImpl.createRoot(manager).getStorageValue(address, storageParentKey1),
+        parentChangedVal);
+    Assert
+        .assertNull(DepositImpl.createRoot(manager).getStorageValue(address, storageParentZeroKey));
     VMConfig.setENERGY_LIMIT_HARD_FORK(false);
   }
 }

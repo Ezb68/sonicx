@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.contract.scenario;
+package stest.tron.wallet.contract.scenario;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,17 +10,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.SmartContract;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.SmartContract;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractScenario003 {
@@ -61,7 +61,7 @@ public class ContractScenario003 {
         .usePlaintext(true)
         .build();
     blockingStubFull = WalletGrpc.newBlockingStub(channelFull);
-    logger.info(Long.toString(PublicMethed.queryAccount(contract003Key,blockingStubFull)
+    logger.info(Long.toString(PublicMethed.queryAccount(contract003Key, blockingStubFull)
         .getBalance()));
     channelFull1 = ManagedChannelBuilder.forTarget(fullnode1)
         .usePlaintext(true)
@@ -76,7 +76,7 @@ public class ContractScenario003 {
     contract003Key = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
 
     Assert.assertTrue(PublicMethed.sendcoin(contract003Address, 500000000L, fromAddress,
-        testKey002,blockingStubFull));
+        testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     AccountResourceMessage accountResource = PublicMethed.getAccountResource(contract003Address,
         blockingStubFull);
@@ -220,6 +220,7 @@ public class ContractScenario003 {
     Assert.assertTrue(energyUsage == 0);
     Assert.assertTrue(balanceBefore == balanceAfter + infoById.get().getFee());
   }
+
   /**
    * constructor.
    */

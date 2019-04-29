@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.common.client.utils;
+package stest.tron.wallet.common.client.utils;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;

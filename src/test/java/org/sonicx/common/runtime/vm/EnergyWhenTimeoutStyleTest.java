@@ -9,9 +9,9 @@ import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.SonicxApplicationContext;
-import org.sonicx.common.runtime.SVMTestResult;
-import org.sonicx.common.runtime.SVMTestUtils;
+import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.runtime.TVMTestResult;
+import org.sonicx.common.runtime.TVMTestUtils;
 import org.sonicx.common.runtime.vm.program.Program.OutOfEnergyException;
 import org.sonicx.common.runtime.vm.program.Program.OutOfTimeException;
 import org.sonicx.common.storage.DepositImpl;
@@ -31,7 +31,7 @@ import org.sonicx.protos.Protocol.AccountType;
 public class EnergyWhenTimeoutStyleTest {
 
   private Manager dbManager;
-  private SonicxApplicationContext context;
+  private TronApplicationContext context;
   private DepositImpl deposit;
   private String dbPath = "output_CPUTimeTest";
   private String OWNER_ADDRESS;
@@ -46,7 +46,7 @@ public class EnergyWhenTimeoutStyleTest {
   public void init() {
     Args.setParam(new String[]{"--output-directory", dbPath},
         Constant.TEST_CONF);
-    context = new SonicxApplicationContext(DefaultConfig.class);
+    context = new TronApplicationContext(DefaultConfig.class);
     AppT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
     dbManager = context.getBean(Manager.class);
@@ -87,7 +87,7 @@ public class EnergyWhenTimeoutStyleTest {
     long feeLimit = 1000_000_000L;
     byte[] address = Hex.decode(OWNER_ADDRESS);
     long consumeUserResourcePercent = 0;
-    SVMTestResult result = deployEndlessLoopContract(value, feeLimit,
+    TVMTestResult result = deployEndlessLoopContract(value, feeLimit,
         consumeUserResourcePercent);
 
     if (null != result.getRuntime().getResult().getException()) {
@@ -106,10 +106,10 @@ public class EnergyWhenTimeoutStyleTest {
 
     /* =================================== CALL setVote(uint256) =================================== */
     String params = "0000000000000000000000000000000000000000000000000000000000000003";
-    byte[] triggerData = SVMTestUtils.parseABI("setVote(uint256)", params);
+    byte[] triggerData = TVMTestUtils.parseABI("setVote(uint256)", params);
     boolean haveException = false;
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS), contractAddress,
+    result = TVMTestUtils
+        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS), contractAddress,
             triggerData, value, feeLimit, dbManager, null);
 
     long expectEnergyUsageTotal2 = feeLimit / 100;
@@ -121,8 +121,8 @@ public class EnergyWhenTimeoutStyleTest {
         totalBalance - (expectEnergyUsageTotal + expectEnergyUsageTotal2) * 100);
   }
 
-  public SVMTestResult deployEndlessLoopContract(long value, long feeLimit,
-                                                 long consumeUserResourcePercent)
+  public TVMTestResult deployEndlessLoopContract(long value, long feeLimit,
+      long consumeUserResourcePercent)
       throws ContractExeException, ReceiptCheckErrException, ContractValidateException, VMIllegalException {
     String contractName = "EndlessLoopContract";
     byte[] address = Hex.decode(OWNER_ADDRESS);
@@ -130,8 +130,8 @@ public class EnergyWhenTimeoutStyleTest {
     String code = "608060405234801561001057600080fd5b506000808190555060fa806100266000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680630242f35114604e578063230796ae146076575b600080fd5b348015605957600080fd5b50606060a0565b6040518082815260200191505060405180910390f35b348015608157600080fd5b50609e6004803603810190808035906020019092919050505060a9565b005b60008054905090565b806000819055505b60011560cb576001600080828254019250508190555060b1565b505600a165627a7a72305820290a38c9bbafccaf6c7f752ab56d229e354da767efb72715ee9fdb653b9f4b6c0029";
     String libraryAddressPair = null;
 
-    return SVMTestUtils
-        .deployContractAndReturnSVMTestResult(contractName, address, ABI, code,
+    return TVMTestUtils
+        .deployContractAndReturnTVMTestResult(contractName, address, ABI, code,
             value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair,
             dbManager, null);

@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.assetissue;
+package stest.tron.wallet.dailybuild.assetissue;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -10,16 +10,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountNetMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountNetMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestAssetIssue007 {
@@ -36,7 +36,7 @@ public class WalletTestAssetIssue007 {
   private static final long totalSupply = now;
   private static final long sendAmount = 10000000000L;
   private static final long netCostMeasure = 200L;
-  private static final Integer soxNum = 1;
+  private static final Integer trxNum = 1;
   private static final Integer icoNum = 1;
 
   Long freeAssetNetLimit = 10000L;
@@ -82,7 +82,7 @@ public class WalletTestAssetIssue007 {
     blockingStubFull = WalletGrpc.newBlockingStub(channelFull);
   }
 
-  @Test(enabled = true,description = "Participate asset issue use participate bandwidth")
+  @Test(enabled = true, description = "Participate asset issue use participate bandwidth")
   public void testParticipateAssetIssueUseParticipateBandwidth() {
     Assert.assertTrue(PublicMethed
         .sendcoin(asset007Address, sendAmount, fromAddress, testKey002, blockingStubFull));
@@ -90,7 +90,7 @@ public class WalletTestAssetIssue007 {
     Long start = System.currentTimeMillis() + 5000;
     Long end = System.currentTimeMillis() + 1000000000;
     Assert.assertTrue(PublicMethed
-        .createAssetIssue(asset007Address, name, totalSupply, soxNum, icoNum, start, end, 1,
+        .createAssetIssue(asset007Address, name, totalSupply, trxNum, icoNum, start, end, 1,
             description, url, freeAssetNetLimit, publicFreeAssetNetLimit, 1L, 1L,
             testKeyForAssetIssue007, blockingStubFull));
 
@@ -99,7 +99,7 @@ public class WalletTestAssetIssue007 {
     //Assert.assertTrue(PublicMethed.waitProduceNextBlock(blockingStubFull));
     //When no balance, participate an asset issue
     Assert.assertFalse(PublicMethed.participateAssetIssue(asset007Address, name.getBytes(),
-        1L, participateAssetAddress, participateAssetCreateKey,blockingStubFull));
+        1L, participateAssetAddress, participateAssetCreateKey, blockingStubFull));
 
     ByteString addressBs = ByteString.copyFrom(asset007Address);
     Account request = Account.newBuilder().setAddress(addressBs).build();
@@ -107,8 +107,8 @@ public class WalletTestAssetIssue007 {
     final Long asset007BeforeFreeNetUsed = asset007NetMessage.getFreeNetUsed();
 
     //SendCoin to participate account.
-    Assert.assertTrue(PublicMethed.sendcoin(participateAssetAddress,10000000L,
-        fromAddress,testKey002,blockingStubFull));
+    Assert.assertTrue(PublicMethed.sendcoin(participateAssetAddress, 10000000L,
+        fromAddress, testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     addressBs = ByteString.copyFrom(participateAssetAddress);
     request = Account.newBuilder().setAddress(addressBs).build();
@@ -117,14 +117,14 @@ public class WalletTestAssetIssue007 {
     Assert.assertTrue(participateAccountBeforeNetUsed == 0);
 
     Account getAssetIdFromThisAccount;
-    getAssetIdFromThisAccount = PublicMethed.queryAccount(asset007Address,blockingStubFull);
+    getAssetIdFromThisAccount = PublicMethed.queryAccount(asset007Address, blockingStubFull);
     ByteString assetAccountId = getAssetIdFromThisAccount.getAssetIssuedID();
     logger.info(assetAccountId.toString());
 
     //Participate an assetIssue, then query the net information.
     Assert.assertTrue(PublicMethed.participateAssetIssue(
-            asset007Address,assetAccountId.toByteArray(),
-        1L,participateAssetAddress,participateAssetCreateKey,blockingStubFull));
+        asset007Address, assetAccountId.toByteArray(),
+        1L, participateAssetAddress, participateAssetCreateKey, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     addressBs = ByteString.copyFrom(asset007Address);
     request = Account.newBuilder().setAddress(addressBs).build();
@@ -143,26 +143,24 @@ public class WalletTestAssetIssue007 {
     Assert.assertTrue(asset007AfterFreeNetUsed <= asset007BeforeFreeNetUsed);
     Assert.assertTrue(participateAccountAfterNetUsed - participateAccountBeforeNetUsed > 150);
 
-
-
-
     Assert.assertTrue(PublicMethed.participateAssetIssue(
-            asset007Address,assetAccountId.toByteArray(),
-        1L,participateAssetAddress,participateAssetCreateKey,blockingStubFull));
+        asset007Address, assetAccountId.toByteArray(),
+        1L, participateAssetAddress, participateAssetCreateKey, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     Assert.assertTrue(PublicMethed.participateAssetIssue(
-            asset007Address,assetAccountId.toByteArray(),
-        1L,participateAssetAddress,participateAssetCreateKey,blockingStubFull));
+        asset007Address, assetAccountId.toByteArray(),
+        1L, participateAssetAddress, participateAssetCreateKey, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    Account participateInfo = PublicMethed.queryAccount(participateAssetCreateKey,blockingStubFull);
+    Account participateInfo = PublicMethed
+        .queryAccount(participateAssetCreateKey, blockingStubFull);
     final Long beforeBalance = participateInfo.getBalance();
     Assert.assertTrue(PublicMethed.participateAssetIssue(
-            asset007Address,assetAccountId.toByteArray(),
-        1L,participateAssetAddress,participateAssetCreateKey,blockingStubFull));
-    participateInfo = PublicMethed.queryAccount(participateAssetCreateKey,blockingStubFull);
+        asset007Address, assetAccountId.toByteArray(),
+        1L, participateAssetAddress, participateAssetCreateKey, blockingStubFull));
+    participateInfo = PublicMethed.queryAccount(participateAssetCreateKey, blockingStubFull);
     final Long afterBalance = participateInfo.getBalance();
 
-    Assert.assertTrue(beforeBalance  - soxNum * 1 * icoNum  >= afterBalance);
+    Assert.assertTrue(beforeBalance - trxNum * 1 * icoNum >= afterBalance);
   }
 
   /**

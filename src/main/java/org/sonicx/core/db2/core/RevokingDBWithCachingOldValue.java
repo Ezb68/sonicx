@@ -14,6 +14,7 @@ import org.sonicx.core.db2.common.IRevokingDB;
 import org.sonicx.core.exception.ItemNotFoundException;
 
 public class RevokingDBWithCachingOldValue implements IRevokingDB {
+
   private AbstractRevokingStore revokingDatabase;
   @Getter
   private LevelDbDataSourceImpl dbSource;
@@ -24,7 +25,8 @@ public class RevokingDBWithCachingOldValue implements IRevokingDB {
 
   // only for unit test
   public RevokingDBWithCachingOldValue(String dbName, AbstractRevokingStore revokingDatabase) {
-    dbSource = new LevelDbDataSourceImpl(Args.getInstance().getOutputDirectoryByDbName(dbName), dbName);
+    dbSource = new LevelDbDataSourceImpl(Args.getInstance().getOutputDirectoryByDbName(dbName),
+        dbName);
     dbSource.initDB();
     this.revokingDatabase = revokingDatabase;
   }

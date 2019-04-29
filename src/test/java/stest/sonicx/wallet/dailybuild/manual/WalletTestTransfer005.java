@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.manual;
+package stest.tron.wallet.dailybuild.manual;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,23 +13,23 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.AccountPaginated;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.AccountPaginated;
 
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.WalletExtensionGrpc;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.WalletExtensionGrpc;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 
 @Slf4j
@@ -96,12 +96,12 @@ public class WalletTestTransfer005 {
     accountPaginated.setLimit(0);
     GrpcAPI.TransactionList transactionList = blockingStubExtension
         .getTransactionsFromThis(accountPaginated.build());
-    Optional<GrpcAPI.TransactionList>  gettransactionsfromthis = Optional
+    Optional<GrpcAPI.TransactionList> gettransactionsfromthis = Optional
         .ofNullable(transactionList);
 
     if (gettransactionsfromthis.get().getTransactionCount() == 0) {
-      Assert.assertTrue(PublicMethed.sendcoin(toAddress,1000000L,fromAddress,
-          testKey002,blockingStubFull));
+      Assert.assertTrue(PublicMethed.sendcoin(toAddress, 1000000L, fromAddress,
+          testKey002, blockingStubFull));
       Assert.assertTrue(PublicMethed.waitSolidityNodeSynFullNodeData(blockingStubFull,
           blockingStubSolidity));
     }
@@ -125,7 +125,7 @@ public class WalletTestTransfer005 {
     accountPaginated.setLimit(0);
     GrpcAPI.TransactionList transactionList = blockingStubExtension
         .getTransactionsFromThis(accountPaginated.build());
-    Optional<GrpcAPI.TransactionList>  gettransactionsfromthisByInvaildAddress = Optional
+    Optional<GrpcAPI.TransactionList> gettransactionsfromthisByInvaildAddress = Optional
         .ofNullable(transactionList);
 
     Assert.assertTrue(gettransactionsfromthisByInvaildAddress.get().getTransactionCount() == 0);
@@ -171,11 +171,12 @@ public class WalletTestTransfer005 {
       channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
-  public Account queryAccount(ECKey ecKey,WalletGrpc.WalletBlockingStub blockingStubFull) {
+  public Account queryAccount(ECKey ecKey, WalletGrpc.WalletBlockingStub blockingStubFull) {
     byte[] address;
     if (ecKey == null) {
       String pubKey = loadPubKey(); //04 PubKey[128]
@@ -198,6 +199,7 @@ public class WalletTestTransfer005 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -207,6 +209,7 @@ public class WalletTestTransfer005 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

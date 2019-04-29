@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.exchangeandtoken;
+package stest.tron.wallet.exchangeandtoken;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -10,16 +10,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestAssetIssue020 {
@@ -35,7 +35,7 @@ public class WalletTestAssetIssue020 {
   private static final String char33Name = "To_long_asset_name_a" + Long.toString(now);
   private static final long totalSupply = now;
   String description = "just-test";
-  String url = "https://github.com/SonicXChain/WalletCli/";
+  String url = "https://github.com/tronprotocol/wallet-cli/";
   Account assetIssue020Account;
   ByteString assetAccountId;
 
@@ -87,12 +87,10 @@ public class WalletTestAssetIssue020 {
     PublicMethed.printAddress(asset020SecondKey);
     logger.info(name);
 
-
-
-    Assert.assertTrue(PublicMethed.sendcoin(asset020Address,2048000000,fromAddress,
-        testKey002,blockingStubFull));
-    Assert.assertTrue(PublicMethed.sendcoin(asset020SecondAddress,2048000000,fromAddress,
-        testKey002,blockingStubFull));
+    Assert.assertTrue(PublicMethed.sendcoin(asset020Address, 2048000000, fromAddress,
+        testKey002, blockingStubFull));
+    Assert.assertTrue(PublicMethed.sendcoin(asset020SecondAddress, 2048000000, fromAddress,
+        testKey002, blockingStubFull));
 
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     //Can create 32 char token name.
@@ -101,38 +99,34 @@ public class WalletTestAssetIssue020 {
 
     //When precision is -1, can not create asset issue
     Assert.assertFalse(PublicMethed.createAssetIssue(asset020Address,
-        name, totalSupply, 1, 1, -1,start, end, 1, description, url,
-        2000L,2000L, 1L,1L,asset020Key,blockingStubFull));
+        name, totalSupply, 1, 1, -1, start, end, 1, description, url,
+        2000L, 2000L, 1L, 1L, asset020Key, blockingStubFull));
 
     //When precision is 7, can not create asset issue
     Assert.assertFalse(PublicMethed.createAssetIssue(asset020Address,
-        name, totalSupply, 1, 1, 7,start, end, 1, description, url,
-        2000L,2000L, 1L,1L,asset020Key,blockingStubFull));
+        name, totalSupply, 1, 1, 7, start, end, 1, description, url,
+        2000L, 2000L, 1L, 1L, asset020Key, blockingStubFull));
 
     //When precision is 6, is equal to default.
     Assert.assertTrue(PublicMethed.createAssetIssue(asset020Address,
-        name, totalSupply, 1, 1, 6,start, end, 1, description, url,
-        2000L,2000L, 1L,1L,asset020Key,blockingStubFull));
+        name, totalSupply, 1, 1, 6, start, end, 1, description, url,
+        2000L, 2000L, 1L, 1L, asset020Key, blockingStubFull));
 
     Account getAssetIdFromThisAccount;
     getAssetIdFromThisAccount = PublicMethed.queryAccount(asset020Address, blockingStubFull);
     assetAccountId = getAssetIdFromThisAccount.getAssetIssuedID();
 
-
     Contract.AssetIssueContract assetIssueInfo = PublicMethed
-        .getAssetIssueByName(name,blockingStubFull);
+        .getAssetIssueByName(name, blockingStubFull);
     final Integer preCisionByName = assetIssueInfo.getPrecision();
     final Long TotalSupplyByName = assetIssueInfo.getTotalSupply();
 
-
-
     assetIssueInfo = PublicMethed.getAssetIssueById(ByteArray.toStr(assetAccountId
-        .toByteArray()),blockingStubFull);
+        .toByteArray()), blockingStubFull);
     final Integer preCisionById = assetIssueInfo.getPrecision();
     final Long TotalSupplyById = assetIssueInfo.getTotalSupply();
 
-
-    assetIssueInfo = PublicMethed.getAssetIssueListByName(name,blockingStubFull)
+    assetIssueInfo = PublicMethed.getAssetIssueListByName(name, blockingStubFull)
         .get().getAssetIssue(0);
     final Integer preCisionByListName = assetIssueInfo.getPrecision();
     final Long TotalSupplyByListName = assetIssueInfo.getTotalSupply();
@@ -143,17 +137,17 @@ public class WalletTestAssetIssue020 {
     logger.info("totalsupply is " + TotalSupplyByName);
     logger.info("totalsupply is " + TotalSupplyById);
     logger.info("totalsupply is " + TotalSupplyByListName);
-    Assert.assertEquals(preCisionById,preCisionByListName);
-    Assert.assertEquals(preCisionById,preCisionByName);
-    Assert.assertEquals(TotalSupplyById,TotalSupplyByListName);
-    Assert.assertEquals(TotalSupplyById,TotalSupplyByName);
+    Assert.assertEquals(preCisionById, preCisionByListName);
+    Assert.assertEquals(preCisionById, preCisionByName);
+    Assert.assertEquals(TotalSupplyById, TotalSupplyByListName);
+    Assert.assertEquals(TotalSupplyById, TotalSupplyByName);
 
     //When precision is 6, is equal to default.
     Assert.assertTrue(PublicMethed.createAssetIssue(asset020SecondAddress,
-        name, totalSupply, 1, 1, 1,start, end, 1, description, url,
-        2000L,2000L, 1L,1L,asset020SecondKey,blockingStubFull));
+        name, totalSupply, 1, 1, 1, start, end, 1, description, url,
+        2000L, 2000L, 1L, 1L, asset020SecondKey, blockingStubFull));
 
-    assetIssueInfo = PublicMethed.getAssetIssueByName(name,blockingStubFull);
+    assetIssueInfo = PublicMethed.getAssetIssueByName(name, blockingStubFull);
     Assert.assertTrue(assetIssueInfo.getName().isEmpty());
 
   }

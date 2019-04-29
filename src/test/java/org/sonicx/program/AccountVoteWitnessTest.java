@@ -8,7 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import org.sonicx.common.application.SonicxApplicationContext;
+import org.sonicx.common.application.TronApplicationContext;
 import org.sonicx.core.Constant;
 import org.sonicx.core.capsule.AccountCapsule;
 import org.sonicx.core.capsule.WitnessCapsule;
@@ -20,17 +20,19 @@ import org.sonicx.protos.Protocol.AccountType;
 @Slf4j
 public class AccountVoteWitnessTest {
 
-  private static SonicxApplicationContext context;
+  private static TronApplicationContext context;
 
   private static Manager dbManager;
   private static String dbPath = "output_witness_test";
 
   static {
-    Args.setParam(new String[] {"-d", dbPath}, Constant.TEST_CONF);
-    context = new SonicxApplicationContext(DefaultConfig.class);
+    Args.setParam(new String[]{"-d", dbPath}, Constant.TEST_CONF);
+    context = new TronApplicationContext(DefaultConfig.class);
   }
 
-  /** init db. */
+  /**
+   * init db.
+   */
   @BeforeClass
   public static void init() {
     dbManager = context.getBean(Manager.class);
@@ -39,7 +41,9 @@ public class AccountVoteWitnessTest {
     //  dbManager.init();
   }
 
-  /** remo db when after test. */
+  /**
+   * remo db when after test.
+   */
   @AfterClass
   public static void removeDb() {
     Args.clearParam();
@@ -116,10 +120,10 @@ public class AccountVoteWitnessTest {
 
   private List<AccountCapsule> getAccountList() {
     final List<AccountCapsule> accountCapsuleList = Lists.newArrayList();
-    final AccountCapsule accountSonicx =
+    final AccountCapsule accountTron =
         new AccountCapsule(
             ByteString.copyFrom("00000000001".getBytes()),
-            ByteString.copyFromUtf8("Sonicx"),
+            ByteString.copyFromUtf8("Tron"),
             AccountType.Normal);
     final AccountCapsule accountMarcus =
         new AccountCapsule(
@@ -141,26 +145,26 @@ public class AccountVoteWitnessTest {
             ByteString.copyFrom("00000000005".getBytes()),
             ByteString.copyFromUtf8("Vivider"),
             AccountType.Normal);
-    // accountSonicx addVotes
-    accountSonicx.addVotes(accountMarcus.getAddress(), 100);
-    accountSonicx.addVotes(accountOlivier.getAddress(), 100);
-    accountSonicx.addVotes(accountSasaXie.getAddress(), 100);
-    accountSonicx.addVotes(accountVivider.getAddress(), 100);
+    // accountTron addVotes
+    accountTron.addVotes(accountMarcus.getAddress(), 100);
+    accountTron.addVotes(accountOlivier.getAddress(), 100);
+    accountTron.addVotes(accountSasaXie.getAddress(), 100);
+    accountTron.addVotes(accountVivider.getAddress(), 100);
 
     // accountMarcus addVotes
-    accountMarcus.addVotes(accountSonicx.getAddress(), 100);
+    accountMarcus.addVotes(accountTron.getAddress(), 100);
     accountMarcus.addVotes(accountOlivier.getAddress(), 100);
     accountMarcus.addVotes(accountSasaXie.getAddress(), 100);
     accountMarcus.addVotes(ByteString.copyFrom("00000000006".getBytes()), 100);
     accountMarcus.addVotes(ByteString.copyFrom("00000000007".getBytes()), 100);
     // accountOlivier addVotes
-    accountOlivier.addVotes(accountSonicx.getAddress(), 100);
+    accountOlivier.addVotes(accountTron.getAddress(), 100);
     accountOlivier.addVotes(accountMarcus.getAddress(), 100);
     accountOlivier.addVotes(accountSasaXie.getAddress(), 100);
     accountOlivier.addVotes(accountVivider.getAddress(), 100);
     // accountSasaXie addVotes
     // accountVivider addVotes
-    accountCapsuleList.add(accountSonicx);
+    accountCapsuleList.add(accountTron);
     accountCapsuleList.add(accountMarcus);
     accountCapsuleList.add(accountOlivier);
     accountCapsuleList.add(accountSasaXie);
@@ -170,7 +174,7 @@ public class AccountVoteWitnessTest {
 
   private List<WitnessCapsule> getWitnessList() {
     final List<WitnessCapsule> witnessCapsuleList = Lists.newArrayList();
-    final WitnessCapsule witnessSonicx =
+    final WitnessCapsule witnessTron =
         new WitnessCapsule(ByteString.copyFrom("00000000001".getBytes()), 0, "");
     final WitnessCapsule witnessOlivier =
         new WitnessCapsule(ByteString.copyFrom("00000000003".getBytes()), 100, "");
@@ -178,7 +182,7 @@ public class AccountVoteWitnessTest {
         new WitnessCapsule(ByteString.copyFrom("00000000005".getBytes()), 200, "");
     final WitnessCapsule witnessSenaLiu =
         new WitnessCapsule(ByteString.copyFrom("00000000006".getBytes()), 300, "");
-    witnessCapsuleList.add(witnessSonicx);
+    witnessCapsuleList.add(witnessTron);
     witnessCapsuleList.add(witnessOlivier);
     witnessCapsuleList.add(witnessVivider);
     witnessCapsuleList.add(witnessSenaLiu);

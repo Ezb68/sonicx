@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.common.client;
+package stest.tron.wallet.common.client;
 
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigFactory;
@@ -17,6 +17,7 @@ public class Configuration {
   private static Config config;
 
   private static final Logger logger = LoggerFactory.getLogger("Configuration");
+
   /**
    * constructor.
    */

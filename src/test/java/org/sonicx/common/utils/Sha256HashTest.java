@@ -10,7 +10,7 @@ public class Sha256HashTest {
 
   @Test
   public void testHash() {
-    //Example from https://github.com/SonicXChain/tips/blob/master/TWP-001.md
+    //Example from https://github.com/tronprotocol/tips/blob/master/TWP-001.md
     byte[] input = ByteArray.fromHexString("A0E11973395042BA3C0B52B4CDF4E15EA77818F275");
     byte[] hash0 = Sha256Hash.hash(input);
     byte[] hash1 = Sha256Hash.hash(hash0);
@@ -30,16 +30,16 @@ public class Sha256HashTest {
     AtomicLong countAll = new AtomicLong(0);
     IntStream.range(0, 7).parallel().forEach(index -> {
       Thread thread =
-      new Thread(() -> {
-        for (int i = 0; i < 10000; i++) {
-          byte[] hash0 = Sha256Hash.hash(input);
-          countAll.incrementAndGet();
-          if (!Arrays.equals(hash, hash0)) {
-            countFailed.incrementAndGet();
-            Assert.assertTrue(false);
-          }
-        }
-      });
+          new Thread(() -> {
+            for (int i = 0; i < 10000; i++) {
+              byte[] hash0 = Sha256Hash.hash(input);
+              countAll.incrementAndGet();
+              if (!Arrays.equals(hash, hash0)) {
+                countFailed.incrementAndGet();
+                Assert.assertTrue(false);
+              }
+            }
+          });
       thread.start();
       try {
         thread.join();

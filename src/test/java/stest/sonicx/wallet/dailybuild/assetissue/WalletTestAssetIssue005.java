@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.assetissue;
+package stest.tron.wallet.dailybuild.assetissue;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,22 +14,22 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class WalletTestAssetIssue005 {
@@ -46,7 +46,7 @@ public class WalletTestAssetIssue005 {
   private static String name = "testAssetIssue005_" + Long.toString(now);
   private static final long totalSupply = now;
   String description = "just-test";
-  String url = "https://github.com/SonicXChain/WalletCli/";
+  String url = "https://github.com/tronprotocol/wallet-cli/";
 
   private ManagedChannel channelFull = null;
   private ManagedChannel channelSolidity = null;
@@ -81,7 +81,7 @@ public class WalletTestAssetIssue005 {
     blockingStubSolidity = WalletSolidityGrpc.newBlockingStub(channelSolidity);
   }
 
-  @Test(enabled = true,description = "Get asset issue by name")
+  @Test(enabled = true, description = "Get asset issue by name")
   public void testGetAssetIssueByName() {
     ByteString addressBS1 = ByteString.copyFrom(fromAddress);
     Account request1 = Account.newBuilder().setAddress(addressBS1).build();
@@ -93,8 +93,8 @@ public class WalletTestAssetIssue005 {
       Long end = System.currentTimeMillis() + 1000000000;
       //Create a new asset issue
       Assert.assertTrue(PublicMethed.createAssetIssue(fromAddress, name, totalSupply, 1, 100,
-          start, end, 1, description, url,10000L,10000L,
-          1L, 1L, testKey002,blockingStubFull));
+          start, end, 1, description, url, 10000L, 10000L,
+          1L, 1L, testKey002, blockingStubFull));
       PublicMethed.waitProduceNextBlock(blockingStubFull);
     } else {
       logger.info("This account already create an assetisue");
@@ -103,12 +103,11 @@ public class WalletTestAssetIssue005 {
     }
 
     Account getAssetIdFromThisAccount;
-    getAssetIdFromThisAccount = PublicMethed.queryAccount(testKey002,blockingStubFull);
+    getAssetIdFromThisAccount = PublicMethed.queryAccount(testKey002, blockingStubFull);
     ByteString assetAccountId = getAssetIdFromThisAccount.getAssetIssuedID();
 
-
     //Get asset issue by name success.
-    ByteString assetNameBs = ByteString.copyFrom(name.getBytes());
+
     GrpcAPI.BytesMessage request = GrpcAPI.BytesMessage.newBuilder().setValue(assetAccountId)
         .build();
     Contract.AssetIssueContract assetIssueByName =
@@ -117,19 +116,21 @@ public class WalletTestAssetIssue005 {
     Assert.assertFalse(assetIssueByName.getUrl().isEmpty());
     Assert.assertFalse(assetIssueByName.getDescription().isEmpty());
     Assert.assertTrue(assetIssueByName.getTotalSupply() > 0);
-    Assert.assertTrue(assetIssueByName.getSoxNum() > 0);
+    Assert.assertTrue(assetIssueByName.getTrxNum() > 0);
 
     //Get asset issue by name failed when the name is not correct.There is no exception.
     String wrongName = name + "_wrong";
+    ByteString assetNameBs = ByteString.copyFrom(name.getBytes());
     assetNameBs = ByteString.copyFrom(wrongName.getBytes());
     request = GrpcAPI.BytesMessage.newBuilder().setValue(assetNameBs).build();
     assetIssueByName = blockingStubFull.getAssetIssueByName(request);
 
     Assert.assertFalse(assetIssueByName.getTotalSupply() > 0);
-    Assert.assertFalse(assetIssueByName.getSoxNum() > 0);
+    Assert.assertFalse(assetIssueByName.getTrxNum() > 0);
     Assert.assertTrue(assetIssueByName.getUrl().isEmpty());
     Assert.assertTrue(assetIssueByName.getDescription().isEmpty());
   }
+
   /**
    * constructor.
    */
@@ -143,11 +144,12 @@ public class WalletTestAssetIssue005 {
       channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, Long fronzenAmount, Long frozenDay,
       String priKey) {
@@ -165,7 +167,7 @@ public class WalletTestAssetIssue005 {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setSoxNum(soxNum);
+      builder.setTrxNum(trxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -198,6 +200,7 @@ public class WalletTestAssetIssue005 {
       return false;
     }
   }
+
   /**
    * constructor.
    */
@@ -225,6 +228,7 @@ public class WalletTestAssetIssue005 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -234,6 +238,7 @@ public class WalletTestAssetIssue005 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */
@@ -253,6 +258,7 @@ public class WalletTestAssetIssue005 {
     transaction = TransactionUtils.setTimestamp(transaction);
     return TransactionUtils.sign(transaction, ecKey);
   }
+
   /**
    * constructor.
    */

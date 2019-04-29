@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.grammar;
+package stest.tron.wallet.dailybuild.grammar;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,17 +10,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractGrammar002 {
@@ -84,9 +84,10 @@ public class ContractGrammar002 {
 
   @Test(enabled = true, description = "Interface type function")
   public void test1Grammar007() {
-    PublicMethed
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
+    Assert.assertTrue(PublicMethed
         .sendcoin(grammarAddress2, 100000000000L, testNetAccountAddress, testNetAccountKey,
-            blockingStubFull);
+            blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     String contractName = "dougContract";
     String code = Configuration.getByPath("testng.conf")

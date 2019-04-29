@@ -55,7 +55,7 @@ public class RevokingDbWithCacheOldValueTest {
   public synchronized void testReset() {
     revokingDatabase.getStack().clear();
     TestRevokingSonicxStore sonicxDatabase = new TestRevokingSonicxStore(
-        "testrevokingsonstore-testReset", revokingDatabase);
+        "testrevokingsonicxstore-testReset", revokingDatabase);
     ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("reset").getBytes());
     try (ISession tmpSession = revokingDatabase.buildSession()) {
       sonicxDatabase.put(testProtoCapsule.getData(), testProtoCapsule);
@@ -64,6 +64,7 @@ public class RevokingDbWithCacheOldValueTest {
     Assert.assertEquals(true, sonicxDatabase.has(testProtoCapsule.getData()));
     sonicxDatabase.reset();
     Assert.assertEquals(false, sonicxDatabase.has(testProtoCapsule.getData()));
+    sonicxDatabase.reset();
   }
 
   @Test
@@ -193,10 +194,10 @@ public class RevokingDbWithCacheOldValueTest {
     }
     Set<ProtoCapsuleTest> result =
         sonicxDatabase.getRevokingDB().getValuesNext(
-          new ProtoCapsuleTest("getValuesNext2".getBytes()).getData(), 3)
-          .stream()
-          .map(ProtoCapsuleTest::new)
-          .collect(Collectors.toSet());
+            new ProtoCapsuleTest("getValuesNext2".getBytes()).getData(), 3)
+            .stream()
+            .map(ProtoCapsuleTest::new)
+            .collect(Collectors.toSet());
 
     for (int i = 2; i < 5; i++) {
       Assert.assertEquals(true,

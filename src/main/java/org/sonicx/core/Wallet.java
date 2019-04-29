@@ -145,7 +145,9 @@ public class Wallet {
   @Getter
   private final ECKey ecKey;
   @Autowired
-  private NodeImpl p2pNode;
+  private SonicxNetService sonicxNetService;
+  @Autowired
+  private SonicxNetNetDelegate sonicxNetDelegate;
   @Autowired
   private Manager dbManager;
   @Autowired
@@ -396,7 +398,8 @@ public class Wallet {
       }
       trx.setReference(blockId.getNum(), blockId.getBytes());
       long expiration =
-          dbManager.getHeadBlockTimeStamp() + Args.getInstance().getTrxExpirationTimeInMilliseconds();
+          dbManager.getHeadBlockTimeStamp() + Args.getInstance()
+              .getTrxExpirationTimeInMilliseconds();
       trx.setExpiration(expiration);
       trx.setTimestamp();
     } catch (Exception e) {
@@ -415,14 +418,14 @@ public class Wallet {
 
     try {
       if (minEffectiveConnection != 0) {
-        if (p2pNode.getActivePeer().isEmpty()) {
+        if (sonicxNetDelegate.getActivePeer().isEmpty()) {
           logger.warn("Broadcast transaction {} failed, no connection.", trx.getTransactionId());
           return builder.setResult(false).setCode(response_code.NO_CONNECTION)
               .setMessage(ByteString.copyFromUtf8("no connection"))
               .build();
         }
 
-        int count = (int) p2pNode.getActivePeer().stream()
+        int count = (int) sonicxNetDelegate.getActivePeer().stream()
             .filter(p -> !p.isNeedSyncFromUs() && !p.isNeedSyncFromPeer())
             .count();
 
@@ -457,7 +460,7 @@ public class Wallet {
         trx.resetResult();
       }
       dbManager.pushTransaction(trx);
-      p2pNode.broadcast(message);
+      sonicxNetService.broadcast(message);
       logger.info("Broadcast transaction {} successfully.", trx.getTransactionId());
       return builder.setResult(true).setCode(response_code.SUCCESS).build();
     } catch (ValidateSignatureException e) {

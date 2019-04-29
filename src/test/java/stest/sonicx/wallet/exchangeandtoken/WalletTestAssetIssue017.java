@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.exchangeandtoken;
+package stest.tron.wallet.exchangeandtoken;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -12,25 +12,26 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.AssetIssueList;
-import org.sonicx.api.GrpcAPI.PaginatedMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.core.db.Manager;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.AssetIssueList;
+import org.tron.api.GrpcAPI.PaginatedMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.core.db.Manager;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class WalletTestAssetIssue017 {
+
   private final String testKey002 = Configuration.getByPath("testng.conf")
       .getString("foundationAccount.key1");
   private final String testKey003 = Configuration.getByPath("testng.conf")
@@ -41,9 +42,9 @@ public class WalletTestAssetIssue017 {
 
   private static long start;
   private static long end;
-  private static  long now = System.currentTimeMillis();
+  private static long now = System.currentTimeMillis();
   private static String name = "AssetIssue017_" + Long.toString(now);
-  private static  long totalSupply = now;
+  private static long totalSupply = now;
   private static final long sendAmount = 10000000000L;
   private static final long netCostMeasure = 200L;
 
@@ -127,7 +128,7 @@ public class WalletTestAssetIssue017 {
     for (Integer i = 0; i < assetIssueListPaginated.get().getAssetIssueCount(); i++) {
       Assert.assertTrue(assetIssueListPaginated.get().getAssetIssue(i).getTotalSupply() > 0);
     }
-    PublicMethed.waitSolidityNodeSynFullNodeData(blockingStubFull,blockingStubSolidity);
+    PublicMethed.waitSolidityNodeSynFullNodeData(blockingStubFull, blockingStubSolidity);
   }
 
   @Test(enabled = true)
@@ -253,7 +254,6 @@ public class WalletTestAssetIssue017 {
     logger.info(Long.toString(assetIssueListPaginated.get().getAssetIssueCount()));
     Assert.assertTrue(assetIssueListPaginated.get().getAssetIssueCount() >= 1);
 
-
     //offset is -1, limit is 100.
     offset = -1;
     limit = 100;
@@ -280,12 +280,13 @@ public class WalletTestAssetIssue017 {
       channelSolidity.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
   public static Boolean createAssetIssue(byte[] address, String name, Long totalSupply,
-      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull) {
@@ -304,7 +305,7 @@ public class WalletTestAssetIssue017 {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setSoxNum(soxNum);
+      builder.setTrxNum(trxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -338,6 +339,7 @@ public class WalletTestAssetIssue017 {
       return false;
     }
   }
+
   /**
    * constructor.
    */

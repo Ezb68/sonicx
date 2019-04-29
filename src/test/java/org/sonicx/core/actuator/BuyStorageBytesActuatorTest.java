@@ -281,7 +281,7 @@ public class BuyStorageBytesActuatorTest {
   }
 
   @Test
-  public void buyLessThan1Wdx() {
+  public void buyLessThan1Sox() {
     long bytes = 1L;
     BuyStorageBytesActuator actuator = new BuyStorageBytesActuator(
         getContract(OWNER_ADDRESS, bytes), dbManager);

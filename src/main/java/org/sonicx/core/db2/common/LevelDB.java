@@ -5,15 +5,17 @@ import java.util.HashMap;
 import java.util.Map;
 import lombok.Getter;
 import org.iq80.leveldb.WriteOptions;
+import org.sonicx.common.storage.WriteOptionsWrapper;
 import org.sonicx.common.storage.leveldb.LevelDbDataSourceImpl;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.db.common.WrappedByteArray;
 import org.sonicx.core.db.common.iterator.DBIterator;
 
 public class LevelDB implements DB<byte[], byte[]>, Flusher {
+
   @Getter
   private LevelDbDataSourceImpl db;
-  private WriteOptions writeOptions = new WriteOptions()
+  private WriteOptionsWrapper writeOptions = WriteOptionsWrapper.getInstance()
       .sync(Args.getInstance().getStorage().isDbSync());
 
   public LevelDB(String parentName, String name) {
@@ -64,6 +66,7 @@ public class LevelDB implements DB<byte[], byte[]>, Flusher {
   public void close() {
     db.closeDB();
   }
+
   @Override
   public void reset() {
     db.resetDb();

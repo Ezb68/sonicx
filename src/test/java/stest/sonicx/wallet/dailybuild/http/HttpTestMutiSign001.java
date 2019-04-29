@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.http;
+package stest.tron.wallet.dailybuild.http;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.JsonArray;
@@ -8,12 +8,12 @@ import org.apache.http.HttpResponse;
 import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.utils.HttpMethed;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.utils.HttpMethed;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class HttpTestMutiSign001 {
@@ -51,15 +51,15 @@ public class HttpTestMutiSign001 {
   @Test(enabled = true, description = "Account Permission Up Date by http")
   public void test1AccountPermissionUpDate() {
     PublicMethed.printAddress(ownerKey);
-    response = HttpMethed.sendCoin(httpnode,fromAddress,ownerAddress,amount,testKey002);
+    response = HttpMethed.sendCoin(httpnode, fromAddress, ownerAddress, amount, testKey002);
     Assert.assertTrue(HttpMethed.verificationResult(response));
-
-    manager1Wight.addProperty("address",ByteArray.toHexString(manager1Address));
-    manager1Wight.addProperty("weight",1);
+    HttpMethed.waitToProduceOneBlock(httpnode);
+    manager1Wight.addProperty("address", ByteArray.toHexString(manager1Address));
+    manager1Wight.addProperty("weight", 1);
 
     logger.info(manager1Wight.toString());
-    manager2Wight.addProperty("address",ByteArray.toHexString(manager2Address));
-    manager2Wight.addProperty("weight",1);
+    manager2Wight.addProperty("address", ByteArray.toHexString(manager2Address));
+    manager2Wight.addProperty("weight", 1);
 
     logger.info(manager2Wight.toString());
 
@@ -78,8 +78,8 @@ public class HttpTestMutiSign001 {
         "7fff1fc0037e0000000000000000000000000000000000000000000000000000");
     activeObject.add("keys", keys);
 
-    response = HttpMethed.accountPermissionUpdate(httpnode,ownerAddress,ownerObject,
-        witnessObject,activeObject,ownerKey);
+    response = HttpMethed.accountPermissionUpdate(httpnode, ownerAddress, ownerObject,
+        witnessObject, activeObject, ownerKey);
     Assert.assertTrue(HttpMethed.verificationResult(response));
   }
 
@@ -94,7 +94,7 @@ public class HttpTestMutiSign001 {
     permissionKeyString[0] = manager1Key;
     permissionKeyString[1] = manager2Key;
 
-    response = HttpMethed.sendCoin(httpnode,ownerAddress,fromAddress,10L,permissionKeyString);
+    response = HttpMethed.sendCoin(httpnode, ownerAddress, fromAddress, 10L, permissionKeyString);
     Assert.assertTrue(HttpMethed.verificationResult(response));
 
 

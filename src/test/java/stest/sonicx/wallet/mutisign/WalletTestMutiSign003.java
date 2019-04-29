@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.mutisign;
+package stest.tron.wallet.mutisign;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -12,17 +12,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class WalletTestMutiSign003 {
@@ -105,7 +105,7 @@ public class WalletTestMutiSign003 {
 
     Assert.assertTrue(
         PublicMethed.sendcoin(ownerAddress, needCoin + 100000000L, fromAddress, testKey002,
-        blockingStubFull));
+            blockingStubFull));
 
     Assert.assertTrue(PublicMethed
         .freezeBalanceForReceiver(fromAddress, 1000000000, 0, 0, ByteString.copyFrom(ownerAddress),
@@ -137,7 +137,7 @@ public class WalletTestMutiSign003 {
     logger.info(accountPermissionJson);
     String txid = PublicMethedForMutiSign
         .accountPermissionUpdateForTransactionId(accountPermissionJson, ownerAddress, ownerKey,
-        blockingStubFull,ownerKeyString);
+            blockingStubFull, ownerKeyString);
 
     final String updateName = Long.toString(System.currentTimeMillis());
     PublicMethed.waitProduceNextBlock(blockingStubFull);
@@ -170,7 +170,7 @@ public class WalletTestMutiSign003 {
     Assert.assertTrue(PublicMethedForMutiSign.freezeBalanceGetEnergy(
         ownerAddress, 1000000L, 0, 1, ownerKey, blockingStubFull, ownerKeyString));
     Assert.assertTrue(PublicMethedForMutiSign.freezeBalanceForReceiver(
-            ownerAddress,1000000L,0,0,ByteString.copyFrom(newAddress),
+        ownerAddress, 1000000L, 0, 0, ByteString.copyFrom(newAddress),
         ownerKey, blockingStubFull, ownerKeyString));
     Assert.assertTrue(PublicMethedForMutiSign.unFreezeBalance(
         ownerAddress, ownerKey, 0, null, blockingStubFull, ownerKeyString));
@@ -189,7 +189,7 @@ public class WalletTestMutiSign003 {
 
     balanceAfter = PublicMethed.queryAccount(ownerAddress, blockingStubFull).getBalance();
     logger.info("balanceAfter: " + balanceAfter);
-    Assert.assertEquals(balanceBefore - balanceAfter, multiSignFee * 8 + 1000000 * 2 + 100);
+    Assert.assertEquals(balanceBefore - balanceAfter, multiSignFee * 9 + 1000000 + 100);
 
     Assert.assertTrue(
         PublicMethed.unFreezeBalance(fromAddress, testKey002, 0, ownerAddress, blockingStubFull));

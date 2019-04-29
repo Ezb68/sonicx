@@ -23,6 +23,7 @@ import org.sonicx.core.capsule.TxOutputCapsule;
 
 @Slf4j
 public class TxOutputCapsuleTest {
+
   @Test
   public void testTxOutputCapsule() {
     long value = 123456L;

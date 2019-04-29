@@ -1,7 +1,7 @@
 package org.sonicx.common.runtime;
 
-import static org.sonicx.common.runtime.SVMTestUtils.generateDeploySmartContractAndGetTransaction;
-import static org.sonicx.common.runtime.SVMTestUtils.generateTriggerSmartContractAndGetTransaction;
+import static org.sonicx.common.runtime.TVMTestUtils.generateDeploySmartContractAndGetTransaction;
+import static org.sonicx.common.runtime.TVMTestUtils.generateTriggerSmartContractAndGetTransaction;
 
 import java.io.File;
 import lombok.extern.slf4j.Slf4j;
@@ -12,7 +12,7 @@ import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.SonicxApplicationContext;
+import org.sonicx.common.application.TronApplicationContext;
 import org.sonicx.common.runtime.vm.program.invoke.ProgramInvokeFactoryImpl;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.FileUtil;
@@ -37,7 +37,7 @@ import org.sonicx.protos.Protocol.Transaction;
 public class RuntimeImplTest {
 
   private Manager dbManager;
-  private SonicxApplicationContext context;
+  private TronApplicationContext context;
   private DepositImpl deposit;
   private String dbPath = "output_RuntimeImplTest";
   private Application AppT;
@@ -52,7 +52,7 @@ public class RuntimeImplTest {
   @Before
   public void init() {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug"}, Constant.TEST_CONF);
-    context = new SonicxApplicationContext(DefaultConfig.class);
+    context = new TronApplicationContext(DefaultConfig.class);
     AppT = ApplicationFactory.create(context);
     callerAddress = Hex
         .decode(Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc");
@@ -60,7 +60,7 @@ public class RuntimeImplTest {
         .decode(Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abd");
     dbManager = context.getBean(Manager.class);
     dbManager.getDynamicPropertiesStore().saveLatestBlockHeaderTimestamp(1526647838000L);
-    dbManager.getDynamicPropertiesStore().saveTotalEnergyWeight(5_000_000_000L); // unit is sox
+    dbManager.getDynamicPropertiesStore().saveTotalEnergyWeight(5_000_000_000L); // unit is trx
     deposit = DepositImpl.createRoot(dbManager);
     deposit.createAccount(callerAddress, AccountType.Normal);
     deposit.addBalance(callerAddress, callerTotalBalance);
@@ -115,18 +115,21 @@ public class RuntimeImplTest {
     AccountCapsule creatorAccount = deposit.getAccount(creatorAddress);
 
     long expectEnergyLimit1 = 10_000_000L;
-    Assert.assertEquals(runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
+    Assert.assertEquals(
+        runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
         expectEnergyLimit1);
 
     value = 2_500_000_000L;
     long expectEnergyLimit2 = 5_000_000L;
-    Assert.assertEquals(runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
+    Assert.assertEquals(
+        runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
         expectEnergyLimit2);
 
     value = 10L;
     feeLimit = 1_000_000L;
     long expectEnergyLimit3 = 10_000L;
-    Assert.assertEquals(runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
+    Assert.assertEquals(
+        runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
         expectEnergyLimit3);
 
     long frozenBalance = 1_000_000_000L;
@@ -138,19 +141,22 @@ public class RuntimeImplTest {
 
     feeLimit = 1_000_000_000L;
     long expectEnergyLimit4 = 10_000_000L;
-    Assert.assertEquals(runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
+    Assert.assertEquals(
+        runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
         expectEnergyLimit4);
 
     feeLimit = 3_000_000_000L;
     value = 10L;
     long expectEnergyLimit5 = 20_009_999L;
-    Assert.assertEquals(runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
+    Assert.assertEquals(
+        runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
         expectEnergyLimit5);
 
     feeLimit = 3_000L;
     value = 10L;
     long expectEnergyLimit6 = 30L;
-    Assert.assertEquals(runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
+    Assert.assertEquals(
+        runtimeImpl.getAccountEnergyLimitWithFixRatio(creatorAccount, feeLimit, value),
         expectEnergyLimit6);
 
   }
@@ -160,21 +166,21 @@ public class RuntimeImplTest {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
 
     long value = 0;
-    long feeLimit = 1_000_000_000L; // dole
+    long feeLimit = 1_000_000_000L; // sun
     long consumeUserResourcePercent = 0L;
     long creatorEnergyLimit = 5_000L;
     String contractName = "test";
     String ABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testNotConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
     String code = "608060405234801561001057600080fd5b50610112806100206000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806321964a3914604e5780634c6bb6eb146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a2565b005b348015608357600080fd5b5060a06004803603810190808035906020019092919050505060c4565b005b600080600091505b8282101560bf576001905060018201915060aa565b505050565b600080600091505b8282101560e1576001905060018201915060cc565b5050505600a165627a7a72305820267cf0ebf31051a92ff62bed7490045b8063be9f1e1a22d07dce257654c8c17b0029";
     String libraryAddressPair = null;
-    SVMTestResult result = SVMTestUtils
-        .deployContractWithCreatorEnergyLimitAndReturnSVMTestResult(contractName, creatorAddress,
+    TVMTestResult result = TVMTestUtils
+        .deployContractWithCreatorEnergyLimitAndReturnTVMTestResult(contractName, creatorAddress,
             ABI, code, value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair, dbManager, null,
             creatorEnergyLimit);
 
     byte[] contractAddress = result.getContractAddress();
-    byte[] triggerData = SVMTestUtils.parseABI("testNotConstant()", null);
+    byte[] triggerData = TVMTestUtils.parseABI("testNotConstant()", null);
     Transaction trx = generateTriggerSmartContractAndGetTransaction(callerAddress, contractAddress,
         triggerData, value, feeLimit);
 
@@ -190,7 +196,9 @@ public class RuntimeImplTest {
     value = 0L;
     long expectEnergyLimit1 = 10_000_000L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit1);
 
     long creatorFrozenBalance = 1_000_000_000L;
@@ -204,20 +212,26 @@ public class RuntimeImplTest {
     value = 0L;
     long expectEnergyLimit2 = 10_005_000L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit2);
 
     value = 3_500_000_000L;
     long expectEnergyLimit3 = 5_005_000L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit3);
 
     value = 10L;
     feeLimit = 5_000_000_000L;
     long expectEnergyLimit4 = 40_004_999L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit4);
 
     long callerFrozenBalance = 1_000_000_000L;
@@ -230,7 +244,9 @@ public class RuntimeImplTest {
     feeLimit = 5_000_000_000L;
     long expectEnergyLimit5 = 30_014_999L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit5);
 
   }
@@ -240,21 +256,21 @@ public class RuntimeImplTest {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
 
     long value = 0;
-    long feeLimit = 1_000_000_000L; // dole
+    long feeLimit = 1_000_000_000L; // sun
     long consumeUserResourcePercent = 40L;
     long creatorEnergyLimit = 5_000L;
     String contractName = "test";
     String ABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testNotConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
     String code = "608060405234801561001057600080fd5b50610112806100206000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806321964a3914604e5780634c6bb6eb146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a2565b005b348015608357600080fd5b5060a06004803603810190808035906020019092919050505060c4565b005b600080600091505b8282101560bf576001905060018201915060aa565b505050565b600080600091505b8282101560e1576001905060018201915060cc565b5050505600a165627a7a72305820267cf0ebf31051a92ff62bed7490045b8063be9f1e1a22d07dce257654c8c17b0029";
     String libraryAddressPair = null;
-    SVMTestResult result = SVMTestUtils
-        .deployContractWithCreatorEnergyLimitAndReturnSVMTestResult(contractName, creatorAddress,
+    TVMTestResult result = TVMTestUtils
+        .deployContractWithCreatorEnergyLimitAndReturnTVMTestResult(contractName, creatorAddress,
             ABI, code, value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair, dbManager, null,
             creatorEnergyLimit);
 
     byte[] contractAddress = result.getContractAddress();
-    byte[] triggerData = SVMTestUtils.parseABI("testNotConstant()", null);
+    byte[] triggerData = TVMTestUtils.parseABI("testNotConstant()", null);
     Transaction trx = generateTriggerSmartContractAndGetTransaction(callerAddress, contractAddress,
         triggerData, value, feeLimit);
 
@@ -270,7 +286,9 @@ public class RuntimeImplTest {
     value = 0L;
     long expectEnergyLimit1 = 10_000_000L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit1);
 
     long creatorFrozenBalance = 1_000_000_000L;
@@ -284,13 +302,17 @@ public class RuntimeImplTest {
     value = 0L;
     long expectEnergyLimit2 = 10_005_000L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit2);
 
     value = 3_999_950_000L;
     long expectEnergyLimit3 = 1_250L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit3);
 
   }
@@ -300,21 +322,21 @@ public class RuntimeImplTest {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
 
     long value = 0;
-    long feeLimit = 1_000_000_000L; // dole
+    long feeLimit = 1_000_000_000L; // sun
     long consumeUserResourcePercent = 100L;
     long creatorEnergyLimit = 5_000L;
     String contractName = "test";
     String ABI = "[{\"constant\":true,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"count\",\"type\":\"uint256\"}],\"name\":\"testNotConstant\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
     String code = "608060405234801561001057600080fd5b50610112806100206000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff16806321964a3914604e5780634c6bb6eb146078575b600080fd5b348015605957600080fd5b5060766004803603810190808035906020019092919050505060a2565b005b348015608357600080fd5b5060a06004803603810190808035906020019092919050505060c4565b005b600080600091505b8282101560bf576001905060018201915060aa565b505050565b600080600091505b8282101560e1576001905060018201915060cc565b5050505600a165627a7a72305820267cf0ebf31051a92ff62bed7490045b8063be9f1e1a22d07dce257654c8c17b0029";
     String libraryAddressPair = null;
-    SVMTestResult result = SVMTestUtils
-        .deployContractWithCreatorEnergyLimitAndReturnSVMTestResult(contractName, creatorAddress,
+    TVMTestResult result = TVMTestUtils
+        .deployContractWithCreatorEnergyLimitAndReturnTVMTestResult(contractName, creatorAddress,
             ABI, code, value,
             feeLimit, consumeUserResourcePercent, libraryAddressPair, dbManager, null,
             creatorEnergyLimit);
 
     byte[] contractAddress = result.getContractAddress();
-    byte[] triggerData = SVMTestUtils.parseABI("testNotConstant()", null);
+    byte[] triggerData = TVMTestUtils.parseABI("testNotConstant()", null);
     Transaction trx = generateTriggerSmartContractAndGetTransaction(callerAddress, contractAddress,
         triggerData, value, feeLimit);
 
@@ -330,7 +352,9 @@ public class RuntimeImplTest {
     value = 0L;
     long expectEnergyLimit1 = 10_000_000L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit1);
 
     long creatorFrozenBalance = 1_000_000_000L;
@@ -344,13 +368,17 @@ public class RuntimeImplTest {
     value = 0L;
     long expectEnergyLimit2 = 10_000_000L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit2);
 
     value = 3_999_950_000L;
     long expectEnergyLimit3 = 500L;
     Assert.assertEquals(
-        runtimeImpl.getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit, value),
+        runtimeImpl
+            .getTotalEnergyLimitWithFixRatio(creatorAccount, callerAccount, contract, feeLimit,
+                value),
         expectEnergyLimit3);
 
   }

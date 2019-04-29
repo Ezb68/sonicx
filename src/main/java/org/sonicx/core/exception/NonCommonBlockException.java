@@ -1,6 +1,7 @@
 package org.sonicx.core.exception;
 
 public class NonCommonBlockException extends SonicxException {
+
   public NonCommonBlockException() {
     super();
   }

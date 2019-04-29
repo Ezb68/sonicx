@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.account;
+package stest.tron.wallet.account;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -12,22 +12,23 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.AccountNetMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.AccountNetMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestAccount007 {
+
   private final String testKey002 = Configuration.getByPath("testng.conf")
       .getString("foundationAccount.key1");
   private final byte[] fromAddress = PublicMethed.getFinalAddress(testKey002);
@@ -82,19 +83,19 @@ public class WalletTestAccount007 {
 
   @Test(enabled = true)
   public void testCreateAccount() {
-    Assert.assertTrue(PublicMethed.sendcoin(account007Address,10000000,
-        fromAddress,testKey002,blockingStubFull));
-    Account accountInfo = PublicMethed.queryAccount(account007Key,blockingStubFull);
+    Assert.assertTrue(PublicMethed.sendcoin(account007Address, 10000000,
+        fromAddress, testKey002, blockingStubFull));
+    Account accountInfo = PublicMethed.queryAccount(account007Key, blockingStubFull);
     final Long beforeBalance = accountInfo.getBalance();
 
     AccountNetMessage accountNetInfo = PublicMethed.getAccountNet(account007Address,
         blockingStubFull);
     final Long beforeFreeNet = accountNetInfo.getFreeNetUsed();
 
-    Assert.assertTrue(PublicMethed.createAccount(account007Address,newAccountAddress,
-        account007Key,blockingStubFull));
+    Assert.assertTrue(PublicMethed.createAccount(account007Address, newAccountAddress,
+        account007Key, blockingStubFull));
 
-    accountInfo = PublicMethed.queryAccount(account007Key,blockingStubFull);
+    accountInfo = PublicMethed.queryAccount(account007Key, blockingStubFull);
     Long afterBalance = accountInfo.getBalance();
 
     accountNetInfo = PublicMethed.getAccountNet(account007Address,
@@ -107,21 +108,23 @@ public class WalletTestAccount007 {
     //When creator has no bandwidth, he can't use the free net.
     Assert.assertTrue(afterFreeNet == beforeFreeNet);
 
-    //When the creator has no bandwidth, create a new account should spend 0.1SOX.
+    //When the creator has no bandwidth, create a new account should spend 0.1TRX.
     Assert.assertTrue(beforeBalance - afterBalance == 100000);
   }
 
   @Test(enabled = true)
   public void testExceptionCreateAccount() {
     //Try to create an exist account
-    Assert.assertFalse(PublicMethed.createAccount(account007Address,account007Address,account007Key,
-        blockingStubFull));
+    Assert
+        .assertFalse(PublicMethed.createAccount(account007Address, account007Address, account007Key,
+            blockingStubFull));
 
     //Try to create an invalid account
     byte[] wrongAddress = "wrongAddress".getBytes();
-    Assert.assertFalse(PublicMethed.createAccount(account007Address,wrongAddress,account007Key,
+    Assert.assertFalse(PublicMethed.createAccount(account007Address, wrongAddress, account007Key,
         blockingStubFull));
   }
+
   /**
    * constructor.
    */

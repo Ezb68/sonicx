@@ -107,8 +107,8 @@ public class BIUtil {
   }
 
   /**
-   * Returns a result of safe addition of two {@code int} values
-   * {@code Integer.MAX_VALUE} is returned if overflow occurs
+   * Returns a result of safe addition of two {@code int} values {@code Integer.MAX_VALUE} is
+   * returned if overflow occurs
    */
   public static int addSafely(int a, int b) {
     long res = (long) a + (long) b;

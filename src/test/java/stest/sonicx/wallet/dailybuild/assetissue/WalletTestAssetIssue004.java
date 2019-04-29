@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.assetissue;
+package stest.tron.wallet.dailybuild.assetissue;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,21 +14,21 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class WalletTestAssetIssue004 {
@@ -53,7 +53,7 @@ public class WalletTestAssetIssue004 {
   private static final String name = "testAssetIssue004_" + Long.toString(now);
   private static final long totalSupply = now;
   String description = "just-test";
-  String url = "https://github.com/SonicXChain/WalletCli/";
+  String url = "https://github.com/tronprotocol/wallet-cli/";
 
   private ManagedChannel channelFull = null;
   private WalletGrpc.WalletBlockingStub blockingStubFull = null;
@@ -65,6 +65,7 @@ public class WalletTestAssetIssue004 {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -86,8 +87,8 @@ public class WalletTestAssetIssue004 {
       Long end = System.currentTimeMillis() + 1000000000;
       //Create a new asset issue
       Assert.assertTrue(PublicMethed.createAssetIssue(fromAddress, name, totalSupply, 6, 1000,
-          start, end, 2, description, url,10000L,10000L,
-          1L, 1L, testKey002,blockingStubFull));
+          start, end, 2, description, url, 10000L, 10000L,
+          1L, 1L, testKey002, blockingStubFull));
       PublicMethed.waitProduceNextBlock(blockingStubFull);
     } else {
       logger.info("This account already create an assetisue");
@@ -95,7 +96,7 @@ public class WalletTestAssetIssue004 {
 
   }
 
-  @Test(enabled = true,description = "Get asset issue by account")
+  @Test(enabled = true, description = "Get asset issue by account")
   public void testGetAssetIssueByAccount() {
     ByteString addressBs = ByteString.copyFrom(fromAddress);
     Account request = Account.newBuilder().setAddress(addressBs).build();
@@ -108,7 +109,7 @@ public class WalletTestAssetIssue004 {
       if (queryAssetIssueByAccount.get().getAssetIssue(j).getTotalSupply() == totalSupply) {
         Assert.assertTrue(queryAssetIssueByAccount.isPresent());
         //Assert.assertTrue(queryAssetIssueByAccount.get().getAssetIssue(j).getDecayRatio() > 0);
-        Assert.assertTrue(queryAssetIssueByAccount.get().getAssetIssue(j).getSoxNum() > 0);
+        Assert.assertTrue(queryAssetIssueByAccount.get().getAssetIssue(j).getTrxNum() > 0);
         Assert.assertTrue(queryAssetIssueByAccount.get().getAssetIssue(j).getVoteScore() > 0);
         Assert.assertFalse(queryAssetIssueByAccount.get().getAssetIssue(j).getUrl().isEmpty());
         logger.info("TestGetAssetIssueByAccount ok!");
@@ -134,6 +135,7 @@ public class WalletTestAssetIssue004 {
     logger.info("No asset account queryed nothing");
 
   }
+
   /**
    * constructor.
    */
@@ -144,11 +146,12 @@ public class WalletTestAssetIssue004 {
       channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, Long fronzenAmount, Long frozenDay,
       String priKey) {
@@ -166,7 +169,7 @@ public class WalletTestAssetIssue004 {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setSoxNum(soxNum);
+      builder.setTrxNum(trxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -199,6 +202,7 @@ public class WalletTestAssetIssue004 {
       return false;
     }
   }
+
   /**
    * constructor.
    */
@@ -226,6 +230,7 @@ public class WalletTestAssetIssue004 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -235,6 +240,7 @@ public class WalletTestAssetIssue004 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */
@@ -254,6 +260,7 @@ public class WalletTestAssetIssue004 {
     transaction = TransactionUtils.setTimestamp(transaction);
     return TransactionUtils.sign(transaction, ecKey);
   }
+
   /**
    * constructor.
    */

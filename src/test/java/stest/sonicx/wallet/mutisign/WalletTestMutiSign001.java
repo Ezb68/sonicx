@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.mutisign;
+package stest.tron.wallet.mutisign;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -11,17 +11,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class WalletTestMutiSign001 {
@@ -105,7 +105,7 @@ public class WalletTestMutiSign001 {
 
     Assert.assertTrue(
         PublicMethed.sendcoin(ownerAddress, needCoin + 2048000000L, fromAddress, testKey002,
-        blockingStubFull));
+            blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     Long balanceBefore = PublicMethed.queryAccount(ownerAddress, blockingStubFull).getBalance();
     logger.info("balanceBefore: " + balanceBefore);
@@ -129,7 +129,7 @@ public class WalletTestMutiSign001 {
     logger.info(accountPermissionJson);
     String txid = PublicMethedForMutiSign
         .accountPermissionUpdateForTransactionId(accountPermissionJson, ownerAddress, ownerKey,
-        blockingStubFull,ownerKeyString);
+            blockingStubFull, ownerKeyString);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     Optional<TransactionInfo> infoById = PublicMethed
@@ -156,7 +156,7 @@ public class WalletTestMutiSign001 {
 
     txid = PublicMethedForMutiSign
         .createAssetIssueForTransactionId(ownerAddress, name, totalSupply, 1,
-        1,start,end,1,description,url,2000L,2000L,
+            1, start, end, 1, description, url, 2000L, 2000L,
             1L, 1L, ownerKey, blockingStubFull, ownerKeyString);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
@@ -179,6 +179,7 @@ public class WalletTestMutiSign001 {
 
     logger.info(" create asset end");
   }
+
   /**
    * constructor.
    */
@@ -231,7 +232,7 @@ public class WalletTestMutiSign001 {
 
     Assert.assertTrue(
         PublicMethed.sendcoin(participateAddress, needCoin + 2048000000L, fromAddress, testKey002,
-        blockingStubFull));
+            blockingStubFull));
 
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     Long balanceBefore = PublicMethed.queryAccount(participateAddress, blockingStubFull)
@@ -253,7 +254,7 @@ public class WalletTestMutiSign001 {
     logger.info(accountPermissionJson);
     String txid = PublicMethedForMutiSign
         .accountPermissionUpdateForTransactionId(accountPermissionJson, participateAddress,
-        participateKey, blockingStubFull,ownerKeyString);
+            participateKey, blockingStubFull, ownerKeyString);
 
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 

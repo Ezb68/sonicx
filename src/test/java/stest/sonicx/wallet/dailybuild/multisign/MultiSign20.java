@@ -1,6 +1,6 @@
-package stest.sonicx.wallet.dailybuild.multisign;
+package stest.tron.wallet.dailybuild.multisign;
 
-import static org.sonicx.api.GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR;
+import static org.tron.api.GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,17 +14,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.tron.api.GrpcAPI;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class MultiSign20 {
@@ -42,7 +42,7 @@ public class MultiSign20 {
   private long updateAccountPermissionFee = Configuration.getByPath("testng.conf")
       .getLong("defaultParameter.updateAccountPermissionFee");
 
-  private final String contractSonicxDiceAddr = "TMYcx6eoRXnePKT1jVn25ZNeMNJ6828HWk";
+  private final String contractTronDiceAddr = "TMYcx6eoRXnePKT1jVn25ZNeMNJ6828HWk";
 
   private ECKey ecKey1 = new ECKey(Utils.getRandom());
   private byte[] ownerAddress = ecKey1.getAddress();
@@ -169,6 +169,8 @@ public class MultiSign20 {
     Assert.assertTrue(PublicMethedForMutiSign.accountPermissionUpdate(accountPermissionJson,
         ownerAddress, ownerKey, blockingStubFull,
         ownerPermissionKeys.toArray(new String[ownerPermissionKeys.size()])));
+
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     Long balanceAfter = PublicMethed.queryAccount(ownerAddress, blockingStubFull)
         .getBalance();
@@ -333,7 +335,7 @@ public class MultiSign20 {
         response.getMessage().toStringUtf8());
 
     // address = contract address
-    byte[] ownerAddress02 = contractSonicxDiceAddr.getBytes();
+    byte[] ownerAddress02 = contractTronDiceAddr.getBytes();
     accountPermissionJson =
         "{\"owner_permission\":{\"type\":0,\"permission_name\":\"owner\",\"threshold\":2,\"keys\":["
             + "{\"address\":\"" + PublicMethed.getAddressString(witnessKey001) + "\",\"weight\":1},"

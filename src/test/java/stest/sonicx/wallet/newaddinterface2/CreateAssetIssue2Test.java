@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.newaddinterface2;
+package stest.tron.wallet.newaddinterface2;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,23 +14,23 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class CreateAssetIssue2Test {
@@ -48,7 +48,7 @@ public class CreateAssetIssue2Test {
   private static String name = "testAssetIssue001_" + Long.toString(now);
   private static final long totalSupply = now;
   String description = "just-test-assetissue-001";
-  String url = "https://github.com/SonicXChain/WalletCli/assetissue001";
+  String url = "https://github.com/tronprotocol/wallet-cli/assetissue001";
   private ManagedChannel channelFull = null;
   private WalletGrpc.WalletBlockingStub blockingStubFull = null;
   private String fullnode = Configuration.getByPath("testng.conf").getStringList("fullnode.ip.list")
@@ -150,6 +150,7 @@ public class CreateAssetIssue2Test {
     logger.info("Test not create asset issue, try to unfreeze asset, no exception. Test OK!!!");
 
   }
+
   /**
    * constructor.
    */
@@ -160,11 +161,12 @@ public class CreateAssetIssue2Test {
       channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, String priKey) {
     ECKey temKey = null;
@@ -181,7 +183,7 @@ public class CreateAssetIssue2Test {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setSoxNum(soxNum);
+      builder.setTrxNum(trxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -209,6 +211,7 @@ public class CreateAssetIssue2Test {
       return false;
     }
   }
+
   /**
    * constructor.
    */
@@ -236,6 +239,7 @@ public class CreateAssetIssue2Test {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -245,6 +249,7 @@ public class CreateAssetIssue2Test {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */
@@ -263,6 +268,7 @@ public class CreateAssetIssue2Test {
     transaction = TransactionUtils.setTimestamp(transaction);
     return TransactionUtils.sign(transaction, ecKey);
   }
+
   /**
    * constructor.
    */
@@ -302,6 +308,7 @@ public class CreateAssetIssue2Test {
     }
 
   }
+
   /**
    * constructor.
    */
@@ -356,6 +363,7 @@ public class CreateAssetIssue2Test {
     }
     return ret;
   }
+
   /**
    * constructor.
    */

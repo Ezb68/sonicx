@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.mutisign;
+package stest.tron.wallet.mutisign;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,21 +13,22 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.SmartContract;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.SmartContract;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class WalletTestMutiSign004 {
+
   private final String testKey002 = Configuration.getByPath("testng.conf")
       .getString("foundationAccount.key1");
   private final byte[] fromAddress = PublicMethed.getFinalAddress(testKey002);
@@ -70,12 +71,12 @@ public class WalletTestMutiSign004 {
   String ownerKey = ByteArray.toHexString(ecKey3.getPrivKeyBytes());
 
 
-
   @BeforeSuite
   public void beforeSuite() {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -92,7 +93,7 @@ public class WalletTestMutiSign004 {
     blockingStubFull1 = WalletGrpc.newBlockingStub(channelFull1);
   }
 
-  @Test(enabled = true,threadPoolSize = 1, invocationCount = 1)
+  @Test(enabled = true, threadPoolSize = 1, invocationCount = 1)
   public void testMutiSignForSmartContract() {
     ecKey1 = new ECKey(Utils.getRandom());
     manager1Address = ecKey1.getAddress();
@@ -111,7 +112,7 @@ public class WalletTestMutiSign004 {
 
     Assert.assertTrue(
         PublicMethed.sendcoin(ownerAddress, needcoin + 100000000L, fromAddress, testKey002,
-        blockingStubFull));
+            blockingStubFull));
     Assert.assertTrue(PublicMethed
         .freezeBalanceForReceiver(fromAddress, 1000000000, 0, 0, ByteString.copyFrom(ownerAddress),
             testKey002, blockingStubFull));
@@ -142,8 +143,8 @@ public class WalletTestMutiSign004 {
             + "{\"address\":\"" + PublicMethed.getAddressString(manager2Key) + "\",\"weight\":1}"
             + "]}]}";
     logger.info(accountPermissionJson);
-    PublicMethedForMutiSign.accountPermissionUpdate(accountPermissionJson,ownerAddress,ownerKey,
-        blockingStubFull,ownerKeyString);
+    PublicMethedForMutiSign.accountPermissionUpdate(accountPermissionJson, ownerAddress, ownerKey,
+        blockingStubFull, ownerKeyString);
 
     Random rand = new Random();
     Integer randNum = rand.nextInt(30) + 1;
@@ -152,23 +153,23 @@ public class WalletTestMutiSign004 {
     Long maxFeeLimit = 1000000000L;
     String contractName = "StorageAndCpu" + Integer.toString(randNum);
     String code = Configuration.getByPath("testng.conf")
-            .getString("code.code_TestStorageAndCpu_storageAndCpu");
+        .getString("code.code_TestStorageAndCpu_storageAndCpu");
     String abi = Configuration.getByPath("testng.conf")
-            .getString("abi.abi_TestStorageAndCpu_storageAndCpu");
-    byte[] contractAddress = PublicMethedForMutiSign.deployContract(contractName,abi,code,
-        "",maxFeeLimit,
+        .getString("abi.abi_TestStorageAndCpu_storageAndCpu");
+    byte[] contractAddress = PublicMethedForMutiSign.deployContract(contractName, abi, code,
+        "", maxFeeLimit,
         0L, 100, null, ownerKey, ownerAddress, blockingStubFull, ownerKeyString);
 
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    SmartContract smartContract = PublicMethed.getContract(contractAddress,blockingStubFull);
+    SmartContract smartContract = PublicMethed.getContract(contractAddress, blockingStubFull);
     Assert.assertTrue(smartContract.getAbi().toString() != null);
     String txid;
     String initParmes = "\"" + "930" + "\"";
     txid = PublicMethedForMutiSign.triggerContract(contractAddress,
-          "testUseCpu(uint256)", initParmes, false,
+        "testUseCpu(uint256)", initParmes, false,
         0, maxFeeLimit, ownerAddress, ownerKey, blockingStubFull, ownerKeyString);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.getTransactionById(txid,blockingStubFull);
+    PublicMethed.getTransactionById(txid, blockingStubFull);
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
     Assert.assertTrue(infoById.get().getBlockNumber() > 0);
     PublicMethedForMutiSign.updateSettingWithPermissionId(contractAddress, 50, ownerKey,

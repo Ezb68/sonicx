@@ -1,6 +1,6 @@
-package stest.sonicx.wallet.dailybuild.multisign;
+package stest.tron.wallet.dailybuild.multisign;
 
-import static org.sonicx.api.GrpcAPI.TransactionSignWeight.Result.response_code.ENOUGH_PERMISSION;
+import static org.tron.api.GrpcAPI.TransactionSignWeight.Result.response_code.ENOUGH_PERMISSION;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,20 +14,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.TransactionExtention;
-import org.sonicx.api.GrpcAPI.TransactionSignWeight;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Transaction;
-import org.sonicx.protos.Protocol.Transaction.Contract.ContractType;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.tron.api.GrpcAPI.TransactionExtention;
+import org.tron.api.GrpcAPI.TransactionSignWeight;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Transaction;
+import org.tron.protos.Protocol.Transaction.Contract.ContractType;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class MultiSign24 {
@@ -99,7 +99,6 @@ public class MultiSign24 {
     ECKey ecKey1 = new ECKey(Utils.getRandom());
     final byte[] ownerAddress = ecKey1.getAddress();
     final String ownerKey = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
     long needCoin = updateAccountPermissionFee * 2 + multiSignFee * 2;
 
     Assert.assertTrue(PublicMethed.sendcoin(ownerAddress, needCoin + 1_000_000, fromAddress,
@@ -280,6 +279,7 @@ public class MultiSign24 {
     logger.info("TransactionSignWeight info : " + txWeight);
 
     Assert.assertTrue(PublicMethedForMutiSign.broadcastTransaction(transaction2, blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Long balanceAfter = PublicMethed.queryAccount(ownerAddress, blockingStubFull)
         .getBalance();
     logger.info("balanceAfter: " + balanceAfter);
@@ -357,6 +357,7 @@ public class MultiSign24 {
     logger.info("TransactionSignWeight info : " + txWeight);
 
     Assert.assertTrue(PublicMethedForMutiSign.broadcastTransaction(transaction1, blockingStubFull));
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Long balanceAfter = PublicMethed.queryAccount(ownerAddress, blockingStubFull)
         .getBalance();
     logger.info("balanceAfter: " + balanceAfter);
@@ -370,11 +371,11 @@ public class MultiSign24 {
     final byte[] ownerAddress = ecKey1.getAddress();
     final String ownerKey = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
     long needCoin = updateAccountPermissionFee;
-
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     Assert.assertTrue(PublicMethed.sendcoin(ownerAddress, needCoin, fromAddress,
         testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
+
     Long balanceBefore = PublicMethed.queryAccount(ownerAddress, blockingStubFull)
         .getBalance();
     logger.info("balanceBefore: " + balanceBefore);

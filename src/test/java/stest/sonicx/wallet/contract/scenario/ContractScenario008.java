@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.contract.scenario;
+package stest.tron.wallet.contract.scenario;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -9,17 +9,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.SmartContract;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.SmartContract;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractScenario008 {
@@ -44,6 +44,7 @@ public class ContractScenario008 {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -62,35 +63,35 @@ public class ContractScenario008 {
     contract008Address = ecKey1.getAddress();
     contract008Key = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
     PublicMethed.printAddress(contract008Key);
-    Assert.assertTrue(PublicMethed.sendcoin(contract008Address,5000000000L,fromAddress,
-        testKey002,blockingStubFull));
+    Assert.assertTrue(PublicMethed.sendcoin(contract008Address, 5000000000L, fromAddress,
+        testKey002, blockingStubFull));
     Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(contract008Address, 1000000L,
-        3,1,contract008Key,blockingStubFull));
+        3, 1, contract008Key, blockingStubFull));
     AccountResourceMessage accountResource = PublicMethed.getAccountResource(contract008Address,
         blockingStubFull);
     Long energyLimit = accountResource.getEnergyLimit();
     Long energyUsage = accountResource.getEnergyUsed();
-    Account account = PublicMethed.queryAccount(contract008Key,blockingStubFull);
+    Account account = PublicMethed.queryAccount(contract008Key, blockingStubFull);
     logger.info("before balance is " + Long.toString(account.getBalance()));
     logger.info("before energy limit is " + Long.toString(energyLimit));
     logger.info("before energy usage is " + Long.toString(energyUsage));
     Long shortFeeLimit = 900L;
     String contractName = "Cat";
     String code = Configuration.getByPath("testng.conf")
-            .getString("code.code_ContractScenario008_deployErc721CryptoKitties");
+        .getString("code.code_ContractScenario008_deployErc721CryptoKitties");
     String abi = Configuration.getByPath("testng.conf")
-            .getString("abi.abi_ContractScenario008_deployErc721CryptoKitties");
-    byte[] contractAddress = PublicMethed.deployContract(contractName,abi,code,"",shortFeeLimit,
-        0L, 100,null,contract008Key,contract008Address,blockingStubFull);
+        .getString("abi.abi_ContractScenario008_deployErc721CryptoKitties");
+    byte[] contractAddress = PublicMethed.deployContract(contractName, abi, code, "", shortFeeLimit,
+        0L, 100, null, contract008Key, contract008Address, blockingStubFull);
 
-    contractAddress = PublicMethed.deployContract(contractName,abi,code,"",maxFeeLimit,
-        0L, 100,null,contract008Key,contract008Address,blockingStubFull);
+    contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
+        0L, 100, null, contract008Key, contract008Address, blockingStubFull);
 
-    final SmartContract smartContract = PublicMethed.getContract(contractAddress,blockingStubFull);
-    accountResource = PublicMethed.getAccountResource(contract008Address,blockingStubFull);
+    final SmartContract smartContract = PublicMethed.getContract(contractAddress, blockingStubFull);
+    accountResource = PublicMethed.getAccountResource(contract008Address, blockingStubFull);
     energyLimit = accountResource.getEnergyLimit();
     energyUsage = accountResource.getEnergyUsed();
-    account = PublicMethed.queryAccount(contract008Key,blockingStubFull);
+    account = PublicMethed.queryAccount(contract008Key, blockingStubFull);
     logger.info("after balance is " + Long.toString(account.getBalance()));
     logger.info("after energy limit is " + Long.toString(energyLimit));
     logger.info("after energy usage is " + Long.toString(energyUsage));
@@ -100,6 +101,7 @@ public class ContractScenario008 {
     Assert.assertTrue(smartContract.getName().equalsIgnoreCase(contractName));
     Assert.assertFalse(smartContract.getBytecode().toString().isEmpty());
   }
+
   /**
    * constructor.
    */

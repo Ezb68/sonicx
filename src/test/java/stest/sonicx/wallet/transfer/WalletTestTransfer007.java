@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.transfer;
+package stest.tron.wallet.transfer;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -10,16 +10,16 @@ import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.BytesMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.protos.Protocol.Transaction;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.BytesMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.protos.Protocol.Transaction;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestTransfer007 {
@@ -53,7 +53,6 @@ public class WalletTestTransfer007 {
       .getStringList("solidityNode.ip.list").get(0);
   /*  private String solidityInFullnode = Configuration.getByPath("testng.conf")
       .getStringList("solidityNode.ip.list").get(1);*/
-
 
 
   /**
@@ -127,12 +126,11 @@ public class WalletTestTransfer007 {
     transactionInfo = blockingStubFull.getTransactionInfoById(request);
     Assert.assertTrue(transactionInfo.getBlockTimeStamp() >= timestampBlockOne);
 
-
     //transactionInfo = blockingStubSolidityInFullnode.getTransactionInfoById(request);
     //Assert.assertTrue(transactionInfo.getBlockTimeStamp() >= timestampBlockOne);
 
-
   }
+
   /**
    * constructor.
    */

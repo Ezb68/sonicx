@@ -249,7 +249,7 @@ public class TransferActuatorTest {
   }
 
   @Test
-  public void iniviateTrx() {
+  public void iniviateSox() {
     TransferActuator actuator = new TransferActuator(
         getContract(100L, OWNER_ADDRESS, OWNER_ADDRESS), dbManager);
     TransactionResultCapsule ret = new TransactionResultCapsule();

@@ -23,6 +23,7 @@ import org.sonicx.core.capsule.TxInputCapsule;
 
 @Slf4j
 public class TxInputCapsuleTest {
+
   @Test
   public void testTxOutputCapsule() {
     byte[] txId = ByteArray

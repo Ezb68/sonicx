@@ -26,6 +26,7 @@ import org.sonicx.common.utils.Sha256Hash;
 
 @Slf4j(topic = "capsule")
 public class StorageRowCapsule implements ProtoCapsule<byte[]> {
+
   @Getter
   private byte[] rowValue;
   @Setter

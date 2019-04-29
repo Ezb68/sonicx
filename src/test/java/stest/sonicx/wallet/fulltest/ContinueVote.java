@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.fulltest;
+package stest.tron.wallet.fulltest;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -15,26 +15,26 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.AccountNetMessage;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Contract.FreezeBalanceContract;
-import org.sonicx.protos.Contract.UnfreezeBalanceContract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.AccountNetMessage;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Contract.FreezeBalanceContract;
+import org.tron.protos.Contract.UnfreezeBalanceContract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class ContinueVote {
@@ -49,7 +49,6 @@ public class ContinueVote {
   private static final byte[] fromAddress = Base58
       .decodeFromBase58Check("THph9K2M2nLvkianrMGswRhz5hjSA9fuH7");*/
   private final byte[] fromAddress = PublicMethed.getFinalAddress(testKey002);
-
 
 
   private ManagedChannel channelFull = null;
@@ -88,7 +87,7 @@ public class ContinueVote {
     searchBlockingStubFull = WalletGrpc.newBlockingStub(searchChannelFull);
   }
 
-  @Test(enabled = false,threadPoolSize = 30, invocationCount = 30)
+  @Test(enabled = false, threadPoolSize = 30, invocationCount = 30)
   public void testVoteWitness() {
     ByteString addressBs = ByteString.copyFrom(fromAddress);
     Account request = Account.newBuilder().setAddress(addressBs).build();
@@ -100,7 +99,7 @@ public class ContinueVote {
     String voteStr = "TB4B1RMhoPeivkj4Hebm6tttHjRY9yQFes";
     HashMap<String, String> smallVoteMap = new HashMap<String, String>();
     smallVoteMap.put(voteStr, "1");
-    Account fromInfo = PublicMethed.queryAccount(testKey002,blockingStubFull);
+    Account fromInfo = PublicMethed.queryAccount(testKey002, blockingStubFull);
 
     Boolean ret = false;
     Integer i = 0;
@@ -110,7 +109,7 @@ public class ContinueVote {
       smallVoteMap = new HashMap<String, String>();
       smallVoteMap.put(voteStr, Integer.toString(randNum));
       if (fromInfo.getFrozen(0).getFrozenBalance() < 10000000) {
-        PublicMethed.freezeBalance(fromAddress,10000000000L,3,testKey002,blockingStubFull);
+        PublicMethed.freezeBalance(fromAddress, 10000000000L, 3, testKey002, blockingStubFull);
       }
       ret = voteWitness(smallVoteMap, fromAddress, testKey002);
       if (ret) {
@@ -119,13 +118,14 @@ public class ContinueVote {
             .getVotes(0).getVoteCount()));
         logger.info(Integer.toString(i++));
       }
-      fromInfo = PublicMethed.queryAccount(testKey002,blockingStubFull);
+      fromInfo = PublicMethed.queryAccount(testKey002, blockingStubFull);
       accountNetMessage = blockingStubFull.getAccountNet(request);
       logger.info("Now the from net used is " + Long.toString(accountNetMessage.getNetUsed()));
 
     }
 
   }
+
   /**
    * constructor.
    */
@@ -139,6 +139,7 @@ public class ContinueVote {
       searchChannelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -213,6 +214,7 @@ public class ContinueVote {
     }
     return true;
   }
+
   /**
    * constructor.
    */
@@ -285,7 +287,6 @@ public class ContinueVote {
       }
     }
 
-
     Account afterFronzen = queryAccount(ecKey, searchBlockingStubFull);
     Long afterFrozenBalance = afterFronzen.getFrozen(0).getFrozenBalance();
     //Long afterBandwidth     = afterFronzen.getBandwidth();
@@ -308,6 +309,7 @@ public class ContinueVote {
 
 
   }
+
   /**
    * constructor.
    */
@@ -376,6 +378,7 @@ public class ContinueVote {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -385,6 +388,7 @@ public class ContinueVote {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

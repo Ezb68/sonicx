@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.manual;
+package stest.tron.wallet.dailybuild.manual;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,25 +14,25 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.WitnessList;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.WitnessList;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
-//import stest.sonicx.wallet.common.client.AccountComparator;
+//import stest.tron.wallet.common.client.AccountComparator;
 
 @Slf4j
 public class WalletTestWitness003 {
@@ -43,6 +43,9 @@ public class WalletTestWitness003 {
   private final String testKey003 = Configuration.getByPath("testng.conf")
       .getString("foundationAccount.key2");
   private final byte[] toAddress = PublicMethed.getFinalAddress(testKey003);
+  private final String testUpdateWitnessKey = Configuration.getByPath("testng.conf")
+      .getString("witness.key1");
+  private final byte[] updateAddress = PublicMethed.getFinalAddress(testUpdateWitnessKey);
   private static final byte[] INVAILD_ADDRESS = Base58
       .decodeFromBase58Check("27cu1ozb4mX3m2afY68FSAqn3HmMp815d48");
 
@@ -70,6 +73,7 @@ public class WalletTestWitness003 {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -80,19 +84,18 @@ public class WalletTestWitness003 {
     logger.info(ByteArray.toHexString(PublicMethed.getFinalAddress(lowBalTest)));
     logger.info(Base58.encode58Check(PublicMethed.getFinalAddress(lowBalTest)));
 
-
     channelFull = ManagedChannelBuilder.forTarget(fullnode)
         .usePlaintext(true)
         .build();
     blockingStubFull = WalletGrpc.newBlockingStub(channelFull);
   }
 
-  @Test(enabled = true,description = "Invaild account to apply create witness")
+  @Test(enabled = true, description = "Invaild account to apply create witness")
   public void testInvaildToApplyBecomeWitness() {
     Assert.assertFalse(createWitness(INVAILD_ADDRESS, createUrl, testKey002));
   }
 
-  @Test(enabled = true,description = "Create witness")
+  @Test(enabled = true, description = "Create witness")
   public void testCreateWitness() {
     //If you are already is witness, apply failed
     //createWitness(fromAddress, createUrl, testKey002);
@@ -108,13 +111,15 @@ public class WalletTestWitness003 {
     Optional<WitnessList> result = Optional.ofNullable(witnesslist);
     GrpcAPI.WitnessList witnessList = result.get();
     if (result.get().getWitnessesCount() < 6) {
-      Assert.assertTrue(sendcoin(lowBalAddress, costForCreateWitness, fromAddress, testKey002));
-      Assert.assertTrue(createWitness(lowBalAddress, createUrl, lowBalTest));
+      Assert.assertTrue(PublicMethed
+          .sendcoin(lowBalAddress, costForCreateWitness, fromAddress, testKey002,
+              blockingStubFull));
+      Assert.assertTrue(createWitnessNotBroadcast(lowBalAddress, createUrl, lowBalTest));
 
     }
   }
 
-  @Test(enabled = true,description = "Update witness")
+  @Test(enabled = true, description = "Update witness")
   public void testUpdateWitness() {
     GrpcAPI.WitnessList witnesslist = blockingStubFull
         .listWitnesses(GrpcAPI.EmptyMessage.newBuilder().build());
@@ -122,17 +127,18 @@ public class WalletTestWitness003 {
     GrpcAPI.WitnessList witnessList = result.get();
     if (result.get().getWitnessesCount() < 6) {
       //null url, update failed
-      Assert.assertFalse(updateWitness(lowBalAddress, wrongUrl, lowBalTest));
+      Assert.assertFalse(updateWitness(updateAddress, wrongUrl, testUpdateWitnessKey));
       //Content space and special char, update success
-      Assert.assertTrue(updateWitness(lowBalAddress, updateSpaceUrl, lowBalTest));
+      Assert.assertTrue(updateWitness(updateAddress, updateSpaceUrl, testUpdateWitnessKey));
       //update success
-      Assert.assertTrue(updateWitness(lowBalAddress, updateUrl, lowBalTest));
+      Assert.assertTrue(updateWitness(updateAddress, updateUrl, testUpdateWitnessKey));
     } else {
       logger.info("Update witness case had been test.This time skip it.");
     }
 
 
   }
+
   /**
    * constructor.
    */
@@ -167,14 +173,37 @@ public class WalletTestWitness003 {
       return false;
     }
     transaction = signTransaction(ecKey, transaction);
-    GrpcAPI.Return response = blockingStubFull.broadcastTransaction(transaction);
-    if (response.getResult() == false) {
-      return false;
-    } else {
-      return true;
-    }
+    GrpcAPI.Return response = PublicMethed.broadcastTransaction(transaction, blockingStubFull);
+    return response.getResult();
 
   }
+
+  /**
+   * constructor.
+   */
+
+  public Boolean createWitnessNotBroadcast(byte[] owner, byte[] url, String priKey) {
+    ECKey temKey = null;
+    try {
+      BigInteger priK = new BigInteger(priKey, 16);
+      temKey = ECKey.fromPrivate(priK);
+    } catch (Exception ex) {
+      ex.printStackTrace();
+    }
+    final ECKey ecKey = temKey;
+
+    Contract.WitnessCreateContract.Builder builder = Contract.WitnessCreateContract.newBuilder();
+    builder.setOwnerAddress(ByteString.copyFrom(owner));
+    builder.setUrl(ByteString.copyFrom(url));
+    Contract.WitnessCreateContract contract = builder.build();
+    Protocol.Transaction transaction = blockingStubFull.createWitness(contract);
+    if (transaction == null || transaction.getRawData().getContractCount() == 0) {
+      return false;
+    }
+    transaction = signTransaction(ecKey, transaction);
+    return true;
+  }
+
   /**
    * constructor.
    */
@@ -199,7 +228,7 @@ public class WalletTestWitness003 {
       return false;
     }
     transaction = signTransaction(ecKey, transaction);
-    GrpcAPI.Return response = blockingStubFull.broadcastTransaction(transaction);
+    GrpcAPI.Return response = PublicMethed.broadcastTransaction(transaction, blockingStubFull);
     if (response.getResult() == false) {
       logger.info(ByteArray.toStr(response.getMessage().toByteArray()));
       logger.info("response.getRestult() == false");
@@ -283,6 +312,7 @@ public class WalletTestWitness003 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -292,6 +322,7 @@ public class WalletTestWitness003 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

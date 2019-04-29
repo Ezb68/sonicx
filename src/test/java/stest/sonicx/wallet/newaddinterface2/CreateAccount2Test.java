@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.newaddinterface2;
+package stest.tron.wallet.newaddinterface2;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -9,17 +9,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.AccountNetMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.AccountNetMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class CreateAccount2Test {
@@ -88,7 +88,7 @@ public class CreateAccount2Test {
     logger.info(Long.toString(afterBalance));
     //When creator has no bandwidth, he can't use the free net.
     Assert.assertTrue(afterFreeNet == beforeFreeNet);
-    //When the creator has no bandwidth, create a new account should spend 0.1SOX.
+    //When the creator has no bandwidth, create a new account should spend 0.1TRX.
     Assert.assertTrue(beforeBalance - afterBalance == 100000);
   }
 
@@ -109,6 +109,7 @@ public class CreateAccount2Test {
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
         "contract validate error : Invalid account address");
   }
+
   /**
    * constructor.
    */

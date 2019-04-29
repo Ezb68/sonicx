@@ -175,7 +175,7 @@ public class ProposalController {
           break;
         }
         case (18): {
-          manager.getDynamicPropertiesStore().saveAllowSvmTransferSrc10(entry.getValue());
+          manager.getDynamicPropertiesStore().saveAllowTvmTransferTrc10(entry.getValue());
           break;
         }
         case (19): {

@@ -1,21 +1,21 @@
-package org.tron.common.storage;
+package org.sonicx.common.storage;
 
-import static org.tron.common.storage.Type.VALUE_TYPE_UNKNOWN;
+import static org.sonicx.common.storage.Type.VALUE_TYPE_UNKNOWN;
 
 import java.util.Arrays;
 import org.apache.commons.lang3.ArrayUtils;
-import org.tron.common.runtime.config.VMConfig;
-import org.tron.core.capsule.AccountCapsule;
-import org.tron.core.capsule.AssetIssueCapsule;
-import org.tron.core.capsule.BlockCapsule;
-import org.tron.core.capsule.BytesCapsule;
-import org.tron.core.capsule.CodeCapsule;
-import org.tron.core.capsule.ContractCapsule;
-import org.tron.core.capsule.ProposalCapsule;
-import org.tron.core.capsule.TransactionCapsule;
-import org.tron.core.capsule.VotesCapsule;
-import org.tron.core.capsule.WitnessCapsule;
-import org.tron.core.exception.BadItemException;
+import org.sonicx.common.runtime.config.VMConfig;
+import org.sonicx.core.capsule.AccountCapsule;
+import org.sonicx.core.capsule.AssetIssueCapsule;
+import org.sonicx.core.capsule.BlockCapsule;
+import org.sonicx.core.capsule.BytesCapsule;
+import org.sonicx.core.capsule.CodeCapsule;
+import org.sonicx.core.capsule.ContractCapsule;
+import org.sonicx.core.capsule.ProposalCapsule;
+import org.sonicx.core.capsule.TransactionCapsule;
+import org.sonicx.core.capsule.VotesCapsule;
+import org.sonicx.core.capsule.WitnessCapsule;
+import org.sonicx.core.exception.BadItemException;
 
 public class Value {
 

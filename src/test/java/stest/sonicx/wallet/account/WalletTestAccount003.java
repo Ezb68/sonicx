@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.account;
+package stest.tron.wallet.account;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -16,25 +16,25 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
-//import stest.sonicx.wallet.common.client.AccountComparator;
+//import stest.tron.wallet.common.client.AccountComparator;
 
 @Slf4j
 public class WalletTestAccount003 {
@@ -128,8 +128,8 @@ public class WalletTestAccount003 {
     }
     //Create AssetIssue failed when there is no enough balance.
     Assert.assertFalse(PublicMethed.createAssetIssue(lowBalAddress, name, TotalSupply, 1, 1,
-        now + 100000000L, now + 10000000000L, 2, description, url,10000L,
-        10000L,1L,1L,lowBalTest,blockingStubFull));
+        now + 100000000L, now + 10000000000L, 2, description, url, 10000L,
+        10000L, 1L, 1L, lowBalTest, blockingStubFull));
     logger.info("nobalancecreateassetissue");
   }
 
@@ -155,6 +155,7 @@ public class WalletTestAccount003 {
       logger.info("This account has freeze balance, please test this case for manual");
     }
   }
+
   /**
    * constructor.
    */
@@ -165,6 +166,7 @@ public class WalletTestAccount003 {
       channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -233,11 +235,12 @@ public class WalletTestAccount003 {
       return true;
     }
   }
+
   /**
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, String priKey) {
     ECKey temKey = null;
@@ -254,7 +257,7 @@ public class WalletTestAccount003 {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(TotalSupply);
-      builder.setSoxNum(soxNum);
+      builder.setTrxNum(trxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -288,6 +291,7 @@ public class WalletTestAccount003 {
       return Long.compare(((Account) o2).getBalance(), ((Account) o1).getBalance());
     }
   }
+
   /**
    * constructor.
    */
@@ -324,6 +328,7 @@ public class WalletTestAccount003 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -333,6 +338,7 @@ public class WalletTestAccount003 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */
@@ -352,6 +358,7 @@ public class WalletTestAccount003 {
     transaction = TransactionUtils.setTimestamp(transaction);
     return TransactionUtils.sign(transaction, ecKey);
   }
+
   /**
    * constructor.
    */
@@ -391,6 +398,7 @@ public class WalletTestAccount003 {
       return true;
     }
   }
+
   /**
    * constructor.
    */
@@ -429,6 +437,7 @@ public class WalletTestAccount003 {
       return true;
     }
   }
+
   /**
    * constructor.
    */
@@ -475,6 +484,7 @@ public class WalletTestAccount003 {
     }
     return true;
   }
+
   /**
    * constructor.
    */
@@ -519,6 +529,7 @@ public class WalletTestAccount003 {
 
 
   }
+
   /**
    * constructor.
    */

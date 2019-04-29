@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.witness;
+package stest.tron.wallet.witness;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -14,25 +14,25 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Contract.FreezeBalanceContract;
-import org.sonicx.protos.Contract.UnfreezeBalanceContract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Contract.FreezeBalanceContract;
+import org.tron.protos.Contract.UnfreezeBalanceContract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class WalletTestWitness001 {
@@ -63,6 +63,7 @@ public class WalletTestWitness001 {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
   /**
    * constructor.
    */
@@ -103,7 +104,7 @@ public class WalletTestWitness001 {
 
     //Freeze balance to get vote ability.
     Assert.assertTrue(PublicMethed.freezeBalance(fromAddress, 1200000L, 3L,
-            testKey002,blockingStubFull));
+        testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     //Vote failed when the vote is large than the freeze balance.
     Assert.assertFalse(voteWitness(veryLargeMap, fromAddress, testKey002));
@@ -119,6 +120,7 @@ public class WalletTestWitness001 {
 
 
   }
+
   /**
    * constructor.
    */
@@ -132,6 +134,7 @@ public class WalletTestWitness001 {
       searchChannelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -206,6 +209,7 @@ public class WalletTestWitness001 {
     }
     return true;
   }
+
   /**
    * constructor.
    */
@@ -278,7 +282,6 @@ public class WalletTestWitness001 {
       }
     }
 
-
     Account afterFronzen = queryAccount(ecKey, searchBlockingStubFull);
     Long afterFrozenBalance = afterFronzen.getFrozen(0).getFrozenBalance();
     //Long afterBandwidth     = afterFronzen.getBandwidth();
@@ -301,6 +304,7 @@ public class WalletTestWitness001 {
 
 
   }
+
   /**
    * constructor.
    */
@@ -369,6 +373,7 @@ public class WalletTestWitness001 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -378,6 +383,7 @@ public class WalletTestWitness001 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

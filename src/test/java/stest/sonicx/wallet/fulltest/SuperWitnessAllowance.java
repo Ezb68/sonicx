@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.fulltest;
+package stest.tron.wallet.fulltest;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -15,28 +15,28 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.GrpcAPI.WitnessList;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.Base58;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.GrpcAPI.WitnessList;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.Base58;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
-//import stest.sonicx.wallet.common.client.AccountComparator;
+//import stest.tron.wallet.common.client.AccountComparator;
 
 @Slf4j
 public class SuperWitnessAllowance {
@@ -89,7 +89,6 @@ public class SuperWitnessAllowance {
     logger.info(ByteArray.toHexString(PublicMethed.getFinalAddress(lowBalTest)));
     logger.info(Base58.encode58Check(PublicMethed.getFinalAddress(lowBalTest)));
 
-
     channelFull = ManagedChannelBuilder.forTarget(fullnode)
         .usePlaintext(true)
         .build();
@@ -114,8 +113,8 @@ public class SuperWitnessAllowance {
       String lowBalTest = ByteArray.toHexString(ecKey.getPrivKeyBytes());
       logger.info(lowBalTest);
       Assert.assertTrue(sendcoin(lowBalAddress, costForCreateWitness, fromAddress, testKey002));
-      Assert.assertTrue(PublicMethed.freezeBalance(lowBalAddress,1000000,
-          3,lowBalTest,blockingStubFull));
+      Assert.assertTrue(PublicMethed.freezeBalance(lowBalAddress, 1000000,
+          3, lowBalTest, blockingStubFull));
       Assert.assertTrue(createWitness(lowBalAddress, createUrl, lowBalTest));
       String voteStr = Base58.encode58Check(PublicMethed.getFinalAddress(lowBalTest));
       HashMap<String, String> smallVoteMap = new HashMap<String, String>();
@@ -168,6 +167,7 @@ public class SuperWitnessAllowance {
       channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
@@ -200,6 +200,7 @@ public class SuperWitnessAllowance {
     }
 
   }
+
   /**
    * constructor.
    */
@@ -308,6 +309,7 @@ public class SuperWitnessAllowance {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -317,6 +319,7 @@ public class SuperWitnessAllowance {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */
@@ -336,6 +339,7 @@ public class SuperWitnessAllowance {
     transaction = TransactionUtils.setTimestamp(transaction);
     return TransactionUtils.sign(transaction, ecKey);
   }
+
   /**
    * constructor.
    */
@@ -350,7 +354,7 @@ public class SuperWitnessAllowance {
       ex.printStackTrace();
     }
     final ECKey ecKey = temKey;
-    Account beforeVote  = PublicMethed.queryAccount(priKey,blockingStubFull);
+    Account beforeVote = PublicMethed.queryAccount(priKey, blockingStubFull);
     //Account beforeVote = queryAccount(ecKey, blockingStubFull);
     Long beforeVoteNum = 0L;
     if (beforeVote.getVotesCount() != 0) {

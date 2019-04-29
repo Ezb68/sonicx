@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.assetissue;
+package stest.tron.wallet.dailybuild.assetissue;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,22 +13,22 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.GrpcAPI.Return;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Contract;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import org.sonicx.protos.Protocol.Transaction;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.TransactionUtils;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.GrpcAPI.Return;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Contract;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import org.tron.protos.Protocol.Transaction;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class WalletTestAssetIssue010 {
@@ -41,13 +41,12 @@ public class WalletTestAssetIssue010 {
   private final byte[] toAddress = PublicMethed.getFinalAddress(testKey003);
 
 
-
   private static final long now = System.currentTimeMillis();
   private static String name = "testAssetIssue010_" + Long.toString(now);
   private static final long totalSupply = now;
   private static final long sendAmount = 10000000000L;
   String description = "just-test";
-  String url = "https://github.com/SonicXChain/WalletCli/";
+  String url = "https://github.com/tronprotocol/wallet-cli/";
   String updateDescription = "This is test for update asset issue, case AssetIssue_010";
   String updateUrl = "www.updateassetissue.010.cn";
   private static final String tooLongDescription =
@@ -92,7 +91,7 @@ public class WalletTestAssetIssue010 {
     blockingStubFull = WalletGrpc.newBlockingStub(channelFull);
   }
 
-  @Test(enabled = true,description = "Update asset issue")
+  @Test(enabled = true, description = "Update asset issue")
   public void testUpdateAssetIssue() {
     ecKey = new ECKey(Utils.getRandom());
     asset010Address = ecKey.getAddress();
@@ -112,15 +111,15 @@ public class WalletTestAssetIssue010 {
         start, end, 1, description, url, freeAssetNetLimit, publicFreeAssetNetLimit,
         1L, 1L, testKeyForAssetIssue010, blockingStubFull));
 
-
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     Account getAssetIdFromThisAccount;
-    getAssetIdFromThisAccount = PublicMethed.queryAccount(testKeyForAssetIssue010,blockingStubFull);
+    getAssetIdFromThisAccount = PublicMethed
+        .queryAccount(testKeyForAssetIssue010, blockingStubFull);
     ByteString assetAccountId = getAssetIdFromThisAccount.getAssetIssuedID();
 
     //Query the description and url,freeAssetNetLimit and publicFreeAssetNetLimit
     GrpcAPI.BytesMessage request = GrpcAPI.BytesMessage.newBuilder()
-            .setValue(assetAccountId).build();
+        .setValue(assetAccountId).build();
     Contract.AssetIssueContract assetIssueByName = blockingStubFull.getAssetIssueByName(request);
 
     Assert.assertTrue(
@@ -148,7 +147,7 @@ public class WalletTestAssetIssue010 {
         .assertTrue(assetIssueByName.getPublicFreeAssetNetLimit() == updatePublicFreeAssetNetLimit);
   }
 
-  @Test(enabled = true,description = "Update asset issue with exception condition")
+  @Test(enabled = true, description = "Update asset issue with exception condition")
   public void testUpdateAssetIssueException() {
     //Test update asset issue for wrong parameter
     //publicFreeAssetNetLimit is -1
@@ -190,6 +189,7 @@ public class WalletTestAssetIssue010 {
             freeAssetNetLimit,
             publicFreeAssetNetLimit, testKeyForAssetIssue010, blockingStubFull));
   }
+
   /**
    * constructor.
    */
@@ -200,11 +200,12 @@ public class WalletTestAssetIssue010 {
       channelFull.shutdown().awaitTermination(5, TimeUnit.SECONDS);
     }
   }
+
   /**
    * constructor.
    */
 
-  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer soxNum,
+  public Boolean createAssetIssue(byte[] address, String name, Long totalSupply, Integer trxNum,
       Integer icoNum, Long startTime, Long endTime,
       Integer voteScore, String description, String url, Long fronzenAmount, Long frozenDay,
       String priKey) {
@@ -223,7 +224,7 @@ public class WalletTestAssetIssue010 {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setSoxNum(soxNum);
+      builder.setTrxNum(trxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -256,6 +257,7 @@ public class WalletTestAssetIssue010 {
       return false;
     }
   }
+
   /**
    * constructor.
    */
@@ -283,6 +285,7 @@ public class WalletTestAssetIssue010 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -292,6 +295,7 @@ public class WalletTestAssetIssue010 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */
@@ -311,6 +315,7 @@ public class WalletTestAssetIssue010 {
     transaction = TransactionUtils.setTimestamp(transaction);
     return TransactionUtils.sign(transaction, ecKey);
   }
+
   /**
    * constructor.
    */
@@ -350,6 +355,7 @@ public class WalletTestAssetIssue010 {
     }
 
   }
+
   /**
    * constructor.
    */

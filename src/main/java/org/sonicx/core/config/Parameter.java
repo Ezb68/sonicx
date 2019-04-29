@@ -7,10 +7,10 @@ public interface Parameter {
   interface ChainConstant {
 
     long TRANSFER_FEE = 0; // free
-    int WITNESS_STANDBY_LENGTH = 7;
+    int WITNESS_STANDBY_LENGTH = 127;
     int SOLIDIFIED_THRESHOLD = 70; // 70%
     int PRIVATE_KEY_LENGTH = 64;
-    int MAX_ACTIVE_WITNESS_NUM = 3;
+    int MAX_ACTIVE_WITNESS_NUM = 27;
     int BLOCK_SIZE = 2_000_000;
     int BLOCK_PRODUCED_INTERVAL = 3000; //ms,produce block period, must be divisible by 60. millisecond
     long CLOCK_MAX_DELAY = 3600000; // 3600 * 1000 ms
@@ -43,12 +43,13 @@ public interface Parameter {
 
     long GRPC_IDLE_TIME_OUT = 60000L;
     long ADV_TIME_OUT = 20000L;
-    long SYNC_TIME_OUT = 5000L;
+    long SYNC_TIME_OUT = 20000L;
     long HEAD_NUM_MAX_DELTA = 1000L;
     long HEAD_NUM_CHECK_TIME = 60000L;
     int MAX_INVENTORY_SIZE_IN_MINUTES = 2;
     long NET_MAX_TRX_PER_SECOND = 700L;
-    long MAX_TRX_PER_PEER = 200L;
+    int MAX_BLOCK_FETCH_PER_PEER = 100;
+    int MAX_TRX_FETCH_PER_PEER = 1000;
     int NET_MAX_INV_SIZE_IN_MINUTES = 2;
     int MSG_CACHE_DURATION_IN_BLOCKS = 5;
   }
@@ -90,7 +91,7 @@ public interface Parameter {
     ALLOW_SAME_TOKEN_NAME, // 1, 15
     ALLOW_DELEGATE_RESOURCE, // 0, 16
     TOTAL_ENERGY_LIMIT, // 50,000,000,000, 17
-    ALLOW_SVM_TRANSFER_SRC10, // 1, 18
+    ALLOW_TVM_TRANSFER_TRC10, // 1, 18
     TOTAL_CURRENT_ENERGY_LIMIT, // 50,000,000,000, 19
     ALLOW_MULTI_SIGN, // 1, 20
     ALLOW_ADAPTIVE_ENERGY, // 1, 21

@@ -1,6 +1,6 @@
 package org.sonicx.core.witness;
 
-public enum  BlockProductionCondition {
+public enum BlockProductionCondition {
   PRODUCED,           // Successfully generated block
   UNELECTED,
   NOT_MY_TURN,        // It isn't my turn

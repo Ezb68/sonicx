@@ -109,7 +109,8 @@ public class ReceiptCapsule {
       payEnergyBill(manager, caller, receipt.getEnergyUsageTotal(), energyProcessor, now);
     } else {
       long originUsage = Math.multiplyExact(receipt.getEnergyUsageTotal(), percent) / 100;
-      originUsage = getOriginUsage(manager, origin, originEnergyLimit, energyProcessor, originUsage);
+      originUsage = getOriginUsage(manager, origin, originEnergyLimit, energyProcessor,
+          originUsage);
 
       long callerUsage = receipt.getEnergyUsageTotal() - originUsage;
       energyProcessor.useEnergy(origin, originUsage, now);
@@ -141,13 +142,13 @@ public class ReceiptCapsule {
       this.setEnergyUsage(usage);
     } else {
       energyProcessor.useEnergy(account, accountEnergyLeft, now);
-      long dolePerEnergy = Constant.DOLE_PER_ENERGY;
+      long sunPerEnergy = Constant.SUN_PER_ENERGY;
       long dynamicEnergyFee = manager.getDynamicPropertiesStore().getEnergyFee();
       if (dynamicEnergyFee > 0) {
-        dolePerEnergy = dynamicEnergyFee;
+        sunPerEnergy = dynamicEnergyFee;
       }
       long energyFee =
-          (usage - accountEnergyLeft) * dolePerEnergy;
+          (usage - accountEnergyLeft) * sunPerEnergy;
       this.setEnergyUsage(accountEnergyLeft);
       this.setEnergyFee(energyFee);
       long balance = account.getBalance();

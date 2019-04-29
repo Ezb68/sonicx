@@ -16,28 +16,28 @@
     <img src="https://img.shields.io/badge/chat-on%20discord-brightgreen.svg">
   </a>
     
-  <a href="https://travis-ci.org/SonicXChain/SonicX">
-    <img src="https://travis-ci.org/SonicXChain/SonicX.svg?branch=develop">
+  <a href="https://travis-ci.org/SonicXChain/sonicx">
+    <img src="https://travis-ci.org/SonicXChain/sonicx.svg?branch=develop">
   </a>
   
-  <a href="https://codecov.io/gh/SonicXChain/SonicX">
-    <img src="https://codecov.io/gh/SonicXChain/SonicX/branch/develop/graph/badge.svg" />
+  <a href="https://codecov.io/gh/SonicXChain/sonicx">
+    <img src="https://codecov.io/gh/SonicXChain/sonicx/branch/develop/graph/badge.svg" />
   </a>
   
-  <a href="https://github.com/SonicXChain/SonicX/issues">
-    <img src="https://img.shields.io/github/issues/SonicXChain/SonicX.svg">
+  <a href="https://github.com/SonicXChain/sonicx/issues">
+    <img src="https://img.shields.io/github/issues/SonicXChain/sonicx.svg">
   </a>
   
-  <a href="https://github.com/SonicXChain/SonicX/pulls">
-    <img src="https://img.shields.io/github/issues-pr/SonicXChain/SonicX.svg">
+  <a href="https://github.com/SonicXChain/sonicx/pulls">
+    <img src="https://img.shields.io/github/issues-pr/SonicXChain/sonicx.svg">
   </a>
   
-  <a href="https://github.com/SonicXChain/SonicX/graphs/contributors"> 
-    <img src="https://img.shields.io/github/contributors/SonicXChain/SonicX.svg">
+  <a href="https://github.com/SonicXChain/sonicx/graphs/contributors"> 
+    <img src="https://img.shields.io/github/contributors/SonicXChain/sonicx.svg">
   </a>
   
   <a href="LICENSE">
-    <img src="https://img.shields.io/github/license/SonicXChain/SonicX.svg">
+    <img src="https://img.shields.io/github/license/SonicXChain/sonicx.svg">
   </a>
 </p>
 
@@ -54,24 +54,24 @@
 
 SonicX is a project dedicated to building the infrastructure for a truly decentralized Internet.
 
-The SonicX Protocol, one of the largest blockchain based operating systems in the world, offers scalable, high-availability and high-throughput support that underlies all the decentralized applications in the SONICX ecosystem. 
+The SonicX Protocol, one of the largest blockchain based operating systems in the world, offers scalable, high-availability and high-throughput support that underlies all the decentralized applications in the SonicX ecosystem. 
 
-SONICX enables large-scale development and engagement. With over 2000 transactions per second (TPS), high concurrency, low latency and massive data transmission, SONICX is ideal for building decentralized entertainment applications. Free features and incentive systems allow developers to create premium app experiences for users.
+SonicX enables large-scale development and engagement. With over 2000 transactions per second (TPS), high concurrency, low latency and massive data transmission, SONICX is ideal for building decentralized entertainment applications. Free features and incentive systems allow developers to create premium app experiences for users.
 
-SONICX Protocol and the SonicX Virtual Machine (SVM) allow anyone to develop decentralized applications (DAPPs) for themselves or their communities with smart contracts thereby making decentralized crowdfunding and token issuance easier than ever.
+SonicX Protocol and the SonicX Virtual Machine (SVM) allow anyone to develop decentralized applications (DAPPs) for themselves or their communities with smart contracts thereby making decentralized crowdfunding and token issuance easier than ever.
 
 # How to Build
 
 ## Prepare dependencies
 
 * JDK 1.8 (JDK 1.9+ are not supported yet)
-* On Linux Ubuntu system (e.g. Ubuntu 16.04.4 LTS), ensure that the machine has [__Oracle JDK 8__](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-get-on-ubuntu-16-04), instead of having __Open JDK 8__ in the system. If you are building the source code by using __Open JDK 8__, you will get [__Build Failed__](https://github.com/SonicXChain/SonicX/issues/337) result.
+* On Linux Ubuntu system (e.g. Ubuntu 16.04.4 LTS), ensure that the machine has [__Oracle JDK 8__](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-get-on-ubuntu-16-04), instead of having __Open JDK 8__ in the system. If you are building the source code by using __Open JDK 8__, you will get [__Build Failed__](https://github.com/SonicXChain/sonicx/issues/337) result.
 * Open **UDP** ports for connection to the network
 * **MINIMUM** 2 ENERGY Cores
 
 ## Build and Deploy automatically using scripts
 
-- Please take a look at the [SonicX Deployment Scripts](https://github.com/SonicXChain/Deployment) repository.
+- Please take a look at the [SonicX Deployment Scripts](https://github.com/SonicXChain/sonicx-deployment) repository.
 
 ## Getting the code with git
 
@@ -80,13 +80,13 @@ SONICX Protocol and the SonicX Virtual Machine (SVM) allow anyone to develop dec
 * master branch: more stable than develop.
 In the shell command, type:
 ```bash
-git clone https://github.com/SonicXChain/SonicX.git
+git clone https://github.com/SonicXChain/sonicx.git
 git checkout -t origin/master
 ```
 
 * For Mac, you can also install **[GitHub for Mac](https://mac.github.com/)** then **[fork and clone our repository](https://guides.github.com/activities/forking/)**. 
 
-* If you'd rather not use Git, [Download the ZIP](https://github.com/SonicXChain/SonicX/archive/develop.zip)
+* If you'd rather not use Git, [Download the ZIP](https://github.com/SonicXChain/sonicx/archive/develop.zip)
 
 ## Including SonicX as dependency
 
@@ -99,7 +99,7 @@ repositories {
    maven { url 'https://jitpack.io' }
 }
 dependencies {
-   implementation 'com.github.SonicXChain:SonicX:develop-SNAPSHOT'
+   implementation 'com.github.SonicXChain:sonicx:develop-SNAPSHOT'
 }
 ```
   
@@ -116,7 +116,7 @@ dependencies {
 ...
 <dependency>
     <groupId>com.github.SonicXChain</groupId>
-    <artifactId>SonicX</artifactId>
+    <artifactId>sonicx</artifactId>
     <version>develop-SNAPSHOT</version><!--You can use any of the tag/branch name available-->
 </dependency>
 ```
@@ -129,7 +129,7 @@ dependencies {
 * Build in the Terminal
 
 ```bash
-cd SonicX
+cd sonicx
 ./gradlew build
 ```
 
@@ -152,7 +152,7 @@ https://github.com/SonicXChain/Documentation/blob/master/SOX/Solidity_and_Full_N
 
 ## Running a local node and connecting to the public testnet 
 
-* Use the [Testnet Config](https://github.com/SonicXChain/Deployment/blob/master/test_net_config.conf) or use the [SonicX Deployment Scripts](https://github.com/SonicXChain/Deployment) 
+* Use the [Testnet Config](https://github.com/SonicXChain/sonicx-deployment/blob/master/test_net_config.conf) or use the [SonicX Deployment Scripts](https://github.com/SonicXChain/sonicx-deployment) 
 
 
 ### Running a Super Representative Node for mainnet
@@ -160,9 +160,9 @@ https://github.com/SonicXChain/Documentation/blob/master/SOX/Solidity_and_Full_N
 * Use the executable JAR(Recommended way)
 
 ```bash
-java -jar FullNode.jar -p your private key --witness -c your config.conf(Example：/data/SonicX/config.conf)
+java -jar FullNode.jar -p your private key --witness -c your config.conf(Example：/data/sonicx/config.conf)
 Example:
-java -jar FullNode.jar -p 650950B193DDDDB35B6E48912DD28F7AB0E7140C1BFDEFD493348F02295BD812 --witness -c /data/SonicX/config.conf
+java -jar FullNode.jar -p 650950B193DDDDB35B6E48912DD28F7AB0E7140C1BFDEFD493348F02295BD812 --witness -c /data/sonicx/config.conf
 
 ```
 
@@ -211,9 +211,9 @@ Then observe whether block synchronization success，If synchronization successf
 
 ```bash
 cd build/libs
-java -jar FullNode.jar -p your private key --witness -c your config.conf (Example：/data/SonicX/config.conf)
+java -jar FullNode.jar -p your private key --witness -c your config.conf (Example：/data/sonicx/config.conf)
 Example:
-java -jar FullNode.jar -p 650950B193DDDDB35B6E48912DD28F7AB0E7140C1BFDEFD493348F02295BD812 --witness -c /data/SonicX/config.conf
+java -jar FullNode.jar -p 650950B193DDDDB35B6E48912DD28F7AB0E7140C1BFDEFD493348F02295BD812 --witness -c /data/sonicx/config.conf
 
 ```
   
@@ -355,6 +355,6 @@ Read the [Advanced Configurations](src/main/java/org/sonicx/core/config/README.m
 
 # Projects
 
-* [SONICX Protocol](https://github.com/SonicXChain/Protocol)
-* [Wallet Client](https://github.com/SonicXChain/WalletCli)
-* [Wallet Web](https://github.com/SonicX/WalletWeb)
+* [SONICX Protocol](https://github.com/SonicXChain/protocol)
+* [Wallet Client](https://github.com/SonicXChain/sonicx-wallet-cli)
+* [Wallet Web](https://github.com/SonicXChain/sonicx-wallet-web)

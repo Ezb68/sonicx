@@ -30,15 +30,13 @@
  * the License.
  */
 
-
-
 package org.sonicx.common.utils;
 
 import com.google.common.primitives.UnsignedBytes;
 
 /**
-* Utility code to do optimized byte-array comparison. This is borrowed and slightly modified from
-* Guava's {@link UnsignedBytes} class to be able to compare arrays that start at non-zero offsets.
+ * Utility code to do optimized byte-array comparison. This is borrowed and slightly modified from
+ * Guava's {@link UnsignedBytes} class to be able to compare arrays that start at non-zero offsets.
  */
 @SuppressWarnings("restriction")
 public abstract class FastByteComparisons {
@@ -80,6 +78,7 @@ public abstract class FastByteComparisons {
    * available.
    */
   private static class LexicographicalComparerHolder {
+
     static final String UNSAFE_COMPARER_NAME =
         LexicographicalComparerHolder.class.getName() +
             "$UnsafeComparer";

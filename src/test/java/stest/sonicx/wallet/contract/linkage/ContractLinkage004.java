@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.contract.linkage;
+package stest.tron.wallet.contract.linkage;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,17 +10,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI.AccountResourceMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.TransactionInfo;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.GrpcAPI.AccountResourceMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.TransactionInfo;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractLinkage004 {
@@ -123,7 +123,7 @@ public class ContractLinkage004 {
     logger.info("beforeNetLimit:" + beforeNetLimit);
     logger.info("beforeNetUsed:" + beforeNetUsed);
     logger.info("beforeFreeNetUsed:" + beforeFreeNetUsed);
-    contractName = "sonicxNative";
+    contractName = "tronNative";
     code = "608060405260008054600160a060020a03199081166201000117909155600180548216620100021"
         + "790556002805482166201000317905560038054821662010004179055600480548216620100051790556005"
         + "8054821662010006179055600680549091166201000717905534801561007757600080fd5b506104ce80610"
@@ -242,7 +242,7 @@ public class ContractLinkage004 {
 
   @Test(enabled = true)
   public void test2FeeLimitIsTooSmall() {
-    //When the fee limit is only short with 1 dole,failed.use freezeBalanceGetNet.
+    //When the fee limit is only short with 1 sun,failed.use freezeBalanceGetNet.
     maxFeeLimit = currentFee - 1L;
     AccountResourceMessage resourceInfo1 = PublicMethed.getAccountResource(linkage004Address,
         blockingStubFull);

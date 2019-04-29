@@ -180,15 +180,15 @@ public class ManagerTest {
     logger.info("------------");
     WitnessCapsule witnessCapsulef =
         new WitnessCapsule(
-            ByteString.copyFrom(ByteArray.fromHexString("0x0011")), "www.sonicx.org/first");
+            ByteString.copyFrom(ByteArray.fromHexString("0x0011")), "www.sonicx.net/first");
     witnessCapsulef.setIsJobs(true);
     WitnessCapsule witnessCapsules =
         new WitnessCapsule(
-            ByteString.copyFrom(ByteArray.fromHexString("0x0012")), "www.sonicx.org/second");
+            ByteString.copyFrom(ByteArray.fromHexString("0x0012")), "www.sonicx.net/second");
     witnessCapsules.setIsJobs(true);
     WitnessCapsule witnessCapsulet =
         new WitnessCapsule(
-            ByteString.copyFrom(ByteArray.fromHexString("0x0013")), "www.sonicx.org/three");
+            ByteString.copyFrom(ByteArray.fromHexString("0x0013")), "www.sonicx.net/three");
     witnessCapsulet.setIsJobs(false);
 
     dbManager
@@ -379,14 +379,14 @@ public class ManagerTest {
 
   @Test
   public void testLastHeadBlockIsMaintenance()
-          throws ValidateSignatureException, ContractValidateException, ContractExeException,
-          UnLinkedBlockException, ValidateScheduleException, BadItemException,
-          ItemNotFoundException, HeaderNotFound, AccountResourceInsufficientException,
-          TransactionExpirationException, TooBigTransactionException, DupTransactionException,
-          BadBlockException, TaposException, BadNumberBlockException, NonCommonBlockException,
-           ReceiptCheckErrException, VMIllegalException,
-          TooBigTransactionResultException {
-    Args.setParam(new String[] {"--witness"}, Constant.TEST_CONF);
+      throws ValidateSignatureException, ContractValidateException, ContractExeException,
+      UnLinkedBlockException, ValidateScheduleException, BadItemException,
+      ItemNotFoundException, HeaderNotFound, AccountResourceInsufficientException,
+      TransactionExpirationException, TooBigTransactionException, DupTransactionException,
+      BadBlockException, TaposException, BadNumberBlockException, NonCommonBlockException,
+      ReceiptCheckErrException, VMIllegalException,
+      TooBigTransactionResultException {
+    Args.setParam(new String[]{"--witness"}, Constant.TEST_CONF);
     long size = dbManager.getBlockStore().size();
     System.out.print("block store size:" + size + "\n");
     String key = "f31db24bfbd1a2ef19beddca0a0fa37632eded9ac666a05d3bd925f01dde1f62";

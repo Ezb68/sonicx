@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.dailybuild.manual;
+package stest.tron.wallet.dailybuild.manual;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,16 +13,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.GrpcAPI.NumberMessage;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.api.WalletSolidityGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import org.sonicx.protos.Protocol.Block;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import org.tron.api.GrpcAPI;
+import org.tron.api.GrpcAPI.NumberMessage;
+import org.tron.api.WalletGrpc;
+import org.tron.api.WalletSolidityGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import org.tron.protos.Protocol.Block;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
 
 @Slf4j
 public class WalletTestBlock001 {
@@ -36,11 +36,18 @@ public class WalletTestBlock001 {
   private String soliditynode = Configuration.getByPath("testng.conf")
       .getStringList("solidityNode.ip.list").get(0);
 
+  /**
+   * constructor.
+   */
   @BeforeSuite
   public void beforeSuite() {
     Wallet wallet = new Wallet();
     Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   }
+
+  /**
+   * constructor.
+   */
 
   @BeforeClass
   public void beforeClass() {
@@ -55,7 +62,10 @@ public class WalletTestBlock001 {
     blockingStubSolidity = WalletSolidityGrpc.newBlockingStub(channelSolidity);
   }
 
-  @Test(enabled = true,description = "Get now block from fullnode")
+  /**
+   * constructor.
+   */
+  @Test(enabled = true, description = "Get now block from fullnode")
   public void testCurrentBlock() {
     Block currentBlock = blockingStubFull.getNowBlock(GrpcAPI.EmptyMessage.newBuilder().build());
     Assert.assertTrue(currentBlock.hasBlockHeader());
@@ -78,7 +88,10 @@ public class WalletTestBlock001 {
     newBlock.getTransactionsList();
   }
 
-  @Test(enabled = true,description = "Get now block from solidity")
+  /**
+   * constructor.
+   */
+  @Test(enabled = true, description = "Get now block from solidity")
   public void testCurrentBlockFromSolidity() {
     Block currentBlock = blockingStubSolidity
         .getNowBlock(GrpcAPI.EmptyMessage.newBuilder().build());
@@ -92,6 +105,7 @@ public class WalletTestBlock001 {
     logger.info("test getcurrentblock in soliditynode is " + Long.toString(currentBlock
         .getBlockHeader().getRawData().getNumber()));
   }
+
   /**
    * constructor.
    */
@@ -142,6 +156,7 @@ public class WalletTestBlock001 {
   public byte[] getAddress(ECKey ecKey) {
     return ecKey.getAddress();
   }
+
   /**
    * constructor.
    */
@@ -151,6 +166,7 @@ public class WalletTestBlock001 {
     Account request = Account.newBuilder().setAddress(addressBs).build();
     return blockingStubFull.getAccount(request);
   }
+
   /**
    * constructor.
    */

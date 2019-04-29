@@ -2,9 +2,11 @@ package org.sonicx.core.config;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+import org.rocksdb.RocksDB;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import org.sonicx.core.config.args.Args;
@@ -12,6 +14,8 @@ import org.sonicx.core.db.RevokingDatabase;
 import org.sonicx.core.db.RevokingStore;
 import org.sonicx.core.db.TransactionCache;
 import org.sonicx.core.db.api.IndexHelper;
+import org.sonicx.core.db.backup.BackupRocksDBAspect;
+import org.sonicx.core.db.backup.NeedBeanCondition;
 import org.sonicx.core.db2.core.SnapshotManager;
 import org.sonicx.core.services.interfaceOnSolidity.RpcApiServiceOnSolidity;
 import org.sonicx.core.services.interfaceOnSolidity.http.solidity.HttpApiOnSolidityService;
@@ -20,6 +24,10 @@ import org.sonicx.core.services.interfaceOnSolidity.http.solidity.HttpApiOnSolid
 @Configuration
 @Import(CommonConfig.class)
 public class DefaultConfig {
+
+  static {
+    RocksDB.loadLibrary();
+  }
 
   @Autowired
   ApplicationContext appCtx;
@@ -43,14 +51,21 @@ public class DefaultConfig {
   @Bean
   public RevokingDatabase revokingDatabase() {
     int dbVersion = Args.getInstance().getStorage().getDbVersion();
-    if (dbVersion == 1) {
-      return RevokingStore.getInstance();
-    } else if (dbVersion == 2) {
-      return new SnapshotManager();
-    } else {
-      throw new RuntimeException("db version is error.");
+    RevokingDatabase revokingDatabase;
+    try {
+      if (dbVersion == 1) {
+        revokingDatabase = RevokingStore.getInstance();
+      } else if (dbVersion == 2) {
+        revokingDatabase = new SnapshotManager();
+      } else {
+        throw new RuntimeException("db version is error.");
+      }
+      return revokingDatabase;
+    } finally {
+      logger.info("key-value data source created.");
     }
   }
+
 
   @Bean
   public RpcApiServiceOnSolidity getRpcApiServiceOnSolidity() {
@@ -84,4 +99,9 @@ public class DefaultConfig {
     return null;
   }
 
+  @Bean
+  @Conditional(NeedBeanCondition.class)
+  public BackupRocksDBAspect backupRocksDBAspect() {
+    return new BackupRocksDBAspect();
+  }
 }

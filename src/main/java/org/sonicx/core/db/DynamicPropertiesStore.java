@@ -160,7 +160,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
   private static final byte[] TOKEN_UPDATE_DONE = "TOKEN_UPDATE_DONE".getBytes();
 
   //This value is only allowed to be 0, 1, -1
-  private static final byte[] ALLOW_SVM_TRANSFER_SRC10 = "ALLOW_SVM_TRANSFER_SRC10".getBytes();
+  private static final byte[] ALLOW_TVM_TRANSFER_TRC10 = "ALLOW_TVM_TRANSFER_TRC10".getBytes();
 
   private static final byte[] AVAILABLE_CONTRACT_TYPE = "AVAILABLE_CONTRACT_TYPE".getBytes();
   private static final byte[] ACTIVE_DEFAULT_OPERATIONS = "ACTIVE_DEFAULT_OPERATIONS".getBytes();
@@ -365,7 +365,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getEnergyFee();
     } catch (IllegalArgumentException e) {
-      this.saveEnergyFee(100L);// 100 dole per energy
+      this.saveEnergyFee(100L);// 100 sun per energy
     }
 
     try {
@@ -395,7 +395,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getTransactionFee();
     } catch (IllegalArgumentException e) {
-      this.saveTransactionFee(10L); // 10dole/byte
+      this.saveTransactionFee(10L); // 10sun/byte
     }
 
     try {
@@ -415,8 +415,6 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     } catch (IllegalArgumentException e) {
       this.saveMultiSignFee(1000000L);
     }
-
-
 
     try {
       this.getExchangeCreateFee();
@@ -451,7 +449,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getTotalStoragePool();
     } catch (IllegalArgumentException e) {
-      this.saveTotalStoragePool(100_000_000_000000L);
+      this.saveTotalStoragePool(100_000_000_000_000L);
     }
 
     try {
@@ -485,9 +483,9 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     }
 
     try {
-      this.getAllowSvmTransferSrc10();
+      this.getAllowTvmTransferTrc10();
     } catch (IllegalArgumentException e) {
-      this.saveAllowSvmTransferSrc10(Args.getInstance().getAllowSvmTransferSrc10());
+      this.saveAllowTvmTransferTrc10(Args.getInstance().getAllowTvmTransferTrc10());
     }
 
     try {
@@ -505,7 +503,6 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
       byte[] bytes = ByteArray.fromHexString(contractType);
       this.saveActiveDefaultOperations(bytes);
     }
-
 
     try {
       this.getAllowSameTokenName();
@@ -1086,7 +1083,6 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
   }
 
 
-
   public void saveExchangeCreateFee(long fee) {
     this.put(EXCHANGE_CREATE_FEE,
         new BytesCapsule(ByteArray.fromLong(fee)));
@@ -1152,9 +1148,9 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
             () -> new IllegalArgumentException("not found TOTAL_CREATE_WITNESS_COST"));
   }
 
-  public void saveTotalStoragePool(long sox) {
+  public void saveTotalStoragePool(long trx) {
     this.put(TOTAL_STORAGE_POOL,
-        new BytesCapsule(ByteArray.fromLong(sox)));
+        new BytesCapsule(ByteArray.fromLong(trx)));
   }
 
   public long getTotalStoragePool() {
@@ -1165,9 +1161,9 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
             () -> new IllegalArgumentException("not found TOTAL_STORAGE_POOL"));
   }
 
-  public void saveTotalStorageTax(long sox) {
+  public void saveTotalStorageTax(long trx) {
     this.put(TOTAL_STORAGE_TAX,
-        new BytesCapsule(ByteArray.fromLong(sox)));
+        new BytesCapsule(ByteArray.fromLong(trx)));
   }
 
   public long getTotalStorageTax() {
@@ -1243,17 +1239,17 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
             () -> new IllegalArgumentException("not found ALLOW_ADAPTIVE_ENERGY"));
   }
 
-  public void saveAllowSvmTransferSrc10(long value) {
-    this.put(ALLOW_SVM_TRANSFER_SRC10,
+  public void saveAllowTvmTransferTrc10(long value) {
+    this.put(ALLOW_TVM_TRANSFER_TRC10,
         new BytesCapsule(ByteArray.fromLong(value)));
   }
 
-  public long getAllowSvmTransferSrc10() {
-    return Optional.ofNullable(getUnchecked(ALLOW_SVM_TRANSFER_SRC10))
+  public long getAllowTvmTransferTrc10() {
+    return Optional.ofNullable(getUnchecked(ALLOW_TVM_TRANSFER_TRC10))
         .map(BytesCapsule::getData)
         .map(ByteArray::toLong)
         .orElseThrow(
-            () -> new IllegalArgumentException("not found ALLOW_SVM_TRANSFER_SRC10"));
+            () -> new IllegalArgumentException("not found ALLOW_TVM_TRANSFER_TRC10"));
   }
 
   public void saveAvailableContractType(byte[] value) {
@@ -1280,7 +1276,6 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
         .orElseThrow(
             () -> new IllegalArgumentException("not found ACTIVE_DEFAULT_OPERATIONS"));
   }
-
 
 
   public boolean supportDR() {
@@ -1528,14 +1523,14 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     );
   }
 
-  //The unit is sox
+  //The unit is trx
   public void addTotalNetWeight(long amount) {
     long totalNetWeight = getTotalNetWeight();
     totalNetWeight += amount;
     saveTotalNetWeight(totalNetWeight);
   }
 
-  //The unit is sox
+  //The unit is trx
   public void addTotalEnergyWeight(long amount) {
     long totalEnergyWeight = getTotalEnergyWeight();
     totalEnergyWeight += amount;

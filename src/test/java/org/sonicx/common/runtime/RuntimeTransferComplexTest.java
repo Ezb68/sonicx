@@ -1,6 +1,6 @@
 package org.sonicx.common.runtime;
 
-import static org.sonicx.common.runtime.utils.MUtil.convertToSonicxAddress;
+import static org.sonicx.common.runtime.utils.MUtil.convertToTronAddress;
 
 import java.io.File;
 import lombok.extern.slf4j.Slf4j;
@@ -10,7 +10,7 @@ import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.SonicxApplicationContext;
+import org.sonicx.common.application.TronApplicationContext;
 import org.testng.Assert;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.FileUtil;
@@ -32,7 +32,7 @@ public class RuntimeTransferComplexTest {
 
   private static Runtime runtime;
   private static Manager dbManager;
-  private static SonicxApplicationContext context;
+  private static TronApplicationContext context;
   private static Application appT;
   private static DepositImpl deposit;
   private static final String dbPath = "output_RuntimeTransferComplexTest";
@@ -41,7 +41,7 @@ public class RuntimeTransferComplexTest {
 
   static {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug"}, Constant.TEST_CONF);
-    context = new SonicxApplicationContext(DefaultConfig.class);
+    context = new TronApplicationContext(DefaultConfig.class);
     appT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
     TRANSFER_TO = Wallet.getAddressPreFixString() + "548794500882809695a8a687866e76d4271a1abc";
@@ -67,7 +67,7 @@ public class RuntimeTransferComplexTest {
    * payable{} }
    */
   @Test
-  public void TransferSoxToContractAccountWhenDeployAContract()
+  public void TransferTrxToContractAccountWhenDeployAContract()
       throws ContractExeException, ReceiptCheckErrException, ContractValidateException, VMIllegalException {
 
     String contractName = "TransferWhenDeployContract";
@@ -78,10 +78,10 @@ public class RuntimeTransferComplexTest {
     long fee = 100000000;
     long consumeUserResourcePercent = 0;
 
-    Transaction trx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction trx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
         contractName, address, ABI, code, value, fee, consumeUserResourcePercent, null);
     byte[] contractAddress = Wallet.generateContractAddress(trx);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(trx, deposit, null);
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(trx, deposit, null);
     Assert.assertNull(runtime.getRuntimeError());
     Assert.assertEquals(dbManager.getAccountStore().get(contractAddress).getBalance(), 100);
     recoverDeposit();
@@ -93,7 +93,7 @@ public class RuntimeTransferComplexTest {
    */
 
   @Test
-  public void TransferSoxToContractAccountFailIfNotPayable()
+  public void TransferTrxToContractAccountFailIfNotPayable()
       throws ContractExeException, ReceiptCheckErrException, ContractValidateException, VMIllegalException {
 
     String contractName = "TransferWhenDeployContract";
@@ -106,10 +106,10 @@ public class RuntimeTransferComplexTest {
     long fee = 100000000;
     long consumeUserResourcePercent = 0;
 
-    Transaction trx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction trx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
         contractName, address, ABI, code, value, fee, consumeUserResourcePercent, null);
     byte[] contractAddress = Wallet.generateContractAddress(trx);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(trx, deposit, null);
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(trx, deposit, null);
     Assert.assertNotNull(runtime.getRuntimeError().contains("REVERT"));
     Assert.assertNull(dbManager.getAccountStore().get(contractAddress));
     recoverDeposit();
@@ -141,21 +141,21 @@ public class RuntimeTransferComplexTest {
     long transferToInitBalance = dbManager.getAccountStore().get(Hex.decode(TRANSFER_TO))
         .getBalance();
 
-    byte[] contractAddress = SVMTestUtils
+    byte[] contractAddress = TVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
 
     String selectorStr = "transferTo(address)";
     String params = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData = SVMTestUtils.parseABI(selectorStr, params);
+    byte[] triggerData = TVMTestUtils.parseABI(selectorStr, params);
 
     long triggerCallValue = 100;
 
-    Transaction transaction = SVMTestUtils
+    Transaction transaction = TVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(address, contractAddress, triggerData,
             triggerCallValue, feeLimit);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction, deposit, null);
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction, deposit, null);
     Assert.assertNull(runtime.getRuntimeError());
     Assert.assertEquals(dbManager.getAccountStore().get(contractAddress).getBalance(), 100 - 5);
     Assert.assertEquals(dbManager.getAccountStore().get(Hex.decode(TRANSFER_TO)).getBalance(),
@@ -217,30 +217,30 @@ public class RuntimeTransferComplexTest {
     //==================================1. testCallTransferToInCalledContract====================================
     String selectorStr1 = "testCallTransferToInCalledContract(address)";
     String params1 = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData1 = SVMTestUtils.parseABI(selectorStr1, params1);
+    byte[] triggerData1 = TVMTestUtils.parseABI(selectorStr1, params1);
 
-    Transaction transaction1 = SVMTestUtils
+    Transaction transaction1 = TVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(msgSenderAddress, callerAddress,
             triggerData1, triggerCallValue, feeLimit);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction1, deposit, null);
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction1, deposit, null);
     Assert.assertNull(runtime.getRuntimeError());
     Assert.assertEquals(dbManager.getAccountStore().get(callerAddress).getBalance(),
         1000);  //Not changed
     Assert.assertEquals(dbManager.getAccountStore().get(calledAddress).getBalance(),
-        1000 - 5);  //Transfer 5 dole to TransferTo
+        1000 - 5);  //Transfer 5 sun to TransferTo
     Assert.assertEquals(dbManager.getAccountStore().get(Hex.decode(TRANSFER_TO)).getBalance(),
-        transferToInitBalance + 5); // get 5 dole from calledAddress
+        transferToInitBalance + 5); // get 5 sun from calledAddress
     recoverDeposit();
 
     //==================================2. testRevertForCall =================================================
     String selectorStr2 = "testRevertForCall(address)";
     String params2 = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData2 = SVMTestUtils.parseABI(selectorStr2, params2);
+    byte[] triggerData2 = TVMTestUtils.parseABI(selectorStr2, params2);
 
-    Transaction transaction2 = SVMTestUtils
+    Transaction transaction2 = TVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(msgSenderAddress, callerAddress,
             triggerData2, triggerCallValue, feeLimit);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction2, deposit, null);
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction2, deposit, null);
     Assert.assertTrue(runtime.getRuntimeError().contains("REVERT"));
     Assert.assertEquals(dbManager.getAccountStore().get(callerAddress).getBalance(),
         1000); //Not changed
@@ -253,12 +253,12 @@ public class RuntimeTransferComplexTest {
     //==================================3. testExceptionForCall =================================================
     String selectorStr3 = "testExceptionForCall(address)";
     String params3 = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData3 = SVMTestUtils.parseABI(selectorStr3, params3);
+    byte[] triggerData3 = TVMTestUtils.parseABI(selectorStr3, params3);
 
-    Transaction transaction3 = SVMTestUtils
+    Transaction transaction3 = TVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(msgSenderAddress, callerAddress,
             triggerData3, triggerCallValue, feeLimit);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction3, deposit, null);
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction3, deposit, null);
     Assert.assertTrue(runtime.getRuntimeError().contains("Invalid operation code: opCode[fe];"));
     Assert.assertEquals(dbManager.getAccountStore().get(callerAddress).getBalance(),
         1000);  //Not changed
@@ -271,13 +271,13 @@ public class RuntimeTransferComplexTest {
     //==================================4. testTransferToInCreatedContract =================================================
     String selectorStr4 = "testTransferToInCreatedContract(address)";
     String params4 = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData4 = SVMTestUtils.parseABI(selectorStr4, params4);
+    byte[] triggerData4 = TVMTestUtils.parseABI(selectorStr4, params4);
 
-    Transaction transaction4 = SVMTestUtils
+    Transaction transaction4 = TVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(msgSenderAddress, callerAddress,
             triggerData4, triggerCallValue, feeLimit);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction4, deposit, null);
-    byte[] createdAddress = convertToSonicxAddress(
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction4, deposit, null);
+    byte[] createdAddress = convertToTronAddress(
         new DataWord(runtime.getResult().getHReturn()).getLast20Bytes());
     Assert.assertNull(runtime.getRuntimeError());
     Assert.assertEquals(dbManager.getAccountStore().get(callerAddress).getBalance(),
@@ -291,13 +291,13 @@ public class RuntimeTransferComplexTest {
     //==================================5. testRevertForCreate =================================================
     String selectorStr5 = "testRevertForCreate(address)";
     String params5 = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData5 = SVMTestUtils.parseABI(selectorStr5, params5);
+    byte[] triggerData5 = TVMTestUtils.parseABI(selectorStr5, params5);
 
-    Transaction transaction5 = SVMTestUtils
+    Transaction transaction5 = TVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(msgSenderAddress, callerAddress,
             triggerData5, triggerCallValue, feeLimit);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction5, deposit, null);
-    byte[] createdAddress2 = convertToSonicxAddress(
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction5, deposit, null);
+    byte[] createdAddress2 = convertToTronAddress(
         new DataWord(runtime.getResult().getHReturn()).getLast20Bytes());
     Assert.assertTrue(Hex.toHexString(new DataWord(createdAddress2).getLast20Bytes())
         .equalsIgnoreCase("0000000000000000000000000000000000000000"));
@@ -313,13 +313,13 @@ public class RuntimeTransferComplexTest {
     //==================================5. testExceptionForCreate =================================================
     String selectorStr6 = "testExceptionForCreate(address)";
     String params6 = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData6 = SVMTestUtils.parseABI(selectorStr6, params6);
+    byte[] triggerData6 = TVMTestUtils.parseABI(selectorStr6, params6);
 
-    Transaction transaction6 = SVMTestUtils
+    Transaction transaction6 = TVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(msgSenderAddress, callerAddress,
             triggerData6, triggerCallValue, feeLimit);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction6, deposit, null);
-    byte[] createdAddress3 = convertToSonicxAddress(
+    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction6, deposit, null);
+    byte[] createdAddress3 = convertToTronAddress(
         new DataWord(runtime.getResult().getHReturn()).getLast20Bytes());
     Assert.assertTrue(Hex.toHexString(new DataWord(createdAddress2).getLast20Bytes())
         .equalsIgnoreCase("0000000000000000000000000000000000000000"));
@@ -355,7 +355,7 @@ public class RuntimeTransferComplexTest {
     long feeLimit = 100000000;
     long consumeUserResourcePercent = 0;
 
-    byte[] contractAddress = SVMTestUtils
+    byte[] contractAddress = TVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -409,7 +409,7 @@ public class RuntimeTransferComplexTest {
     long value = 1000;
     long feeLimit = 100000000;
     long consumeUserResourcePercent = 0;
-    byte[] contractAddress = SVMTestUtils
+    byte[] contractAddress = TVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, callerAddress, callerABI,
             callerCode, value, feeLimit, consumeUserResourcePercent, null,
             deposit, null);

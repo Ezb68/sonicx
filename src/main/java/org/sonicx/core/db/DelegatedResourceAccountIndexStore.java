@@ -8,7 +8,7 @@ import org.sonicx.core.capsule.DelegatedResourceAccountIndexCapsule;
 
 @Component
 public class DelegatedResourceAccountIndexStore extends
-    SonicxStoreWithRevoking<DelegatedResourceAccountIndexCapsule> {
+  SonicxStoreWithRevoking<DelegatedResourceAccountIndexCapsule> {
 
   @Autowired
   public DelegatedResourceAccountIndexStore(@Value("DelegatedResourceAccountIndex") String dbName) {

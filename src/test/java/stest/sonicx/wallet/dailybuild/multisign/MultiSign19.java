@@ -1,6 +1,6 @@
-package stest.sonicx.wallet.dailybuild.multisign;
+package stest.tron.wallet.dailybuild.multisign;
 
-import static org.sonicx.api.GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR;
+import static org.tron.api.GrpcAPI.Return.response_code.CONTRACT_VALIDATE_ERROR;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -13,18 +13,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.GrpcAPI;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Transaction.Contract.ContractType;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.WalletClient;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
-import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.tron.api.GrpcAPI;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Transaction.Contract.ContractType;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.WalletClient;
+import stest.tron.wallet.common.client.utils.PublicMethed;
+import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class MultiSign19 {
@@ -191,9 +191,9 @@ public class MultiSign19 {
     final byte[] ownerAddress = ecKey1.getAddress();
     final String ownerKey = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
 
-    long needCoin = updateAccountPermissionFee + 1000000;
+    long needCoin = updateAccountPermissionFee;
 
-    Assert.assertTrue(PublicMethed.sendcoin(ownerAddress, needCoin, fromAddress,
+    Assert.assertTrue(PublicMethed.sendcoin(ownerAddress, needCoin + 1000000, fromAddress,
         testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
@@ -246,6 +246,9 @@ public class MultiSign19 {
         .sendcoinWithPermissionId(fromAddress, 1_000000, ownerAddress, 2, ownerKey,
             blockingStubFull,
             activePermissionKeys.toArray(new String[activePermissionKeys.size()])));
+
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     Long balanceAfter = PublicMethed.queryAccount(ownerAddress, blockingStubFull)
         .getBalance();

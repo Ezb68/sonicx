@@ -2,7 +2,7 @@ package org.sonicx.common.runtime.vm;
 
 
 import static junit.framework.TestCase.fail;
-import static org.sonicx.common.runtime.utils.MUtil.convertToSonicxAddress;
+import static org.sonicx.common.runtime.utils.MUtil.convertToTronAddress;
 
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
@@ -19,7 +19,7 @@ import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Hex;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.SonicxApplicationContext;
+import org.sonicx.common.application.TronApplicationContext;
 import org.sonicx.common.runtime.vm.PrecompiledContracts.PrecompiledContract;
 import org.sonicx.common.runtime.vm.program.ProgramResult;
 import org.sonicx.common.storage.Deposit;
@@ -64,12 +64,12 @@ public class PrecompiledContractsTest {
       "0000000000000000000000000000000000000000000000000000000000010006");
   private static final DataWord proposalDeleteAddr = new DataWord(
       "0000000000000000000000000000000000000000000000000000000000010007");
-  private static final DataWord convertFromSonicxBytesAddressAddr = new DataWord(
+  private static final DataWord convertFromTronBytesAddressAddr = new DataWord(
       "0000000000000000000000000000000000000000000000000000000000010008");
-  private static final DataWord convertFromSonicxBase58AddressAddr = new DataWord(
+  private static final DataWord convertFromTronBase58AddressAddr = new DataWord(
       "0000000000000000000000000000000000000000000000000000000000010009");
 
-  private static SonicxApplicationContext context;
+  private static TronApplicationContext context;
   private static Application appT;
   private static Manager dbManager;
   private static final String dbPath = "output_PrecompiledContracts_test";
@@ -78,7 +78,7 @@ public class PrecompiledContractsTest {
   private static final String WITNESS_NAME = "witness";
   private static final String WITNESS_ADDRESS;
   private static final String WITNESS_ADDRESS_BASE = "548794500882809695a8a687866e76d4271a1abc";
-  private static final String URL = "https://wwww.sonicx.org";
+  private static final String URL = "https://sonicx.org";
 
   // withdraw
   private static final long initBalance = 10_000_000_000L;
@@ -86,7 +86,7 @@ public class PrecompiledContractsTest {
 
   static {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug"}, Constant.TEST_CONF);
-    context = new SonicxApplicationContext(DefaultConfig.class);
+    context = new TronApplicationContext(DefaultConfig.class);
     appT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
     WITNESS_ADDRESS = Wallet.getAddressPreFixString() + WITNESS_ADDRESS_BASE;
@@ -151,7 +151,7 @@ public class PrecompiledContractsTest {
 
   private PrecompiledContract createPrecompiledContract(DataWord addr, String ownerAddress) {
     PrecompiledContract contract = PrecompiledContracts.getContractForAddress(addr);
-    contract.setCallerAddress(convertToSonicxAddress(Hex.decode(ownerAddress)));
+    contract.setCallerAddress(convertToTronAddress(Hex.decode(ownerAddress)));
     contract.setDeposit(DepositImpl.createRoot(dbManager));
     ProgramResult programResult = new ProgramResult();
     contract.setResult(programResult);
@@ -307,14 +307,14 @@ public class PrecompiledContractsTest {
 
 
   @Test
-  public void convertFromSonicxBytesAddressNativeTest() {
-//    PrecompiledContract contract = createPrecompiledContract(convertFromSonicxBytesAddressAddr, WITNESS_ADDRESS);
+  public void convertFromTronBytesAddressNativeTest() {
+//    PrecompiledContract contract = createPrecompiledContract(convertFromTronBytesAddressAddr, WITNESS_ADDRESS);
 //    byte[] solidityAddress = contract.execute(new DataWord(WITNESS_ADDRESS).getData()).getRight();
 //    Assert.assertArrayEquals(solidityAddress,new DataWord(Hex.decode(WITNESS_ADDRESS_BASE)).getData());
   }
 
   //@Test
-  public void convertFromSonicxBase58AddressNative() {
+  public void convertFromTronBase58AddressNative() {
     // 27WnTihwXsqCqpiNedWvtKCZHsLjDt4Hfmf  TestNet address
     DataWord word1 = new DataWord(
         "3237576e54696877587371437170694e65645776744b435a48734c6a44743448");
@@ -324,7 +324,7 @@ public class PrecompiledContractsTest {
     byte[] data = new byte[35];
     System.arraycopy(word1.getData(), 0, data, 0, word1.getData().length);
     System.arraycopy(Arrays.copyOfRange(word2.getData(), 0, 3), 0, data, word1.getData().length, 3);
-    PrecompiledContract contract = createPrecompiledContract(convertFromSonicxBase58AddressAddr,
+    PrecompiledContract contract = createPrecompiledContract(convertFromTronBase58AddressAddr,
         WITNESS_ADDRESS);
 
     byte[] solidityAddress = contract.execute(data).getRight();

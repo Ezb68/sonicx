@@ -1,4 +1,4 @@
-package stest.sonicx.wallet.fulltest;
+package stest.tron.wallet.fulltest;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -9,15 +9,15 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.sonicx.api.WalletGrpc;
-import org.sonicx.common.crypto.ECKey;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Utils;
-import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.Account;
-import stest.sonicx.wallet.common.client.Configuration;
-import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import org.tron.api.WalletGrpc;
+import org.tron.common.crypto.ECKey;
+import org.tron.common.utils.ByteArray;
+import org.tron.common.utils.Utils;
+import org.tron.core.Wallet;
+import org.tron.protos.Protocol.Account;
+import stest.tron.wallet.common.client.Configuration;
+import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import stest.tron.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class Creatasset {
@@ -29,7 +29,7 @@ public class Creatasset {
       "6815B367FDDE637E53E9ADC8E69424E07724333C9A2B973CFA469975E20753FC";
 
   private final byte[] fromAddress = PublicMethed.getFinalAddress(testKey002);
-  private final byte[] toAddress   = PublicMethed.getFinalAddress(testKey003);
+  private final byte[] toAddress = PublicMethed.getFinalAddress(testKey003);
 
   private static final String tooLongDescription =
       "1qazxswedcvqazxswedcvqazxswedcvqazxswedcvqazxswedcvqazxswedcvqa"
@@ -91,7 +91,7 @@ public class Creatasset {
   }
 
   //@Test(enabled = false)
-  @Test(enabled = false,threadPoolSize = 20, invocationCount = 20)
+  @Test(enabled = false, threadPoolSize = 20, invocationCount = 20)
   public void createAssetissue() throws InterruptedException {
 
     ECKey ecKey1 = new ECKey(Utils.getRandom());
@@ -111,7 +111,6 @@ public class Creatasset {
     Boolean participateRet = false;
     Random rand = new Random();
     Integer randNum;
-
 
     while (fromAccountInfo.getBalance() > 1025000000) {
       randNum = rand.nextInt(4);
@@ -189,6 +188,7 @@ public class Creatasset {
 
     }
   }
+
   /**
    * constructor.
    */

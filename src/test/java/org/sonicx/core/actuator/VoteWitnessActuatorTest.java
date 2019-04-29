@@ -43,7 +43,7 @@ public class VoteWitnessActuatorTest {
   private static final String OWNER_ADDRESS;
   private static final String WITNESS_NAME = "witness";
   private static final String WITNESS_ADDRESS;
-  private static final String URL = "https://wwww.sonicx.org";
+  private static final String URL = "https://sonicx.org";
   private static final String ADDRESS_INVALID = "aaaa";
   private static final String WITNESS_ADDRESS_NOACCOUNT;
   private static final String OWNER_ADDRESS_NOACCOUNT;

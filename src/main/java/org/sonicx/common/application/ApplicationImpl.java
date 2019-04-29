@@ -7,7 +7,7 @@ import org.sonicx.common.logsfilter.EventPluginLoader;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.db.BlockStore;
 import org.sonicx.core.db.Manager;
-import org.sonicx.core.net.TronNetService;
+import org.sonicx.core.net.SonicxNetService;
 
 @Slf4j(topic = "app")
 @Component
@@ -17,7 +17,7 @@ public class ApplicationImpl implements Application {
   private ServiceContainer services;
 
   @Autowired
-  private TronNetService tronNetService;
+  private SonicxNetService sonicxNetService;
 
   @Autowired
   private Manager dbManager;
@@ -50,13 +50,13 @@ public class ApplicationImpl implements Application {
    * start up the app.
    */
   public void startup() {
-    tronNetService.start();
+    sonicxNetService.start();
   }
 
   @Override
   public void shutdown() {
     logger.info("******** begin to shutdown ********");
-    tronNetService.close();
+    sonicxNetService.close();
     synchronized (dbManager.getRevokingStore()) {
       closeRevokingStore();
       closeAllStore();
