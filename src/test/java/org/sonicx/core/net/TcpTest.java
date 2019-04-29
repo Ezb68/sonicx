@@ -56,7 +56,7 @@ public class TcpTest {
     channelManager = context.getBean(ChannelManager.class);
     manager = context.getBean(Manager.class);
     pool = context.getBean(SyncPool.class);
-    sonicxNetDelegate = context.getBean(sonicxNetDelegate.class);
+    sonicxNetDelegate = context.getBean(SonicxNetDelegate.class);
   }
 
   private enum TestType {

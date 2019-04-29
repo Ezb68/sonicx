@@ -40,7 +40,7 @@ import stest.sonicx.wallet.common.client.utils.AbiUtil;
  * commands.
  */
 @Slf4j
-public class TVMTestUtils {
+public class SVMTestUtils {
 
   public static byte[] deployContractWholeProcessReturnContractAddress(String contractName,
       byte[] callerAddress,
@@ -160,7 +160,7 @@ public class TVMTestUtils {
   }
 
   /**
-   * use given input Transaction,deposit,block and execute TVM  (for both Deploy and Trigger
+   * use given input Transaction,deposit,block and execute SVM  (for both Deploy and Trigger
    * contracts)
    */
 
@@ -213,21 +213,21 @@ public class TVMTestUtils {
   }
 
 
-  public static TVMTestResult deployContractAndReturnTVMTestResult(String contractName,
-      byte[] callerAddress,
-      String ABI, String code, long value, long feeLimit, long consumeUserResourcePercent,
-      String libraryAddressPair, Manager dbManager, BlockCapsule blockCap)
+  public static SVMTestResult deployContractAndReturnSVMTestResult(String contractName,
+                                                                   byte[] callerAddress,
+                                                                   String ABI, String code, long value, long feeLimit, long consumeUserResourcePercent,
+                                                                   String libraryAddressPair, Manager dbManager, BlockCapsule blockCap)
       throws ContractExeException, ReceiptCheckErrException, ContractValidateException, VMIllegalException {
     Transaction trx = generateDeploySmartContractAndGetTransaction(contractName, callerAddress, ABI,
         code, value, feeLimit, consumeUserResourcePercent, libraryAddressPair);
 
     byte[] contractAddress = Wallet.generateContractAddress(trx);
 
-    return processTransactionAndReturnTVMTestResult(trx, dbManager, blockCap)
+    return processTransactionAndReturnSVMTestResult(trx, dbManager, blockCap)
         .setContractAddress(Wallet.generateContractAddress(trx));
   }
 
-  public static TVMTestResult deployContractWithCreatorEnergyLimitAndReturnTVMTestResult(
+  public static SVMTestResult deployContractWithCreatorEnergyLimitAndReturnSVMTestResult(
       String contractName,
       byte[] callerAddress,
       String ABI, String code, long value, long feeLimit, long consumeUserResourcePercent,
@@ -239,23 +239,23 @@ public class TVMTestUtils {
 
     byte[] contractAddress = Wallet.generateContractAddress(trx);
 
-    return processTransactionAndReturnTVMTestResult(trx, dbManager, blockCap)
+    return processTransactionAndReturnSVMTestResult(trx, dbManager, blockCap)
         .setContractAddress(Wallet.generateContractAddress(trx));
   }
 
-  public static TVMTestResult triggerContractAndReturnTVMTestResult(byte[] callerAddress,
-      byte[] contractAddress, byte[] data, long callValue, long feeLimit, Manager dbManager,
-      BlockCapsule blockCap)
+  public static SVMTestResult triggerContractAndReturnSVMTestResult(byte[] callerAddress,
+                                                                    byte[] contractAddress, byte[] data, long callValue, long feeLimit, Manager dbManager,
+                                                                    BlockCapsule blockCap)
       throws ContractExeException, ReceiptCheckErrException, ContractValidateException, VMIllegalException {
     Transaction trx = generateTriggerSmartContractAndGetTransaction(callerAddress, contractAddress,
         data, callValue, feeLimit);
-    return processTransactionAndReturnTVMTestResult(trx, dbManager, blockCap)
+    return processTransactionAndReturnSVMTestResult(trx, dbManager, blockCap)
         .setContractAddress(contractAddress);
   }
 
 
-  public static TVMTestResult processTransactionAndReturnTVMTestResult(Transaction trx,
-      Manager dbManager, BlockCapsule blockCap)
+  public static SVMTestResult processTransactionAndReturnSVMTestResult(Transaction trx,
+                                                                       Manager dbManager, BlockCapsule blockCap)
       throws ContractExeException, ContractValidateException, ReceiptCheckErrException, VMIllegalException {
     TransactionCapsule trxCap = new TransactionCapsule(trx);
     TransactionTrace trace = new TransactionTrace(trxCap, dbManager);
@@ -267,7 +267,7 @@ public class TVMTestUtils {
 
     trace.finalization();
 
-    return new TVMTestResult(trace.getRuntime(), trace.getReceipt(), null);
+    return new SVMTestResult(trace.getRuntime(), trace.getReceipt(), null);
   }
 
   public static CreateSmartContract buildCreateSmartContract(String contractName,

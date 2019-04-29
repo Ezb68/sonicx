@@ -1,9 +1,9 @@
-package stest.tron.wallet.dailybuild.multisign;
+package stest.sonicx.wallet.dailybuild.multisign;
 
 import static org.hamcrest.CoreMatchers.containsString;
-import static org.tron.api.GrpcAPI.TransactionSignWeight.Result.response_code.ENOUGH_PERMISSION;
-import static org.tron.api.GrpcAPI.TransactionSignWeight.Result.response_code.NOT_ENOUGH_PERMISSION;
-import static org.tron.api.GrpcAPI.TransactionSignWeight.Result.response_code.PERMISSION_ERROR;
+import static org.sonicx.api.GrpcAPI.TransactionSignWeight.Result.response_code.ENOUGH_PERMISSION;
+import static org.sonicx.api.GrpcAPI.TransactionSignWeight.Result.response_code.NOT_ENOUGH_PERMISSION;
+import static org.sonicx.api.GrpcAPI.TransactionSignWeight.Result.response_code.PERMISSION_ERROR;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -16,20 +16,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.TransactionExtention;
-import org.tron.api.GrpcAPI.TransactionSignWeight;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Contract;
-import org.tron.protos.Protocol.Transaction;
-import org.tron.protos.Protocol.Transaction.Contract.ContractType;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
-import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.sonicx.api.GrpcAPI.TransactionExtention;
+import org.sonicx.api.GrpcAPI.TransactionSignWeight;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Contract;
+import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.protos.Protocol.Transaction.Contract.ContractType;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class MultiSign23 {

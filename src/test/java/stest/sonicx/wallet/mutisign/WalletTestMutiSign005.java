@@ -1,4 +1,4 @@
-package stest.tron.wallet.mutisign;
+package stest.sonicx.wallet.mutisign;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -11,18 +11,18 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.EmptyMessage;
-import org.tron.api.GrpcAPI.ProposalList;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
-import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.sonicx.api.GrpcAPI.EmptyMessage;
+import org.sonicx.api.GrpcAPI.ProposalList;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
 
 
 @Slf4j

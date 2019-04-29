@@ -25,7 +25,7 @@ public class RandomGeneratorTest {
 
   private List<WitnessCapsule> getWitnessList() {
     final List<WitnessCapsule> witnessCapsuleList = Lists.newArrayList();
-    final WitnessCapsule witnessTron = new WitnessCapsule(
+    final WitnessCapsule witnessSonicx = new WitnessCapsule(
         ByteString.copyFrom("00000000001".getBytes()), 0, "");
     final WitnessCapsule witnessOlivier = new WitnessCapsule(
         ByteString.copyFrom("00000000003".getBytes()), 100, "");
@@ -33,7 +33,7 @@ public class RandomGeneratorTest {
         ByteString.copyFrom("00000000005".getBytes()), 200, "");
     final WitnessCapsule witnessSenaLiu = new WitnessCapsule(
         ByteString.copyFrom("00000000006".getBytes()), 300, "");
-    witnessCapsuleList.add(witnessTron);
+    witnessCapsuleList.add(witnessSonicx);
     witnessCapsuleList.add(witnessOlivier);
     witnessCapsuleList.add(witnessVivider);
     witnessCapsuleList.add(witnessSenaLiu);

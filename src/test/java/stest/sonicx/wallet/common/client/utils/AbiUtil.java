@@ -1,4 +1,4 @@
-package stest.tron.wallet.common.client.utils;
+package stest.sonicx.wallet.common.client.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.spongycastle.util.encoders.Hex;
-import org.tron.common.crypto.Hash;
-import org.tron.core.Wallet;
+import org.sonicx.common.crypto.Hash;
+import org.sonicx.core.Wallet;
 
 public class AbiUtil {
 

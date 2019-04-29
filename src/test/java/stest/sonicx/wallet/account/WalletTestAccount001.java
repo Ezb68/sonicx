@@ -1,4 +1,4 @@
-package stest.tron.wallet.account;
+package stest.sonicx.wallet.account;
 
 import com.google.protobuf.ByteString;
 import com.googlecode.cqengine.query.simple.In;
@@ -15,17 +15,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.NumberMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Block;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.GrpcAPI.NumberMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Block;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 
 @Slf4j

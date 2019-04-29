@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.http;
+package stest.sonicx.wallet.dailybuild.http;
 
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -6,13 +6,13 @@ import org.apache.http.HttpResponse;
 import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.utils.HttpMethed;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.utils.HttpMethed;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class HttpTestEasyAccount001 {

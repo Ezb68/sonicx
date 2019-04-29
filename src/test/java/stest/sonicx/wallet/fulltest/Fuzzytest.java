@@ -1,4 +1,4 @@
-package stest.tron.wallet.fulltest;
+package stest.sonicx.wallet.fulltest;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,27 +13,27 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI;
-import org.tron.api.GrpcAPI.AccountPaginated;
-import org.tron.api.GrpcAPI.AssetIssueList;
-import org.tron.api.GrpcAPI.NumberMessage;
-import org.tron.api.GrpcAPI.PaginatedMessage;
-import org.tron.api.WalletExtensionGrpc;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.core.db.Manager;
-import org.tron.protos.Contract;
-import org.tron.protos.Protocol;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Block;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
-import stest.tron.wallet.common.client.utils.TransactionUtils;
+import org.sonicx.api.GrpcAPI;
+import org.sonicx.api.GrpcAPI.AccountPaginated;
+import org.sonicx.api.GrpcAPI.AssetIssueList;
+import org.sonicx.api.GrpcAPI.NumberMessage;
+import org.sonicx.api.GrpcAPI.PaginatedMessage;
+import org.sonicx.api.WalletExtensionGrpc;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.core.db.Manager;
+import org.sonicx.protos.Contract;
+import org.sonicx.protos.Protocol;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Block;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import stest.sonicx.wallet.common.client.utils.TransactionUtils;
 
 @Slf4j
 public class Fuzzytest {
@@ -169,7 +169,7 @@ public class Fuzzytest {
    */
 
   public static Boolean createAssetIssue(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull) {
@@ -188,7 +188,7 @@ public class Fuzzytest {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);

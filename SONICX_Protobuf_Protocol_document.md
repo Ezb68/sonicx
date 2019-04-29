@@ -236,7 +236,7 @@
      `owner_address`: the address for contract owner – e.g. “_0xu82h…7237_”.  
      `to_address`: the receiver address – e.g. “_0xu82h…7237_”.  
      `asset_name`: the name of target asset.  
-     `amount`: the amount of suns.
+     `amount`: the amount of doles.
      
          message ParticipateAssetIssueContract {
            bytes owner_address = 1;

@@ -24,10 +24,10 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.runtime.Runtime;
 import org.sonicx.common.runtime.RuntimeImpl;
-import org.sonicx.common.runtime.TVMTestUtils;
+import org.sonicx.common.runtime.SVMTestUtils;
 import org.sonicx.common.runtime.vm.program.invoke.ProgramInvokeFactoryImpl;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.FileUtil;
@@ -45,7 +45,7 @@ import org.sonicx.core.exception.AccountResourceInsufficientException;
 import org.sonicx.core.exception.ContractExeException;
 import org.sonicx.core.exception.ContractValidateException;
 import org.sonicx.core.exception.TooBigTransactionResultException;
-import org.sonicx.core.exception.TronException;
+import org.sonicx.core.exception.SonicxException;
 import org.sonicx.core.exception.VMIllegalException;
 import org.sonicx.protos.Contract.CreateSmartContract;
 import org.sonicx.protos.Contract.TriggerSmartContract;
@@ -74,9 +74,9 @@ public class BandWidthRuntimeTest {
   private static AnnotationConfigApplicationContext context;
   private static Manager dbManager;
 
-  private static String OwnerAddress = "TCWHANtDDdkZCTo2T2peyEq3Eg9c2XB7ut";
-  private static String TriggerOwnerAddress = "TCSgeWapPJhCqgWRxXCKb6jJ5AgNWSGjPA";
-  private static String TriggerOwnerTwoAddress = "TPMBUANrTwwQAPwShn7ZZjTJz1f3F8jknj";
+  private static String OwnerAddress = "SPq5CAHdoGpoZbWrQCA1zzHTyfdiYmaiwA";
+  private static String TriggerOwnerAddress = "SPmUgHzExwmTCpEFugXgcrBipAAV6pq5DL";
+  private static String TriggerOwnerTwoAddress = "SafyVwnH3b1eXXfGewSvbUujj199okQbLj";
 
   static {
     Args.setParam(
@@ -88,7 +88,7 @@ public class BandWidthRuntimeTest {
         },
         "config-test-mainnet.conf"
     );
-    context = new TronApplicationContext(DefaultConfig.class);
+    context = new SonicxApplicationContext(DefaultConfig.class);
   }
 
   /**
@@ -141,7 +141,7 @@ public class BandWidthRuntimeTest {
       AccountCapsule triggerOwner = dbManager.getAccountStore()
           .get(Wallet.decodeFromBase58Check(TriggerOwnerAddress));
       long energy = triggerOwner.getEnergyUsage();
-      TriggerSmartContract triggerContract = TVMTestUtils.createTriggerContract(contractAddress,
+      TriggerSmartContract triggerContract = SVMTestUtils.createTriggerContract(contractAddress,
           "setCoin(uint256)", "3", false,
           0, Wallet.decodeFromBase58Check(TriggerOwnerAddress));
       Transaction transaction = Transaction.newBuilder().setRawData(raw.newBuilder().addContract(
@@ -165,7 +165,7 @@ public class BandWidthRuntimeTest {
       Assert.assertEquals(45706, trace.getReceipt().getEnergyUsageTotal());
       Assert.assertEquals(45706, energy);
       Assert.assertEquals(totalBalance, balance);
-    } catch (TronException e) {
+    } catch (SonicxException e) {
       Assert.assertNotNull(e);
     }
   }
@@ -174,7 +174,7 @@ public class BandWidthRuntimeTest {
   public void testSuccessNoBandd() {
     try {
       byte[] contractAddress = createContract();
-      TriggerSmartContract triggerContract = TVMTestUtils.createTriggerContract(contractAddress,
+      TriggerSmartContract triggerContract = SVMTestUtils.createTriggerContract(contractAddress,
           "setCoin(uint256)", "50", false,
           0, Wallet.decodeFromBase58Check(TriggerOwnerTwoAddress));
       Transaction transaction = Transaction.newBuilder().setRawData(raw.newBuilder().addContract(
@@ -203,7 +203,7 @@ public class BandWidthRuntimeTest {
       Assert.assertEquals(47285000, receipt.getEnergyFee());
       Assert.assertEquals(totalBalance - receipt.getEnergyFee(),
           balance);
-    } catch (TronException e) {
+    } catch (SonicxException e) {
       Assert.assertNotNull(e);
     }
   }
@@ -218,7 +218,7 @@ public class BandWidthRuntimeTest {
     String contractName = "foriContract";
     String code = "608060405234801561001057600080fd5b50610105806100206000396000f3006080604052600436106049576000357c0100000000000000000000000000000000000000000000000000000000900463ffffffff1680637bb98a6814604e578063866edb47146076575b600080fd5b348015605957600080fd5b50606060a0565b6040518082815260200191505060405180910390f35b348015608157600080fd5b50609e6004803603810190808035906020019092919050505060a6565b005b60005481565b60008090505b8181101560d55760008081548092919060010191905055600081905550808060010191505060ac565b50505600a165627a7a72305820f4020a69fb8504d7db776726b19e5101c3216413d7ab8e91a11c4f55f772caed0029";
     String abi = "[{\"constant\":true,\"inputs\":[],\"name\":\"balances\",\"outputs\":[{\"name\":\"\",\"type\":\"uint256\"}],\"payable\":false,\"stateMutability\":\"view\",\"type\":\"function\"},{\"constant\":false,\"inputs\":[{\"name\":\"receiver\",\"type\":\"uint256\"}],\"name\":\"setCoin\",\"outputs\":[],\"payable\":false,\"stateMutability\":\"nonpayable\",\"type\":\"function\"}]";
-    CreateSmartContract smartContract = TVMTestUtils.createSmartContract(
+    CreateSmartContract smartContract = SVMTestUtils.createSmartContract(
         Wallet.decodeFromBase58Check(OwnerAddress), contractName, abi, code, 0, 100);
     Transaction transaction = Transaction.newBuilder().setRawData(raw.newBuilder().addContract(
         Contract.newBuilder().setParameter(Any.pack(smartContract))
@@ -241,7 +241,7 @@ public class BandWidthRuntimeTest {
     Assert.assertEquals(50000, energy);
     Assert.assertEquals(229900, balance);
     Assert
-        .assertEquals(52299 * Constant.SUN_PER_ENERGY, balance + energy * Constant.SUN_PER_ENERGY);
+        .assertEquals(52299 * Constant.DOLE_PER_ENERGY, balance + energy * Constant.DOLE_PER_ENERGY);
     Assert.assertNull(runtime.getRuntimeError());
     return runtime.getResult().getContractAddress();
   }

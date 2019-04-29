@@ -1,4 +1,4 @@
-package stest.tron.wallet.common.client.utils;
+package stest.sonicx.wallet.common.client.utils;
 
 import com.alibaba.fastjson.JSONObject;
 import com.google.gson.Gson;
@@ -19,8 +19,8 @@ import org.apache.http.impl.conn.PoolingClientConnectionManager;
 import org.apache.http.params.CoreConnectionPNames;
 import org.apache.http.util.EntityUtils;
 import org.junit.Assert;
-import org.tron.common.utils.ByteArray;
-import stest.tron.wallet.common.client.Configuration;
+import org.sonicx.common.utils.ByteArray;
+import stest.sonicx.wallet.common.client.Configuration;
 
 @Slf4j
 public class HttpMethed {
@@ -485,7 +485,7 @@ public class HttpMethed {
    * constructor.
    */
   public static HttpResponse assetIssue(String httpNode, byte[] ownerAddress, String name,
-      String abbr, Long totalSupply, Integer trxNum, Integer num, Long startTime, Long endTime,
+      String abbr, Long totalSupply, Integer soxNum, Integer num, Long startTime, Long endTime,
       Integer voteScore, Integer precision, String description, String url, Long freeAssetNetLimit,
       Long publicFreeAssetNetLimit, String fromKey) {
     try {
@@ -495,7 +495,7 @@ public class HttpMethed {
       userBaseObj2.addProperty("name", str2hex(name));
       userBaseObj2.addProperty("abbr", str2hex(abbr));
       userBaseObj2.addProperty("total_supply", totalSupply);
-      userBaseObj2.addProperty("trx_num", trxNum);
+      userBaseObj2.addProperty("SOX_NUM", soxNum);
       userBaseObj2.addProperty("num", num);
       userBaseObj2.addProperty("precision", precision);
       userBaseObj2.addProperty("start_time", startTime);

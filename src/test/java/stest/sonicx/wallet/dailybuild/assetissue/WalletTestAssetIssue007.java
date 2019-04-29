@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.assetissue;
+package stest.sonicx.wallet.dailybuild.assetissue;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -10,16 +10,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.AccountNetMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.GrpcAPI.AccountNetMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletTestAssetIssue007 {
@@ -36,7 +36,7 @@ public class WalletTestAssetIssue007 {
   private static final long totalSupply = now;
   private static final long sendAmount = 10000000000L;
   private static final long netCostMeasure = 200L;
-  private static final Integer trxNum = 1;
+  private static final Integer soxNum = 1;
   private static final Integer icoNum = 1;
 
   Long freeAssetNetLimit = 10000L;
@@ -90,7 +90,7 @@ public class WalletTestAssetIssue007 {
     Long start = System.currentTimeMillis() + 5000;
     Long end = System.currentTimeMillis() + 1000000000;
     Assert.assertTrue(PublicMethed
-        .createAssetIssue(asset007Address, name, totalSupply, trxNum, icoNum, start, end, 1,
+        .createAssetIssue(asset007Address, name, totalSupply, soxNum, icoNum, start, end, 1,
             description, url, freeAssetNetLimit, publicFreeAssetNetLimit, 1L, 1L,
             testKeyForAssetIssue007, blockingStubFull));
 
@@ -160,7 +160,7 @@ public class WalletTestAssetIssue007 {
     participateInfo = PublicMethed.queryAccount(participateAssetCreateKey, blockingStubFull);
     final Long afterBalance = participateInfo.getBalance();
 
-    Assert.assertTrue(beforeBalance - trxNum * 1 * icoNum >= afterBalance);
+    Assert.assertTrue(beforeBalance - soxNum * 1 * icoNum >= afterBalance);
   }
 
   /**

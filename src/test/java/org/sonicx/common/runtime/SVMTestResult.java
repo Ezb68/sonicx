@@ -4,7 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.sonicx.core.capsule.ReceiptCapsule;
 
 @Slf4j
-public class TVMTestResult {
+public class SVMTestResult {
 
   private Runtime runtime;
   private ReceiptCapsule receipt;
@@ -14,7 +14,7 @@ public class TVMTestResult {
     return contractAddress;
   }
 
-  public TVMTestResult setContractAddress(byte[] contractAddress) {
+  public SVMTestResult setContractAddress(byte[] contractAddress) {
     this.contractAddress = contractAddress;
     return this;
   }
@@ -23,7 +23,7 @@ public class TVMTestResult {
     return runtime;
   }
 
-  public TVMTestResult setRuntime(Runtime runtime) {
+  public SVMTestResult setRuntime(Runtime runtime) {
     this.runtime = runtime;
     return this;
   }
@@ -32,12 +32,12 @@ public class TVMTestResult {
     return receipt;
   }
 
-  public TVMTestResult setReceipt(ReceiptCapsule receipt) {
+  public SVMTestResult setReceipt(ReceiptCapsule receipt) {
     this.receipt = receipt;
     return this;
   }
 
-  public TVMTestResult(Runtime runtime, ReceiptCapsule receipt, byte[] contractAddress) {
+  public SVMTestResult(Runtime runtime, ReceiptCapsule receipt, byte[] contractAddress) {
     this.runtime = runtime;
     this.receipt = receipt;
     this.contractAddress = contractAddress;

@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.grammar;
+package stest.sonicx.wallet.dailybuild.grammar;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,19 +10,19 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.crypto.Hash;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.TransactionInfo;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.Base58;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.crypto.Hash;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.TransactionInfo;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.Base58;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractGrammar003 {
@@ -499,10 +499,10 @@ public class ContractGrammar003 {
   }
 
 
-  @Test(enabled = true, description = "Trx and sun unit conversion.")
+  @Test(enabled = true, description = "Sox and dole unit conversion.")
   public void test7Grammar020() {
 
-    String contractName = "TrxContract";
+    String contractName = "SoxContract";
     String code = Configuration.getByPath("testng.conf")
         .getString("code.code_ContractGrammar003_testGrammar020");
     String abi = Configuration.getByPath("testng.conf")

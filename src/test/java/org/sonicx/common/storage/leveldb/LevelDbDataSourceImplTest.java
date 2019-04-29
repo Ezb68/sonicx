@@ -34,7 +34,7 @@ import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.FileUtil;
 import org.sonicx.core.Constant;

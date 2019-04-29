@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.manual;
+package stest.sonicx.wallet.dailybuild.manual;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -13,16 +13,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI;
-import org.tron.api.GrpcAPI.NumberMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Block;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
+import org.sonicx.api.GrpcAPI;
+import org.sonicx.api.GrpcAPI.NumberMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Block;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
 
 @Slf4j
 public class WalletTestBlock001 {

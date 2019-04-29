@@ -1,4 +1,4 @@
-package stest.tron.wallet.common.client.utils;
+package stest.sonicx.wallet.common.client.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -21,39 +21,39 @@ import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
-import org.tron.api.GrpcAPI;
-import org.tron.api.GrpcAPI.BytesMessage;
-import org.tron.api.GrpcAPI.EmptyMessage;
-import org.tron.api.GrpcAPI.ExchangeList;
-import org.tron.api.GrpcAPI.Return;
-import org.tron.api.GrpcAPI.TransactionExtention;
-import org.tron.api.GrpcAPI.TransactionSignWeight;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.crypto.ECKey.ECDSASignature;
-import org.tron.common.crypto.Hash;
-import org.tron.common.utils.Base58;
-import org.tron.common.utils.ByteArray;
-import org.tron.core.Wallet;
-import org.tron.core.exception.CancelException;
-import org.tron.protos.Contract;
-import org.tron.protos.Contract.CreateSmartContract;
-import org.tron.protos.Contract.CreateSmartContract.Builder;
-import org.tron.protos.Contract.UpdateEnergyLimitContract;
-import org.tron.protos.Contract.UpdateSettingContract;
-import org.tron.protos.Protocol;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Block;
-import org.tron.protos.Protocol.Key;
-import org.tron.protos.Protocol.Permission;
-import org.tron.protos.Protocol.SmartContract;
-import org.tron.protos.Protocol.Transaction;
-import org.tron.protos.Protocol.Transaction.Contract.ContractType;
-import org.tron.protos.Protocol.Transaction.Result;
-import org.tron.protos.Protocol.Transaction.raw;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.WalletClient;
+import org.sonicx.api.GrpcAPI;
+import org.sonicx.api.GrpcAPI.BytesMessage;
+import org.sonicx.api.GrpcAPI.EmptyMessage;
+import org.sonicx.api.GrpcAPI.ExchangeList;
+import org.sonicx.api.GrpcAPI.Return;
+import org.sonicx.api.GrpcAPI.TransactionExtention;
+import org.sonicx.api.GrpcAPI.TransactionSignWeight;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.crypto.ECKey.ECDSASignature;
+import org.sonicx.common.crypto.Hash;
+import org.sonicx.common.utils.Base58;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.core.Wallet;
+import org.sonicx.core.exception.CancelException;
+import org.sonicx.protos.Contract;
+import org.sonicx.protos.Contract.CreateSmartContract;
+import org.sonicx.protos.Contract.CreateSmartContract.Builder;
+import org.sonicx.protos.Contract.UpdateEnergyLimitContract;
+import org.sonicx.protos.Contract.UpdateSettingContract;
+import org.sonicx.protos.Protocol;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Block;
+import org.sonicx.protos.Protocol.Key;
+import org.sonicx.protos.Protocol.Permission;
+import org.sonicx.protos.Protocol.SmartContract;
+import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.protos.Protocol.Transaction.Contract.ContractType;
+import org.sonicx.protos.Protocol.Transaction.Result;
+import org.sonicx.protos.Protocol.Transaction.raw;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.WalletClient;
 
 
 public class PublicMethedForMutiSign {
@@ -66,7 +66,7 @@ public class PublicMethedForMutiSign {
    */
 
   public static Boolean createAssetIssue(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull, String[] permissionKeyString) {
@@ -84,7 +84,7 @@ public class PublicMethedForMutiSign {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -119,7 +119,7 @@ public class PublicMethedForMutiSign {
 
   public static String createAssetIssueForTransactionId(byte[] address, String name,
       Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull, String[] permissionKeyString) {
@@ -137,7 +137,7 @@ public class PublicMethedForMutiSign {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -304,7 +304,7 @@ public class PublicMethedForMutiSign {
 
     long currentTime = System.currentTimeMillis();//*1000000 + System.nanoTime()%1000000;
     Transaction.Builder builder = transaction.toBuilder();
-    org.tron.protos.Protocol.Transaction.raw.Builder rowBuilder = transaction.getRawData()
+    org.sonicx.protos.Protocol.Transaction.raw.Builder rowBuilder = transaction.getRawData()
         .toBuilder();
     rowBuilder.setTimestamp(currentTime);
     builder.setRawData(rowBuilder.build());
@@ -4232,7 +4232,7 @@ public class PublicMethedForMutiSign {
 
   public static String createAssetIssueForTransactionId1(byte[] address, String name,
       Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull, int permissionId,
@@ -4251,7 +4251,7 @@ public class PublicMethedForMutiSign {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);

@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.manual;
+package stest.sonicx.wallet.dailybuild.manual;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,17 +10,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.TransactionInfo;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.Base58;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.TransactionInfo;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.Base58;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractScenario014 {
@@ -83,7 +83,7 @@ public class ContractScenario014 {
 
     Assert.assertTrue(PublicMethed.sendcoin(contract014Address, 5000000000L, fromAddress,
         testKey002, blockingStubFull));
-    //Deploy contract1, contract1 has a function to transaction 5 sun to target account
+    //Deploy contract1, contract1 has a function to transaction 5 dole to target account
     String contractName = "Contract1";
     String code = Configuration.getByPath("testng.conf")
         .getString("code.code_ContractScenario014_testTripleTrigger");
@@ -97,7 +97,7 @@ public class ContractScenario014 {
     Assert.assertTrue(infoById.get().getResultValue() == 0);
     contractAddress1 = infoById.get().getContractAddress().toByteArray();
 
-    //Deploy contract2, contract2 has a function to call contract1 transaction sun function.
+    //Deploy contract2, contract2 has a function to call contract1 transaction dole function.
     // and has a revert function.
     String code1 = Configuration.getByPath("testng.conf")
         .getString("code.code1_ContractScenario014_testTripleTrigger");

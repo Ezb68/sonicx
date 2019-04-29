@@ -6,12 +6,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.AfterClass;
 import org.junit.Assert;
 import org.junit.Test;
+import org.sonicx.common.runtime.SVMTestUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.runtime.Runtime;
-import org.sonicx.common.runtime.TVMTestUtils;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.ByteArray;
@@ -36,14 +36,14 @@ public class TransferTokenTest {
 
   private static Runtime runtime;
   private static Manager dbManager;
-  private static TronApplicationContext context;
+  private static SonicxApplicationContext context;
   private static Application appT;
   private static DepositImpl deposit;
   private static final String dbPath = "output_TransferTokenTest";
   private static final String OWNER_ADDRESS;
   private static final String TRANSFER_TO;
   private static final long TOTAL_SUPPLY = 1000_000_000L;
-  private static final int TRX_NUM = 10;
+  private static final int SOX_NUM = 10;
   private static final int NUM = 1;
   private static final long START_TIME = 1;
   private static final long END_TIME = 2;
@@ -54,7 +54,7 @@ public class TransferTokenTest {
 
   static {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug"}, Constant.TEST_CONF);
-    context = new TronApplicationContext(DefaultConfig.class);
+    context = new SonicxApplicationContext(DefaultConfig.class);
     appT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
     TRANSFER_TO = Wallet.getAddressPreFixString() + "548794500882809695a8a687866e76d4271a1abc";
@@ -75,7 +75,7 @@ public class TransferTokenTest {
 
   private long createAsset(String tokenName) {
     dbManager.getDynamicPropertiesStore().saveAllowSameTokenName(1);
-    VMConfig.initAllowTvmTransferTrc10(1);
+    VMConfig.initAllowSvmTransferSrc10(1);
     long id = dbManager.getDynamicPropertiesStore().getTokenIdNum() + 1;
     dbManager.getDynamicPropertiesStore().saveTokenIdNum(id);
     AssetIssueContract assetIssueContract =
@@ -84,7 +84,7 @@ public class TransferTokenTest {
             .setName(ByteString.copyFrom(ByteArray.fromString(tokenName)))
             .setId(Long.toString(id))
             .setTotalSupply(TOTAL_SUPPLY)
-            .setTrxNum(TRX_NUM)
+            .setSoxNum(SOX_NUM)
             .setNum(NUM)
             .setStartTime(START_TIME)
             .setEndTime(END_TIME)
@@ -128,17 +128,17 @@ public class TransferTokenTest {
     String params = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc" +
         Hex.toHexString(new DataWord(id).getData()) +
         "0000000000000000000000000000000000000000000000000000000000000009"; //TRANSFER_TO, 100001, 9
-    byte[] triggerData = TVMTestUtils.parseABI(selectorStr, params);
+    byte[] triggerData = SVMTestUtils.parseABI(selectorStr, params);
 
     /*  2. Test trigger with tokenValue and tokenId, also test internal transaction transferToken function */
     long triggerCallValue = 100;
     long feeLimit = 100000000;
     long tokenValue = 8;
-    Transaction transaction = TVMTestUtils
+    Transaction transaction = SVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), contractAddress,
             triggerData,
             triggerCallValue, feeLimit, tokenValue, id);
-    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction, dbManager, null);
+    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction, dbManager, null);
 
     org.testng.Assert.assertNull(runtime.getRuntimeError());
     Assert.assertEquals(100 + tokenValue - 9,
@@ -156,12 +156,12 @@ public class TransferTokenTest {
     dbManager.getAccountStore().put(contractAddress, changeAccountCapsule);
     String selectorStr2 = "suicide(address)";
     String params2 = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc"; //TRANSFER_TO
-    byte[] triggerData2 = TVMTestUtils.parseABI(selectorStr2, params2);
-    Transaction transaction2 = TVMTestUtils
+    byte[] triggerData2 = SVMTestUtils.parseABI(selectorStr2, params2);
+    Transaction transaction2 = SVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), contractAddress,
             triggerData2,
             triggerCallValue, feeLimit, 0, id);
-    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction2, dbManager, null);
+    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction2, dbManager, null);
     org.testng.Assert.assertNull(runtime.getRuntimeError());
     Assert.assertEquals(100 + tokenValue - 9 + 9,
         dbManager.getAccountStore().get(Hex.decode(TRANSFER_TO)).getAssetMapV2()
@@ -194,7 +194,7 @@ public class TransferTokenTest {
     long tokenValue = 100;
     long tokenId = id;
 
-    byte[] contractAddress = TVMTestUtils
+    byte[] contractAddress = SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null, tokenValue, tokenId,
             deposit, null);
@@ -218,14 +218,14 @@ public class TransferTokenTest {
     String params = "000000000000000000000000548794500882809695a8a687866e76d4271a1abc" +
         Hex.toHexString(new DataWord(id).getData()) +
         "0000000000000000000000000000000000000000000000000000000000000002"; //TRANSFER_TO, 100001, 9
-    byte[] triggerData = TVMTestUtils.parseABI(selectorStr, params);
-    Transaction transaction = TVMTestUtils
+    byte[] triggerData = SVMTestUtils.parseABI(selectorStr, params);
+    Transaction transaction = SVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), contractAddress,
             triggerData,
             triggerCallValue, feeLimit, tokenValue, id);
     long start = System.nanoTime() / 1000;
 
-    runtime = TVMTestUtils.processTransactionAndReturnRuntime(transaction, dbManager, null);
+    runtime = SVMTestUtils.processTransactionAndReturnRuntime(transaction, dbManager, null);
     long end = System.nanoTime() / 1000;
     System.err.println("running time:" + (end - start));
     Assert.assertTrue((end - start) < 50_0000);
@@ -253,7 +253,7 @@ public class TransferTokenTest {
     long tokenValue = 1000_000;
     long tokenId = id;
 
-    byte[] contractAddress = TVMTestUtils
+    byte[] contractAddress = SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null, tokenValue, tokenId,
             deposit, null);

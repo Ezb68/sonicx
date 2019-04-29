@@ -163,8 +163,8 @@ public class AssetIssueActuator extends AbstractActuator {
 
     if (dbManager.getDynamicPropertiesStore().getAllowSameTokenName() != 0) {
       String name = assetIssueContract.getName().toStringUtf8().toLowerCase();
-      if (name.equals("trx")) {
-        throw new ContractValidateException("assetName can't be trx");
+      if (name.equals("sox")) {
+        throw new ContractValidateException("assetName can't be sox");
       }
     }
 

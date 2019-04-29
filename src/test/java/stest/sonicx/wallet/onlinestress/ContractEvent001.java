@@ -1,4 +1,4 @@
-package stest.tron.wallet.onlinestress;
+package stest.sonicx.wallet.onlinestress;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -16,16 +16,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.AccountResourceMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.SmartContract;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.GrpcAPI.AccountResourceMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.SmartContract;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractEvent001 {
@@ -207,7 +207,7 @@ public class ContractEvent001 {
           "triggerBoolEvent(bool,bool)", param, false,
           0L, 100000000L, event001Address, event001Key, blockingStubFull);
       logger.info(txid);
-      String filename = "/Users/wangzihe/Documents/modify_fullnode/java-tron/tooLongString.txt";
+      String filename = "/Users/wangzihe/Documents/modify_fullnode/SonicX/tooLongString.txt";
       try {
         FileReader fr = new FileReader(
             filename);

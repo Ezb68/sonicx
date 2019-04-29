@@ -1,4 +1,4 @@
-package stest.tron.wallet.common.client;
+package stest.sonicx.wallet.common.client;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
@@ -17,33 +17,33 @@ import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
-import org.tron.api.GrpcAPI.AccountNetMessage;
-import org.tron.api.GrpcAPI.AssetIssueList;
-import org.tron.api.GrpcAPI.BlockList;
-import org.tron.api.GrpcAPI.NodeList;
-import org.tron.api.GrpcAPI.TransactionList;
-import org.tron.api.GrpcAPI.WitnessList;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.crypto.SymmEncoder;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.FileUtil;
-import org.tron.common.utils.Sha256Hash;
-import org.tron.common.utils.Utils;
-import org.tron.core.exception.CancelException;
-import org.tron.keystore.CipherException;
-import org.tron.protos.Contract;
-import org.tron.protos.Contract.AssetIssueContract;
-import org.tron.protos.Contract.FreezeBalanceContract;
-import org.tron.protos.Contract.UnfreezeBalanceContract;
-import org.tron.protos.Contract.WithdrawBalanceContract;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.AccountType;
-import org.tron.protos.Protocol.Block;
-import org.tron.protos.Protocol.Transaction;
-import org.tron.protos.Protocol.Witness;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.Base58;
-import stest.tron.wallet.common.client.utils.TransactionUtils;
+import org.sonicx.api.GrpcAPI.AccountNetMessage;
+import org.sonicx.api.GrpcAPI.AssetIssueList;
+import org.sonicx.api.GrpcAPI.BlockList;
+import org.sonicx.api.GrpcAPI.NodeList;
+import org.sonicx.api.GrpcAPI.TransactionList;
+import org.sonicx.api.GrpcAPI.WitnessList;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.crypto.SymmEncoder;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.FileUtil;
+import org.sonicx.common.utils.Sha256Hash;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.exception.CancelException;
+import org.sonicx.keystore.CipherException;
+import org.sonicx.protos.Contract;
+import org.sonicx.protos.Contract.AssetIssueContract;
+import org.sonicx.protos.Contract.FreezeBalanceContract;
+import org.sonicx.protos.Contract.UnfreezeBalanceContract;
+import org.sonicx.protos.Contract.WithdrawBalanceContract;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.AccountType;
+import org.sonicx.protos.Protocol.Block;
+import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.protos.Protocol.Witness;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.Base58;
+import stest.sonicx.wallet.common.client.utils.TransactionUtils;
 
 /*class AccountComparator implements Comparator {
 
@@ -123,7 +123,7 @@ public class WalletClient {
    */
 
   public static GrpcClient init() {
-    //Config config = org.tron.core.config.Configuration.getByPath("config.conf");
+    //Config config = org.sonicx.core.config.Configuration.getByPath("config.conf");
     Config config = Configuration.getByPath("testng.conf");
     dbPath = config.getString("CityDb.DbPath");
     txtPath = System.getProperty("user.dir") + "/" + config.getString("CityDb.TxtPath");

@@ -1,8 +1,8 @@
-package stest.tron.wallet.common.client.utils;
+package stest.sonicx.wallet.common.client.utils;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;
-import org.tron.common.utils.Sha256Hash;
+import org.sonicx.common.utils.Sha256Hash;
 
 public class Base58 {
 

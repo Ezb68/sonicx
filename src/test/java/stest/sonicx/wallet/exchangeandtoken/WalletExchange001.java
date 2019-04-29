@@ -1,4 +1,4 @@
-package stest.tron.wallet.exchangeandtoken;
+package stest.sonicx.wallet.exchangeandtoken;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -11,20 +11,20 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.EmptyMessage;
-import org.tron.api.GrpcAPI.ExchangeList;
-import org.tron.api.GrpcAPI.PaginatedMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Exchange;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.GrpcAPI.EmptyMessage;
+import org.sonicx.api.GrpcAPI.ExchangeList;
+import org.sonicx.api.GrpcAPI.PaginatedMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Exchange;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class WalletExchange001 {
@@ -50,7 +50,7 @@ public class WalletExchange001 {
   private static String name2 = "exchange001_2_" + Long.toString(now);
   private static final long totalSupply = 1000000001L;
   String description = "just-test";
-  String url = "https://github.com/tronprotocol/wallet-cli/";
+  String url = "https://github.com/SonicXChain/sonicx-wallet-cli/";
 
   ECKey ecKey1 = new ECKey(Utils.getRandom());
   byte[] exchange001Address = ecKey1.getAddress();

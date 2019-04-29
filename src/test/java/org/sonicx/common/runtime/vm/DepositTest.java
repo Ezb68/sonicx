@@ -7,13 +7,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+import org.sonicx.common.runtime.SVMTestUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.runtime.Runtime;
-import org.sonicx.common.runtime.TVMTestResult;
-import org.sonicx.common.runtime.TVMTestUtils;
+import org.sonicx.common.runtime.SVMTestResult;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.storage.Deposit;
 import org.sonicx.common.storage.DepositImpl;
@@ -35,7 +35,7 @@ import org.sonicx.protos.Protocol.Transaction;
 public class DepositTest {
 
   private Manager manager;
-  private TronApplicationContext context;
+  private SonicxApplicationContext context;
   private String dbPath = "output_DepostitTest";
   private String OWNER_ADDRESS;
   private Deposit rootDeposit;
@@ -43,7 +43,7 @@ public class DepositTest {
   @Before
   public void init() {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug"}, Constant.TEST_CONF);
-    context = new TronApplicationContext(DefaultConfig.class);
+    context = new SonicxApplicationContext(DefaultConfig.class);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
     manager = context.getBean(Manager.class);
     rootDeposit = DepositImpl.createRoot(manager);
@@ -118,15 +118,15 @@ public class DepositTest {
     long consumeUserResourcePercent = 0;
     long engeryLiimt = 100000000;
 
-    Transaction aTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction aTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         contractA, address, aABI, aCode, value, fee, consumeUserResourcePercent, null, engeryLiimt);
-    Runtime runtime = TVMTestUtils
+    Runtime runtime = SVMTestUtils
         .processTransactionAndReturnRuntime(aTrx, DepositImpl.createRoot(manager), null);
     Assert.assertNull(runtime.getRuntimeError());
 
-    Transaction bTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction bTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         contractB, address, bABI, bCode, value, fee, consumeUserResourcePercent, null, engeryLiimt);
-    runtime = TVMTestUtils
+    runtime = SVMTestUtils
         .processTransactionAndReturnRuntime(bTrx, DepositImpl.createRoot(manager), null);
     Assert.assertNull(runtime.getRuntimeError());
 
@@ -141,23 +141,23 @@ public class DepositTest {
         + "00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002";
     System.err.println(params1);
 
-    byte[] triggerData = TVMTestUtils
+    byte[] triggerData = SVMTestUtils
         .parseABI("callBcallARevert(address,uint256,uint256)", params1);
-    TVMTestResult result = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    SVMTestResult result = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, triggerData, 0, fee, manager, null);
     Assert.assertNull(result.getRuntime().getRuntimeError());
 
     // check result
     // expected: n1 = 1; n2 = 0
-    byte[] checkN1Data = TVMTestUtils.parseABI("n1()", null);
-    byte[] checkN2Data = TVMTestUtils.parseABI("n2()", null);
+    byte[] checkN1Data = SVMTestUtils.parseABI("n1()", null);
+    byte[] checkN2Data = SVMTestUtils.parseABI("n2()", null);
 
-    TVMTestResult checkN1 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    SVMTestResult checkN1 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN1Data, 0, fee, manager, null);
-    TVMTestResult checkN2 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    SVMTestResult checkN2 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN2Data, 0, fee, manager, null);
 
     System.out.println(Hex.toHexString(checkN1.getRuntime().getResult().getHReturn()));
@@ -171,16 +171,16 @@ public class DepositTest {
     // <bAddress>,100,1000
     String params2 = Hex.toHexString(new DataWord(bAddress).getData())
         + "000000000000000000000000000000000000000000000000000000000000006400000000000000000000000000000000000000000000000000000000000003e8";
-    triggerData = TVMTestUtils.parseABI("callBcallA(address,uint256,uint256)", params2);
-    result = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    triggerData = SVMTestUtils.parseABI("callBcallA(address,uint256,uint256)", params2);
+    result = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, triggerData, 0, fee, manager, null);
     Assert.assertNull(result.getRuntime().getRuntimeError());
-    checkN1 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    checkN1 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN1Data, 0, fee, manager, null);
-    checkN2 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    checkN2 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN2Data, 0, fee, manager, null);
     System.out.println(Hex.toHexString(checkN1.getRuntime().getResult().getHReturn()));
     System.out.println(Hex.toHexString(checkN2.getRuntime().getResult().getHReturn()));
@@ -212,16 +212,16 @@ public class DepositTest {
     long fee = 100000000;
     long consumeUserResourcePercent = 0;
 
-    Transaction aTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction aTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         contractA, address, aABI, aCode, value, fee, consumeUserResourcePercent, null);
     Deposit rootDeposit = DepositImpl.createRoot(manager);
-    Runtime runtime = TVMTestUtils.processTransactionAndReturnRuntime(aTrx, rootDeposit, null);
+    Runtime runtime = SVMTestUtils.processTransactionAndReturnRuntime(aTrx, rootDeposit, null);
     Assert.assertNull(runtime.getRuntimeError());
 
-    Transaction bTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction bTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         contractB, address, bABI, bCode, value, fee, consumeUserResourcePercent, null);
     rootDeposit = DepositImpl.createRoot(manager);
-    runtime = TVMTestUtils.processTransactionAndReturnRuntime(bTrx, rootDeposit, null);
+    runtime = SVMTestUtils.processTransactionAndReturnRuntime(bTrx, rootDeposit, null);
     Assert.assertNull(runtime.getRuntimeError());
 
     byte[] aAddress = Wallet.generateContractAddress(aTrx);
@@ -234,23 +234,23 @@ public class DepositTest {
     String params1 = Hex.toHexString(new DataWord(bAddress).getData())
         + "00000000000000000000000000000000000000000000000000000000000000010000000000000000000000000000000000000000000000000000000000000002";
 
-    byte[] triggerData = TVMTestUtils
+    byte[] triggerData = SVMTestUtils
         .parseABI("callBcallARevert(address,uint256,uint256)", params1);
-    TVMTestResult result = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    SVMTestResult result = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, triggerData, 0, fee, manager, null);
     Assert.assertNull(result.getRuntime().getRuntimeError());
 
     // check result
     // expected: n1 = 1; n2 = 0
-    byte[] checkN1Data = TVMTestUtils.parseABI("n1()", null);
-    byte[] checkN2Data = TVMTestUtils.parseABI("n2()", null);
+    byte[] checkN1Data = SVMTestUtils.parseABI("n1()", null);
+    byte[] checkN2Data = SVMTestUtils.parseABI("n2()", null);
 
-    TVMTestResult checkN1 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    SVMTestResult checkN1 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN1Data, 0, fee, manager, null);
-    TVMTestResult checkN2 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    SVMTestResult checkN2 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN2Data, 0, fee, manager, null);
 
     System.out.println(Hex.toHexString(checkN1.getRuntime().getResult().getHReturn()));
@@ -264,16 +264,16 @@ public class DepositTest {
     // <bAddress>,100,1000
     String params2 = Hex.toHexString(new DataWord(bAddress).getData())
         + "000000000000000000000000000000000000000000000000000000000000006400000000000000000000000000000000000000000000000000000000000003e8";
-    triggerData = TVMTestUtils.parseABI("callBcallA(address,uint256,uint256)", params2);
-    result = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    triggerData = SVMTestUtils.parseABI("callBcallA(address,uint256,uint256)", params2);
+    result = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, triggerData, 0, fee, manager, null);
     Assert.assertNull(result.getRuntime().getRuntimeError());
-    checkN1 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    checkN1 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN1Data, 0, fee, manager, null);
-    checkN2 = TVMTestUtils
-        .triggerContractAndReturnTVMTestResult(Hex.decode(OWNER_ADDRESS),
+    checkN2 = SVMTestUtils
+        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
             aAddress, checkN2Data, 0, fee, manager, null);
     System.out.println(Hex.toHexString(checkN1.getRuntime().getResult().getHReturn()));
     System.out.println(Hex.toHexString(checkN2.getRuntime().getResult().getHReturn()));

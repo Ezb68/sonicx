@@ -4,10 +4,10 @@ package org.sonicx.common.runtime.vm;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
+import org.sonicx.common.runtime.SVMTestUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.runtime.Runtime;
-import org.sonicx.common.runtime.TVMTestUtils;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.runtime.vm.program.Program.OutOfEnergyException;
 import org.sonicx.common.storage.DepositImpl;
@@ -109,7 +109,7 @@ contract D {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
     byte[] stats = new byte[27];
     Arrays.fill(stats, (byte) 1);
-    VMConfig.initAllowTvmTransferTrc10(1);
+    VMConfig.initAllowSvmTransferSrc10(1);
     byte[] address = Hex.decode(OWNER_ADDRESS);
 
     this.manager.getDynamicPropertiesStore()
@@ -118,27 +118,27 @@ contract D {
         .statsByVersion(ForkBlockVersionEnum.VERSION_3_5.getValue(), stats);
     VMConfig.initAllowMultiSign(1);
 
-    Transaction aTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction aTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testA", address, abi, aCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime aRuntime = TVMTestUtils
+    Runtime aRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(aTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(aRuntime.getRuntimeError(), "REVERT opcode executed");
 
-    Transaction bTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction bTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testB", address, abi, bCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime bRuntime = TVMTestUtils
+    Runtime bRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(bTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(bRuntime.getRuntimeError(), "REVERT opcode executed");
 
-    Transaction cTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction cTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, cCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime cRuntime = TVMTestUtils
+    Runtime cRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(cTrx, DepositImpl.createRoot(manager), null);
     Assert.assertTrue(cRuntime.getResult().getException() instanceof OutOfEnergyException);
 
-    Transaction dTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction dTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, dCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime dRuntime = TVMTestUtils
+    Runtime dRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(dTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(dRuntime.getRuntimeError(), "REVERT opcode executed");
 
@@ -149,28 +149,28 @@ contract D {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
     VMConfig.initAllowMultiSign(0);
     byte[] address = Hex.decode(OWNER_ADDRESS);
-    Transaction aTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction aTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testA", address, abi, aCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime aRuntime = TVMTestUtils
+    Runtime aRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(aTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(aRuntime.getRuntimeError(), "Unknown Exception");
 //
 //
-    Transaction bTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction bTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testB", address, abi, bCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime bRuntime = TVMTestUtils
+    Runtime bRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(bTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(bRuntime.getRuntimeError(), "REVERT opcode executed");
 
-    Transaction cTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction cTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, cCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime cRuntime = TVMTestUtils
+    Runtime cRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(cTrx, DepositImpl.createRoot(manager), null);
     Assert.assertTrue(cRuntime.getResult().getException() instanceof OutOfEnergyException);
 
-    Transaction dTrx = TVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction dTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, dCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime dRuntime = TVMTestUtils
+    Runtime dRuntime = SVMTestUtils
         .processTransactionAndReturnRuntime(dTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(dRuntime.getRuntimeError(), "REVERT opcode executed");
 

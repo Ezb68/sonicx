@@ -1,4 +1,4 @@
-package stest.tron.wallet.fulltest;
+package stest.sonicx.wallet.fulltest;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -9,19 +9,19 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.AccountResourceMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.GrpcAPI.AccountResourceMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
-public class TvmContract {
+public class SvmContract {
 
   //testng001、testng002、testng003、testng004
   private final String testKey002 =
@@ -83,9 +83,9 @@ public class TvmContract {
     Long maxFeeLimit = 50000000L;
     String contractName = "ERC721";
     String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_TvmContract_deployErc721CryptoKitties");
+        .getString("code.code_SvmContract_deployErc721CryptoKitties");
     String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_TvmContract_deployErc721CryptoKitties");
+        .getString("abi.abi_SvmContract_deployErc721CryptoKitties");
     Long m = 0L;
     Long freeNet;
     accountResource = PublicMethed.getAccountResource(contract008Address, blockingStubFull);

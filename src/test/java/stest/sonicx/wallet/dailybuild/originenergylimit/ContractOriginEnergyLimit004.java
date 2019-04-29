@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.originenergylimit;
+package stest.sonicx.wallet.dailybuild.originenergylimit;
 
 import com.google.protobuf.ByteString;
 import io.grpc.ManagedChannel;
@@ -11,19 +11,19 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.AccountResourceMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.SmartContract;
-import org.tron.protos.Protocol.Transaction;
-import org.tron.protos.Protocol.TransactionInfo;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.GrpcAPI.AccountResourceMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.SmartContract;
+import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.protos.Protocol.TransactionInfo;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractOriginEnergyLimit004 {
@@ -160,10 +160,10 @@ public class ContractOriginEnergyLimit004 {
     final boolean expectRet = true;
 
     // count dev energy, balance
-    long devFreezeBalanceSun = PublicMethed.getFreezeBalanceCount(dev001Address, dev001Key,
+    long devFreezeBalanceDole = PublicMethed.getFreezeBalanceCount(dev001Address, dev001Key,
         devTargetEnergy, blockingStubFull);
 
-    long devNeedBalance = devTargetBalance + devFreezeBalanceSun;
+    long devNeedBalance = devTargetBalance + devFreezeBalanceDole;
 
     logger.info("need balance:" + devNeedBalance);
 
@@ -172,7 +172,7 @@ public class ContractOriginEnergyLimit004 {
         testKey002, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     // get energy
-    Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(dev001Address, devFreezeBalanceSun,
+    Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(dev001Address, devFreezeBalanceDole,
         3, 1, dev001Key, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
@@ -222,17 +222,17 @@ public class ContractOriginEnergyLimit004 {
     Assert.assertEquals(devBalanceBefore, devBalanceAfter);
 
     // count dev energy, balance
-    devFreezeBalanceSun = PublicMethed.getFreezeBalanceCount(dev001Address, dev001Key,
+    devFreezeBalanceDole = PublicMethed.getFreezeBalanceCount(dev001Address, dev001Key,
         devTriggerTargetEnergy, blockingStubFull);
 
-    devNeedBalance = devTriggerTargetBalance + devFreezeBalanceSun;
+    devNeedBalance = devTriggerTargetBalance + devFreezeBalanceDole;
     logger.info("dev need  balance:" + devNeedBalance);
 
     // count user energy, balance
-    long userFreezeBalanceSun = PublicMethed.getFreezeBalanceCount(user001Address, user001Key,
+    long userFreezeBalanceDole = PublicMethed.getFreezeBalanceCount(user001Address, user001Key,
         userTargetEnergy, blockingStubFull);
 
-    long userNeedBalance = userTargetBalance + userFreezeBalanceSun;
+    long userNeedBalance = userTargetBalance + userFreezeBalanceDole;
 
     logger.info("User need  balance:" + userNeedBalance);
 
@@ -244,9 +244,9 @@ public class ContractOriginEnergyLimit004 {
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     // get energy
-    Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(dev001Address, devFreezeBalanceSun,
+    Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(dev001Address, devFreezeBalanceDole,
         3, 1, dev001Key, blockingStubFull));
-    Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(user001Address, userFreezeBalanceSun,
+    Assert.assertTrue(PublicMethed.freezeBalanceGetEnergy(user001Address, userFreezeBalanceDole,
         3, 1, user001Key, blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 

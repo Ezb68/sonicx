@@ -12,12 +12,10 @@ import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.runtime.vm.DataWord;
 import org.sonicx.common.runtime.vm.program.InternalTransaction;
 import org.sonicx.common.storage.DepositImpl;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.ByteString;
 import org.sonicx.common.utils.FileUtil;
 import org.sonicx.core.Constant;
 import org.sonicx.core.Wallet;
@@ -35,7 +33,6 @@ import org.sonicx.core.exception.VMIllegalException;
 import org.sonicx.protos.Protocol;
 import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.Transaction;
-import org.sonicx.protos.Protocol.TransactionInfo;
 
 
 @Slf4j
@@ -43,7 +40,7 @@ public class ProgramResultTest {
 
   private static Runtime runtime;
   private static Manager dbManager;
-  private static TronApplicationContext context;
+  private static SonicxApplicationContext context;
   private static Application appT;
   private static DepositImpl deposit;
   private static final String dbPath = "output_InternalTransactionComplexTest";
@@ -53,7 +50,7 @@ public class ProgramResultTest {
   static {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug", "--support-constant"},
         Constant.TEST_CONF);
-    context = new TronApplicationContext(DefaultConfig.class);
+    context = new SonicxApplicationContext(DefaultConfig.class);
     appT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
     TRANSFER_TO = Wallet.getAddressPreFixString() + "548794500882809695a8a687866e76d4271a1abc";
@@ -97,8 +94,8 @@ public class ProgramResultTest {
     byte[] calledContractAddress = deployCalledContractAndGetItsAddress();
     byte[] contractAAddress = deployContractAAndGetItsAddress(calledContractAddress);
     /* =================================== CALL create() =================================== */
-    byte[] triggerData1 = TVMTestUtils.parseABI("create()", "");
-    runtime = TVMTestUtils
+    byte[] triggerData1 = SVMTestUtils.parseABI("create()", "");
+    runtime = SVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             contractAAddress, triggerData1,
             0, 100000000, deposit, null);
@@ -133,7 +130,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -208,7 +205,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -239,12 +236,12 @@ public class ProgramResultTest {
             "0000000000000000000000000000000000000000000000000000000000000000";
 
     // ======================================= Test Success =======================================
-    byte[] triggerData1 = TVMTestUtils.parseABI("transfer(address,bool)",
+    byte[] triggerData1 = SVMTestUtils.parseABI("transfer(address,bool)",
         params);
-    Transaction trx1 = TVMTestUtils
+    Transaction trx1 = SVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
             triggerData1, 0, 100000000);
-    TransactionTrace traceSuccess = TVMTestUtils
+    TransactionTrace traceSuccess = SVMTestUtils
         .processTransactionAndReturnTrace(trx1, deposit, null);
     runtime = traceSuccess.getRuntime();
     byte[] bContract = runtime.getResult().getHReturn();
@@ -283,12 +280,12 @@ public class ProgramResultTest {
     // set revert == true
     params = Hex.toHexString(new DataWord(new DataWord(cContract).getLast20Bytes()).getData()) +
         "0000000000000000000000000000000000000000000000000000000000000001";
-    byte[] triggerData2 = TVMTestUtils.parseABI("transfer(address,bool)",
+    byte[] triggerData2 = SVMTestUtils.parseABI("transfer(address,bool)",
         params);
-    Transaction trx2 = TVMTestUtils
+    Transaction trx2 = SVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
             triggerData2, 0, 100000000);
-    TransactionTrace traceFailed = TVMTestUtils
+    TransactionTrace traceFailed = SVMTestUtils
         .processTransactionAndReturnTrace(trx2, deposit, null);
     runtime = traceFailed.getRuntime();
     byte[] bContract2 = Wallet
@@ -339,7 +336,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -380,7 +377,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -402,12 +399,12 @@ public class ProgramResultTest {
         .toHexString(new DataWord(new DataWord(TRANSFER_TO).getLast20Bytes()).getData());
 
     // ======================================= Test Suicide =======================================
-    byte[] triggerData1 = TVMTestUtils.parseABI("suicide(address)",
+    byte[] triggerData1 = SVMTestUtils.parseABI("suicide(address)",
         params);
-    Transaction trx = TVMTestUtils
+    Transaction trx = SVMTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), suicideContract,
             triggerData1, 0, 100000000);
-    TransactionTrace trace = TVMTestUtils.processTransactionAndReturnTrace(trx, deposit, null);
+    TransactionTrace trace = SVMTestUtils.processTransactionAndReturnTrace(trx, deposit, null);
     runtime = trace.getRuntime();
     List<InternalTransaction> internalTransactionsList = runtime.getResult()
         .getInternalTransactions();
@@ -442,7 +439,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return TVMTestUtils
+    return SVMTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);

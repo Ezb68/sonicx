@@ -2,13 +2,15 @@ package org.sonicx.program;
 
 import static org.sonicx.core.config.Parameter.ChainConstant.BLOCK_PRODUCED_INTERVAL;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import ch.qos.logback.classic.Level;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.BooleanUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
+import org.springframework.util.StringUtils;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
 import org.sonicx.common.application.SonicxApplicationContext;
@@ -24,8 +26,6 @@ import org.sonicx.core.db.Manager;
 import org.sonicx.core.services.RpcApiService;
 import org.sonicx.core.services.http.solidity.SolidityNodeHttpApiService;
 import org.sonicx.protos.Protocol.Block;
-import org.springframework.util.StringUtils;
-import org.springframework.context.ApplicationContext;
 
 @Slf4j(topic = "app")
 public class SolidityNode {
@@ -56,9 +56,11 @@ public class SolidityNode {
     try {
       new Thread(() -> getBlock()).start();
       new Thread(() -> processBlock()).start();
-      logger.info( "Success to start solid node, ID: {}, remoteBlockNum: {}.", ID.get(), remoteBlockNum);
+      logger.info("Success to start solid node, ID: {}, remoteBlockNum: {}.", ID.get(),
+          remoteBlockNum);
     } catch (Exception e) {
-      logger.error("Failed to start solid node, address: {}.", Args.getInstance().getTrustNodeAddr());
+      logger
+          .error("Failed to start solid node, address: {}.", Args.getInstance().getTrustNodeAddr());
       System.exit(0);
     }
   }
@@ -100,7 +102,8 @@ public class SolidityNode {
       try {
         dbManager.pushVerifiedBlock(new BlockCapsule(block));
         dbManager.getDynamicPropertiesStore().saveLatestSolidifiedBlockNum(blockNum);
-        logger.info("Success to process block: {}, blockQueueSize: {}.", blockNum, blockQueue.size());
+        logger
+            .info("Success to process block: {}, blockQueueSize: {}.", blockNum, blockQueue.size());
         return;
       } catch (Exception e) {
         logger.error("Failed to process block {}.", new BlockCapsule(block), e);
@@ -120,11 +123,11 @@ public class SolidityNode {
           logger.info("Success to get block: {}, cost: {}ms.",
               blockNum, System.currentTimeMillis() - time);
           return block;
-        }else {
+        } else {
           logger.warn("Get block id not the same , {}, {}.", num, blockNum);
           sleep(exceptionSleepTime);
         }
-      }catch (Exception e) {
+      } catch (Exception e) {
         logger.error("Failed to get block: {}, reason: {}.", blockNum, e.getMessage());
         sleep(exceptionSleepTime);
       }
@@ -140,7 +143,8 @@ public class SolidityNode {
             blockNum, remoteBlockNum, System.currentTimeMillis() - time);
         return blockNum;
       } catch (Exception e) {
-        logger.error("Failed to get last solid blockNum: {}, reason: {}.", remoteBlockNum.get(), e.getMessage());
+        logger.error("Failed to get last solid blockNum: {}, reason: {}.", remoteBlockNum.get(),
+            e.getMessage());
         sleep(exceptionSleepTime);
       }
     }

@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.multisign;
+package stest.sonicx.wallet.dailybuild.multisign;
 
 import static org.hamcrest.core.StringContains.containsString;
 
@@ -11,18 +11,18 @@ import org.junit.Assert;
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.Return;
-import org.tron.api.GrpcAPI.TransactionSignWeight;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Permission;
-import org.tron.protos.Protocol.Transaction;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.utils.PublicMethed;
-import stest.tron.wallet.common.client.utils.PublicMethedForMutiSign;
+import org.sonicx.api.GrpcAPI.Return;
+import org.sonicx.api.GrpcAPI.TransactionSignWeight;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Permission;
+import org.sonicx.protos.Protocol.Transaction;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
+import stest.sonicx.wallet.common.client.utils.PublicMethedForMutiSign;
 
 @Slf4j
 public class MultiSign35 {

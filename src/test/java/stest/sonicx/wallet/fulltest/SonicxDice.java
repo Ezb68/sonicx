@@ -1,4 +1,4 @@
-package stest.tron.wallet.fulltest;
+package stest.sonicx.wallet.fulltest;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -11,22 +11,22 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.GrpcAPI.AccountResourceMessage;
-import org.tron.api.WalletGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.SmartContract;
-import org.tron.protos.Protocol.TransactionInfo;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.Base58;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.GrpcAPI.AccountResourceMessage;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.SmartContract;
+import org.sonicx.protos.Protocol.TransactionInfo;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.Base58;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
-public class TronDice {
+public class SonicxDice {
 
   private final String testKey002 = Configuration.getByPath("testng.conf")
       .getString("foundationAccount.key1");
@@ -71,19 +71,19 @@ public class TronDice {
   }
 
   @Test(enabled = true, threadPoolSize = 30, invocationCount = 30)
-  public void tronDice() {
+  public void sonicxDice() {
     ECKey ecKey1 = new ECKey(Utils.getRandom());
-    byte[] tronDiceAddress = ecKey1.getAddress();
-    String tronDiceKey = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
+    byte[] sonicxDiceAddress = ecKey1.getAddress();
+    String sonicxDiceKey = ByteArray.toHexString(ecKey1.getPrivKeyBytes());
     PublicMethed
-        .sendcoin(tronDiceAddress, 100000000000L, fromAddress, testKey002, blockingStubFull);
-    String contractName = "TronDice";
+        .sendcoin(sonicxDiceAddress, 100000000000L, fromAddress, testKey002, blockingStubFull);
+    String contractName = "SonicxDice";
     String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_TronDice_tronDice");
+        .getString("code.code_SonicxDice_sonicxDice");
     String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_TronDice_tronDice");
+        .getString("abi.abi_SonicxDice_sonicxDice");
     byte[] contractAddress = PublicMethed.deployContract(contractName, abi, code, "",
-        maxFeeLimit, 1000000000L, 100, null, tronDiceKey, tronDiceAddress, blockingStubFull);
+        maxFeeLimit, 1000000000L, 100, null, sonicxDiceKey, sonicxDiceAddress, blockingStubFull);
     SmartContract smartContract = PublicMethed.getContract(contractAddress, blockingStubFull);
     try {
       Thread.sleep(10000);
@@ -99,7 +99,7 @@ public class TronDice {
       String initParmes = "\"" + "10" + "\"";
       txid = PublicMethed.triggerContract(contractAddress,
           "rollDice(uint256)", initParmes, false,
-          1000000, maxFeeLimit, tronDiceAddress, tronDiceKey, blockingStubFull);
+          1000000, maxFeeLimit, sonicxDiceAddress, sonicxDiceKey, blockingStubFull);
       logger.info(txid);
       txidList.add(txid);
 

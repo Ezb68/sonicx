@@ -8,7 +8,7 @@ import org.junit.Test;
 import org.spongycastle.util.encoders.Hex;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
-import org.sonicx.common.application.TronApplicationContext;
+import org.sonicx.common.application.SonicxApplicationContext;
 import org.testng.Assert;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.FileUtil;
@@ -28,7 +28,7 @@ public class InheritanceTest {
 
   private static Runtime runtime;
   private static Manager dbManager;
-  private static TronApplicationContext context;
+  private static SonicxApplicationContext context;
   private static Application appT;
   private static DepositImpl deposit;
   private static final String dbPath = "output_InheritanceTest";
@@ -36,7 +36,7 @@ public class InheritanceTest {
 
   static {
     Args.setParam(new String[]{"--output-directory", dbPath, "--debug"}, Constant.TEST_CONF);
-    context = new TronApplicationContext(DefaultConfig.class);
+    context = new SonicxApplicationContext(DefaultConfig.class);
     appT = ApplicationFactory.create(context);
     OWNER_ADDRESS = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
   }
@@ -88,14 +88,14 @@ public class InheritanceTest {
     long fee = 100000000;
     long consumeUserResourcePercent = 0;
 
-    byte[] contractAddress = TVMTestUtils.deployContractWholeProcessReturnContractAddress(
+    byte[] contractAddress = SVMTestUtils.deployContractWholeProcessReturnContractAddress(
         contractName, callerAddress, ABI, code, value, fee, consumeUserResourcePercent, null,
         deposit, null);
 
 
     /* =================================== CALL getName() return child value =================================== */
-    byte[] triggerData1 = TVMTestUtils.parseABI("getName()", "");
-    runtime = TVMTestUtils
+    byte[] triggerData1 = SVMTestUtils.parseABI("getName()", "");
+    runtime = SVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(callerAddress, contractAddress,
             triggerData1,
             0, 1000000, deposit, null);
@@ -107,8 +107,8 @@ public class InheritanceTest {
             + "6261720000000000000000000000000000000000000000000000000000000000");
 
     /* =================================== CALL getNumber() return parent value=================================== */
-    byte[] triggerData2 = TVMTestUtils.parseABI("getNumber()", "");
-    runtime = TVMTestUtils
+    byte[] triggerData2 = SVMTestUtils.parseABI("getNumber()", "");
+    runtime = SVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(callerAddress, contractAddress,
             triggerData2,
             0, 1000000, deposit, null);
@@ -118,8 +118,8 @@ public class InheritanceTest {
         "0000000000000000000000000000000000000000000000000000000000000064");
 
     /* =================================== CALL getId() call child function return parent field value=================================== */
-    byte[] triggerData3 = TVMTestUtils.parseABI("getId()", "");
-    runtime = TVMTestUtils
+    byte[] triggerData3 = SVMTestUtils.parseABI("getId()", "");
+    runtime = SVMTestUtils
         .triggerContractWholeProcessReturnContractAddress(callerAddress, contractAddress,
             triggerData3,
             0, 1000000, deposit, null);

@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.trctoken;
+package stest.sonicx.wallet.dailybuild.trctoken;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,16 +10,16 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.TransactionInfo;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.TransactionInfo;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractTrcToken077 {
@@ -97,7 +97,7 @@ public class ContractTrcToken077 {
 
   }
 
-  @Test(enabled = true, description = "The value of address is not at the beginning of 41")
+  @Test(enabled = true, description = "The value of address is not at the beginning of 3f")
   public void testAddress002() {
     PublicMethed
         .sendcoin(grammarAddress, 100000000000L, testNetAccountAddress, testNetAccountKey,
@@ -130,7 +130,7 @@ public class ContractTrcToken077 {
     byte[] a = infoById.get().getContractResult(0).toByteArray();
     byte[] b = subByte(a, 11, 1);
     byte[] c = subByte(a, 0, 11);
-    byte[] e = "41".getBytes();
+    byte[] e = "3f".getBytes();
     byte[] d = subByte(a, 12, 20);
 
     logger.info("a:" + ByteArray.toHexString(a));
@@ -140,11 +140,11 @@ public class ContractTrcToken077 {
 
     logger.info("d:" + ByteArray.toHexString(d));
 
-    logger.info("41" + ByteArray.toHexString(d));
-    String exceptedResult = "41" + ByteArray.toHexString(d);
+    logger.info("3f" + ByteArray.toHexString(d));
+    String exceptedResult = "3f" + ByteArray.toHexString(d);
     String realResult = ByteArray.toHexString(b);
     Assert.assertEquals(realResult, "00");
-    Assert.assertNotEquals(realResult, "41");
+    Assert.assertNotEquals(realResult, "3f");
 
     Assert.assertEquals(exceptedResult, ByteArray.toHexString(contractAddress));
 

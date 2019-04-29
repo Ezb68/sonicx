@@ -114,8 +114,9 @@ import org.sonicx.core.exception.TooBigTransactionException;
 import org.sonicx.core.exception.TransactionExpirationException;
 import org.sonicx.core.exception.VMIllegalException;
 import org.sonicx.core.exception.ValidateSignatureException;
+import org.sonicx.core.net.SonicxNetDelegate;
+import org.sonicx.core.net.SonicxNetService;
 import org.sonicx.core.net.message.TransactionMessage;
-import org.sonicx.core.net.node.NodeImpl;
 import org.sonicx.protos.Contract.AssetIssueContract;
 import org.sonicx.protos.Contract.CreateSmartContract;
 import org.sonicx.protos.Contract.TransferContract;
@@ -147,7 +148,7 @@ public class Wallet {
   @Autowired
   private SonicxNetService sonicxNetService;
   @Autowired
-  private SonicxNetNetDelegate sonicxNetDelegate;
+  private SonicxNetDelegate sonicxNetDelegate;
   @Autowired
   private Manager dbManager;
   @Autowired
@@ -1304,7 +1305,8 @@ public class Wallet {
       Runtime runtime = new RuntimeImpl(trxCap.getInstance(), new BlockCapsule(headBlock), deposit,
           new ProgramInvokeFactoryImpl(), true);
       VMConfig.initVmHardFork();
-      VMConfig.initAllowSvmTransferSrc10(dbManager.getDynamicPropertiesStore().getAllowSvmTransferSrc10());
+      VMConfig.initAllowSvmTransferSrc10(
+          dbManager.getDynamicPropertiesStore().getAllowSvmTransferSrc10());
       VMConfig.initAllowMultiSign(dbManager.getDynamicPropertiesStore().getAllowMultiSign());
       runtime.execute();
       runtime.go();

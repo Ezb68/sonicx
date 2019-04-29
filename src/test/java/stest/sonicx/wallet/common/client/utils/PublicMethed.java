@@ -1,4 +1,4 @@
-package stest.tron.wallet.common.client.utils;
+package stest.sonicx.wallet.common.client.utils;
 
 import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
@@ -19,45 +19,45 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
-import org.tron.api.GrpcAPI;
-import org.tron.api.GrpcAPI.AccountNetMessage;
-import org.tron.api.GrpcAPI.AccountResourceMessage;
-import org.tron.api.GrpcAPI.AssetIssueList;
-import org.tron.api.GrpcAPI.BytesMessage;
-import org.tron.api.GrpcAPI.DelegatedResourceList;
-import org.tron.api.GrpcAPI.DelegatedResourceMessage;
-import org.tron.api.GrpcAPI.EmptyMessage;
-import org.tron.api.GrpcAPI.ExchangeList;
-import org.tron.api.GrpcAPI.Return;
-import org.tron.api.GrpcAPI.Return.response_code;
-import org.tron.api.GrpcAPI.TransactionApprovedList;
-import org.tron.api.GrpcAPI.TransactionExtention;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.crypto.ECKey.ECDSASignature;
-import org.tron.common.crypto.Hash;
-import org.tron.common.utils.ByteArray;
-import org.tron.core.Wallet;
-import org.tron.keystore.WalletFile;
-import org.tron.protos.Contract;
-import org.tron.protos.Contract.CreateSmartContract;
-import org.tron.protos.Contract.CreateSmartContract.Builder;
-import org.tron.protos.Contract.UpdateEnergyLimitContract;
-import org.tron.protos.Contract.UpdateSettingContract;
-import org.tron.protos.Protocol;
-import org.tron.protos.Protocol.Account;
-import org.tron.protos.Protocol.Block;
-import org.tron.protos.Protocol.DelegatedResourceAccountIndex;
-import org.tron.protos.Protocol.Exchange;
-import org.tron.protos.Protocol.Key;
-import org.tron.protos.Protocol.Permission;
-import org.tron.protos.Protocol.SmartContract;
-import org.tron.protos.Protocol.Transaction;
-import org.tron.protos.Protocol.Transaction.Result;
-import org.tron.protos.Protocol.TransactionInfo;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.WalletClient;
+import org.sonicx.api.GrpcAPI;
+import org.sonicx.api.GrpcAPI.AccountNetMessage;
+import org.sonicx.api.GrpcAPI.AccountResourceMessage;
+import org.sonicx.api.GrpcAPI.AssetIssueList;
+import org.sonicx.api.GrpcAPI.BytesMessage;
+import org.sonicx.api.GrpcAPI.DelegatedResourceList;
+import org.sonicx.api.GrpcAPI.DelegatedResourceMessage;
+import org.sonicx.api.GrpcAPI.EmptyMessage;
+import org.sonicx.api.GrpcAPI.ExchangeList;
+import org.sonicx.api.GrpcAPI.Return;
+import org.sonicx.api.GrpcAPI.Return.response_code;
+import org.sonicx.api.GrpcAPI.TransactionApprovedList;
+import org.sonicx.api.GrpcAPI.TransactionExtention;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.crypto.ECKey.ECDSASignature;
+import org.sonicx.common.crypto.Hash;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.core.Wallet;
+import org.sonicx.keystore.WalletFile;
+import org.sonicx.protos.Contract;
+import org.sonicx.protos.Contract.CreateSmartContract;
+import org.sonicx.protos.Contract.CreateSmartContract.Builder;
+import org.sonicx.protos.Contract.UpdateEnergyLimitContract;
+import org.sonicx.protos.Contract.UpdateSettingContract;
+import org.sonicx.protos.Protocol;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Block;
+import org.sonicx.protos.Protocol.DelegatedResourceAccountIndex;
+import org.sonicx.protos.Protocol.Exchange;
+import org.sonicx.protos.Protocol.Key;
+import org.sonicx.protos.Protocol.Permission;
+import org.sonicx.protos.Protocol.SmartContract;
+import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.protos.Protocol.Transaction.Result;
+import org.sonicx.protos.Protocol.TransactionInfo;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.WalletClient;
 
 
 public class PublicMethed {
@@ -75,7 +75,7 @@ public class PublicMethed {
    */
 
   public static Boolean createAssetIssue(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull) {
@@ -93,7 +93,7 @@ public class PublicMethed {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -129,7 +129,7 @@ public class PublicMethed {
    */
 
   public static Boolean createAssetIssue(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, int precision, Long startTime, Long endTime,
+      Integer soxNum, Integer icoNum, int precision, Long startTime, Long endTime,
       Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
@@ -148,7 +148,7 @@ public class PublicMethed {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -185,7 +185,7 @@ public class PublicMethed {
    */
 
   public static Return createAssetIssue2(byte[] address, String name, Long totalSupply,
-      Integer trxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
+      Integer soxNum, Integer icoNum, Long startTime, Long endTime, Integer voteScore,
       String description, String url, Long freeAssetNetLimit, Long publicFreeAssetNetLimit,
       Long fronzenAmount, Long frozenDay, String priKey,
       WalletGrpc.WalletBlockingStub blockingStubFull) {
@@ -204,7 +204,7 @@ public class PublicMethed {
       builder.setOwnerAddress(ByteString.copyFrom(address));
       builder.setName(ByteString.copyFrom(name.getBytes()));
       builder.setTotalSupply(totalSupply);
-      builder.setTrxNum(trxNum);
+      builder.setSoxNum(soxNum);
       builder.setNum(icoNum);
       builder.setStartTime(startTime);
       builder.setEndTime(endTime);
@@ -1138,7 +1138,7 @@ public class PublicMethed {
   /*  public static byte[] addPreFix(byte[] address) {
   Wallet.setAddressPreFixByte(CommonConstant.ADD_PRE_FIX_BYTE_MAINNET);
   Config config = Configuration.getByPath("testng.conf");
-  byte ADD_PRE_FIX_BYTE_MAINNET = (byte) 0x41;   //41 + address
+  byte ADD_PRE_FIX_BYTE_MAINNET = (byte) 0x3f;   //3f + address
   byte ADD_PRE_FIX_BYTE_TESTNET = (byte) 0xa0;   //a0 + address
   byte[] preFix = new byte[1];
   if (config.hasPath("net.type") && "mainnet".equalsIgnoreCase(config.getString("net.type"))) {

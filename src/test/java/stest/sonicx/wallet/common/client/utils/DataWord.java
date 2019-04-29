@@ -1,4 +1,4 @@
-package stest.tron.wallet.common.client.utils;
+package stest.sonicx.wallet.common.client.utils;
 
 /*
  * Copyright (c) [2016] [ <ether.camp> ]
@@ -24,8 +24,8 @@ import java.math.BigInteger;
 import java.nio.ByteBuffer;
 import org.spongycastle.util.Arrays;
 import org.spongycastle.util.encoders.Hex;
-import org.tron.common.utils.ByteUtil;
-import org.tron.common.utils.FastByteComparisons;
+import org.sonicx.common.utils.ByteUtil;
+import org.sonicx.common.utils.FastByteComparisons;
 
 public class DataWord implements Comparable<DataWord> {
 

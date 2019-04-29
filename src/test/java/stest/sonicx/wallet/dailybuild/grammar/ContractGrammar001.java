@@ -1,4 +1,4 @@
-package stest.tron.wallet.dailybuild.grammar;
+package stest.sonicx.wallet.dailybuild.grammar;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
@@ -10,17 +10,17 @@ import org.testng.annotations.AfterClass;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.BeforeSuite;
 import org.testng.annotations.Test;
-import org.tron.api.WalletGrpc;
-import org.tron.api.WalletSolidityGrpc;
-import org.tron.common.crypto.ECKey;
-import org.tron.common.utils.ByteArray;
-import org.tron.common.utils.Utils;
-import org.tron.core.Wallet;
-import org.tron.protos.Protocol.TransactionInfo;
-import stest.tron.wallet.common.client.Configuration;
-import stest.tron.wallet.common.client.Parameter.CommonConstant;
-import stest.tron.wallet.common.client.utils.Base58;
-import stest.tron.wallet.common.client.utils.PublicMethed;
+import org.sonicx.api.WalletGrpc;
+import org.sonicx.api.WalletSolidityGrpc;
+import org.sonicx.common.crypto.ECKey;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Utils;
+import org.sonicx.core.Wallet;
+import org.sonicx.protos.Protocol.TransactionInfo;
+import stest.sonicx.wallet.common.client.Configuration;
+import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
+import stest.sonicx.wallet.common.client.utils.Base58;
+import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
 public class ContractGrammar001 {
@@ -142,7 +142,7 @@ public class ContractGrammar001 {
     String abi1 = Configuration.getByPath("testng.conf")
         .getString("abi.abi1_ContractGrammar001_testGrammar002");
     String libraryAddress =
-        "browser/TvmTest_p1_Grammar_002.sol:S:" + Base58.encode58Check(contractAddress);
+        "browser/SvmTest_p1_Grammar_002.sol:S:" + Base58.encode58Check(contractAddress);
     contractAddress1 = PublicMethed.deployContract(contractName1, abi1, code1, "", maxFeeLimit,
         0L, 100, libraryAddress, testKeyForGrammarAddress,
         grammarAddress, blockingStubFull);
@@ -178,7 +178,7 @@ public class ContractGrammar001 {
     String abi1 = Configuration.getByPath("testng.conf")
         .getString("abi.abi1_ContractGrammar001_testGrammar003");
     String libraryAddress =
-        "browser/TvmTest_p1_Grammar_003.sol:S:" + Base58.encode58Check(contractAddress);
+        "browser/SvmTest_p1_Grammar_003.sol:S:" + Base58.encode58Check(contractAddress);
     contractAddress1 = PublicMethed.deployContract(contractName1, abi1, code1, "", maxFeeLimit,
         0L, 100, libraryAddress, testKeyForGrammarAddress,
         grammarAddress, blockingStubFull);
@@ -214,7 +214,7 @@ public class ContractGrammar001 {
         .getString("abi.abi1_ContractGrammar001_testGrammar004");
     String libraryAddress = null;
     libraryAddress =
-        "browser/TvmTest_p1_Grammar_004.sol:S:" + Base58.encode58Check(contractAddress);
+        "browser/SvmTest_p1_Grammar_004.sol:S:" + Base58.encode58Check(contractAddress);
     contractAddress1 = PublicMethed.deployContract(contractName1, abi1, code1, "", maxFeeLimit,
         0L, 100, libraryAddress, testKeyForGrammarAddress,
         grammarAddress, blockingStubFull);
