@@ -1,8 +1,5 @@
 package org.sonicx.core.db;
 
-import static org.sonicx.core.config.Parameter.ChainConstant.SOLIDIFIED_THRESHOLD;
-import static org.sonicx.core.config.Parameter.NodeConstant.MAX_TRANSACTION_PENDING;
-
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Lists;
@@ -13,64 +10,30 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingQueue;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.stream.Collectors;
-import java.util.stream.LongStream;
+import com.google.protobuf.InvalidProtocolBufferException;
 import javafx.util.Pair;
-import javax.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.joda.time.DateTime;
-import org.spongycastle.util.encoders.Hex;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.sonicx.common.crypto.Hash;
 import org.sonicx.common.logsfilter.EventPluginLoader;
 import org.sonicx.common.logsfilter.FilterQuery;
-import org.sonicx.common.logsfilter.capsule.BlockLogTriggerCapsule;
-import org.sonicx.common.logsfilter.capsule.ContractEventTriggerCapsule;
-import org.sonicx.common.logsfilter.capsule.ContractLogTriggerCapsule;
-import org.sonicx.common.logsfilter.capsule.TransactionLogTriggerCapsule;
-import org.sonicx.common.logsfilter.capsule.TriggerCapsule;
+import org.sonicx.common.logsfilter.capsule.*;
 import org.sonicx.common.logsfilter.trigger.ContractLogTrigger;
 import org.sonicx.common.logsfilter.trigger.ContractTrigger;
 import org.sonicx.common.overlay.discover.node.Node;
 import org.sonicx.common.runtime.config.VMConfig;
+import org.sonicx.common.runtime.vm.DataWord;
 import org.sonicx.common.runtime.vm.LogEventWrapper;
-import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.ForkController;
-import org.sonicx.common.utils.SessionOptional;
-import org.sonicx.common.utils.Sha256Hash;
-import org.sonicx.common.utils.StringUtil;
+import org.sonicx.common.storage.Deposit;
+import org.sonicx.common.storage.DepositImpl;
+import org.sonicx.common.utils.*;
 import org.sonicx.core.Constant;
-import org.sonicx.core.capsule.AccountCapsule;
-import org.sonicx.core.capsule.BlockCapsule;
+import org.sonicx.core.Wallet;
+import org.sonicx.core.capsule.*;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
-import org.sonicx.core.capsule.BytesCapsule;
-import org.sonicx.core.capsule.ExchangeCapsule;
-import org.sonicx.core.capsule.TransactionCapsule;
-import org.sonicx.core.capsule.TransactionInfoCapsule;
-import org.sonicx.core.capsule.WitnessCapsule;
 import org.sonicx.core.capsule.utils.BlockUtil;
 import org.sonicx.core.config.Parameter.ChainConstant;
 import org.sonicx.core.config.args.Args;
@@ -80,33 +43,29 @@ import org.sonicx.core.db.api.AssetUpdateHelper;
 import org.sonicx.core.db2.core.ISession;
 import org.sonicx.core.db2.core.ISonicxChainBase;
 import org.sonicx.core.db2.core.SnapshotManager;
-import org.sonicx.core.exception.AccountResourceInsufficientException;
-import org.sonicx.core.exception.BadBlockException;
-import org.sonicx.core.exception.BadItemException;
-import org.sonicx.core.exception.BadNumberBlockException;
-import org.sonicx.core.exception.BalanceInsufficientException;
-import org.sonicx.core.exception.ContractExeException;
-import org.sonicx.core.exception.ContractSizeNotEqualToOneException;
-import org.sonicx.core.exception.ContractValidateException;
-import org.sonicx.core.exception.DupTransactionException;
-import org.sonicx.core.exception.HeaderNotFound;
-import org.sonicx.core.exception.ItemNotFoundException;
-import org.sonicx.core.exception.NonCommonBlockException;
-import org.sonicx.core.exception.ReceiptCheckErrException;
-import org.sonicx.core.exception.TaposException;
-import org.sonicx.core.exception.TooBigTransactionException;
-import org.sonicx.core.exception.TooBigTransactionResultException;
-import org.sonicx.core.exception.TransactionExpirationException;
-import org.sonicx.core.exception.UnLinkedBlockException;
-import org.sonicx.core.exception.VMIllegalException;
-import org.sonicx.core.exception.ValidateScheduleException;
-import org.sonicx.core.exception.ValidateSignatureException;
+import org.sonicx.core.exception.*;
+import org.sonicx.core.mastrnode.MasterNodeController;
 import org.sonicx.core.services.WitnessService;
+import org.sonicx.core.services.http.JsonFormat;
 import org.sonicx.core.witness.ProposalController;
 import org.sonicx.core.witness.WitnessController;
+import org.sonicx.protos.Protocol;
 import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.Transaction;
 import org.sonicx.protos.Protocol.Transaction.Contract;
+import org.spongycastle.util.encoders.Hex;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.annotation.PostConstruct;
+import java.util.*;
+import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.stream.Collectors;
+import java.util.stream.LongStream;
+
+import static org.sonicx.core.config.Parameter.ChainConstant.SOLIDIFIED_THRESHOLD;
+import static org.sonicx.core.config.Parameter.NodeConstant.MAX_TRANSACTION_PENDING;
 
 
 @Slf4j(topic = "DB")
@@ -210,6 +169,9 @@ public class Manager {
   @Getter
   @Setter
   public boolean eventPluginLoaded = false;
+
+  @Getter
+  private byte[] mastrnodesContractAddress;
 
   private BlockingQueue<TransactionCapsule> pushTransactionQueue = new LinkedBlockingQueue<>();
 
@@ -434,8 +396,8 @@ public class Manager {
     this.repushTransactions = new LinkedBlockingQueue<>();
     this.triggerCapsuleQueue = new LinkedBlockingQueue<>();
 
-    this.initGenesis();
     try {
+      this.initGenesis();
       this.khaosDb.start(getBlockById(getDynamicPropertiesStore().getLatestBlockHeaderHash()));
     } catch (ItemNotFoundException e) {
       logger.error(
@@ -450,8 +412,23 @@ public class Manager {
       e.printStackTrace();
       logger.error("DB data broken!");
       logger.error(
-          "Please delete database directory({}) and restart",
-          Args.getInstance().getOutputDirectory());
+              "Please delete database directory({}) and restart",
+              Args.getInstance().getOutputDirectory());
+      System.exit(1);
+    } catch (JsonFormat.ParseException e) {
+      e.printStackTrace();
+      logger.error(
+              "Wrong ABI format: {}",
+              Args.getInstance().getMasternode().getAbi());
+      System.exit(1);
+    } catch (VMIllegalException | ContractExeException | ContractValidateException e) {
+      e.printStackTrace();
+      logger.error(
+              "Failed to deploy smart contract: {}", e.getMessage());
+      System.exit(1);
+    } catch (InvalidProtocolBufferException e) {
+      logger.error(
+              "Failed to parse smart contract: {}", e.getMessage());
       System.exit(1);
     }
     forkController.init(this);
@@ -485,10 +462,13 @@ public class Manager {
   /**
    * init genesis block.
    */
-  public void initGenesis() {
+  public void initGenesis()
+          throws JsonFormat.ParseException, VMIllegalException,
+          ContractExeException, ContractValidateException, InvalidProtocolBufferException {
     this.genesisBlock = BlockUtil.newGenesisBlockCapsule();
     if (this.containBlock(this.genesisBlock.getBlockId())) {
       Args.getInstance().setChainId(this.genesisBlock.getBlockId().toString());
+      initMasterNodesAddress();
     } else {
       if (this.hasBlocks()) {
         logger.error(
@@ -511,6 +491,7 @@ public class Manager {
             this.genesisBlock.getTimeStamp());
         this.initAccount();
         this.initWitness();
+        this.initSmartContracts();
         this.witnessController.initWits();
         this.khaosDb.start(genesisBlock);
         this.updateRecentBlock(genesisBlock);
@@ -525,20 +506,124 @@ public class Manager {
     final Args args = Args.getInstance();
     final GenesisBlock genesisBlockArg = args.getGenesisBlock();
     genesisBlockArg
-        .getAssets()
-        .forEach(
-            account -> {
-              account.setAccountType("Normal"); // to be set in conf
-              final AccountCapsule accountCapsule =
-                  new AccountCapsule(
-                      account.getAccountName(),
-                      ByteString.copyFrom(account.getAddress()),
-                      account.getAccountType(),
-                      account.getBalance());
-              this.accountStore.put(account.getAddress(), accountCapsule);
-              this.accountIdIndexStore.put(accountCapsule);
-              this.accountIndexStore.put(accountCapsule);
-            });
+            .getAssets()
+            .forEach(
+                    account -> {
+                      account.setAccountType("Normal"); // to be set in conf
+                      final AccountCapsule accountCapsule =
+                              new AccountCapsule(
+                                      account.getAccountName(),
+                                      ByteString.copyFrom(account.getAddress()),
+                                      account.getAccountType(),
+                                      account.getBalance());
+                      this.accountStore.put(account.getAddress(), accountCapsule);
+                      this.accountIdIndexStore.put(accountCapsule);
+                      this.accountIndexStore.put(accountCapsule);
+                    });
+  }
+
+  private void initMasterNodesAddress() {
+    final Protocol.Block block = this.genesisBlock.getInstance();
+
+    for (Transaction tx : block
+            .getTransactionsList()) {
+      Transaction.raw raw = tx.getRawData();
+      for (Contract contract : raw.getContractList()) {
+        if (contract.getType() != Contract.ContractType.CreateSmartContract) {
+          continue;
+        }
+
+        Protocol.SmartContract smartContract = Objects.requireNonNull(ContractCapsule
+                .getSmartContractFromTransaction(tx)).getNewContract();
+
+        if (smartContract.getName().equals(MasterNodeController.contractName)) {
+          mastrnodesContractAddress = Wallet.generateContractAddress(tx);
+        }
+      }
+    }
+  }
+
+  /**
+   * save smart contracts into database.
+   */
+  private void initSmartContracts()
+          throws VMIllegalException, ContractExeException, ContractValidateException {
+    final Protocol.Block block = this.genesisBlock.getInstance();
+    final ByteString senorZorroAccountAddress = ByteString.copyFrom("0x000000000000000000000".getBytes());
+    final String zeroAccountName = "SenorZorro";
+    final long startBalance = 30000000000000L;
+    final long finishBalance = 0L;
+
+    for (Transaction tx : block
+            .getTransactionsList()) {
+      Transaction.raw raw = tx.getRawData();
+      for (Contract contract : raw.getContractList()) {
+        if (contract.getType() != Contract.ContractType.CreateSmartContract) {
+          continue;
+        }
+
+        // Initialization of a zero account.
+        final AccountCapsule senorZorroAccountCapsule =
+                new AccountCapsule(
+                        ByteString.copyFrom(zeroAccountName.getBytes()),
+                        senorZorroAccountAddress,
+                        AccountType.Normal,
+                        startBalance);
+        this.accountStore.put(senorZorroAccountAddress.toByteArray(), senorZorroAccountCapsule);
+        this.accountIdIndexStore.put(senorZorroAccountCapsule);
+        this.accountIndexStore.put(senorZorroAccountCapsule);
+
+        // Execution of the transaction.
+        TransactionCapsule trxCap = new TransactionCapsule(tx);
+
+
+        TransactionTrace trace = new TransactionTrace(trxCap, this);
+        trace.init(null);
+        VMConfig.initAllowSvmTransferSrc10(dynamicPropertiesStore.getAllowSvmTransferSrc10());
+
+        trace.exec();
+        trace.finalization();
+
+        TransactionInfoCapsule transactionInfo = TransactionInfoCapsule
+                .buildInstance(trxCap, null, trace);
+
+        if (transactionInfo.getInstance().getResult() == Protocol.TransactionInfo.code.FAILED) {
+          throw new ContractExeException("failed to deploy smart contract: " +
+                  trace.getRuntime().getRuntimeError());
+        }
+
+        // Save a transaction.
+        transactionHistoryStore.put(trxCap.getTransactionId().getBytes(), transactionInfo);
+        transactionStore.put(trxCap.getTransactionId().getBytes(), trxCap);
+
+        Protocol.SmartContract smartContract = Objects.requireNonNull(ContractCapsule
+                .getSmartContractFromTransaction(tx)).getNewContract();
+        ContractCapsule conCap = new ContractCapsule(smartContract);
+
+        byte[] contractAddress = Wallet.generateContractAddress(tx);
+        contractStore.put(contractAddress, conCap);
+
+        if (smartContract.getName().equals(MasterNodeController.contractName)) {
+          mastrnodesContractAddress = contractAddress;
+        }
+        // Change the amount of accounts balances.
+        final AccountCapsule accountCapsule =
+                new AccountCapsule(
+                        ByteString.copyFrom("Masternodes".getBytes()),
+                        ByteString.copyFrom(contractAddress),
+                        AccountType.Contract,
+                        finishBalance);
+        this.accountStore.put(contractAddress, accountCapsule);
+        this.accountIdIndexStore.put(accountCapsule);
+        this.accountIndexStore.put(accountCapsule);
+
+        // Change the zero account.
+        senorZorroAccountCapsule.setBalance(finishBalance);
+        this.accountStore.put(senorZorroAccountAddress.toByteArray(), senorZorroAccountCapsule);
+        this.accountIdIndexStore.put(senorZorroAccountCapsule);
+        this.accountIndexStore.put(senorZorroAccountCapsule);
+      }
+    }
   }
 
   /**
@@ -677,7 +762,7 @@ public class Manager {
             "Tapos failed, different block hash, %s, %s , recent block %s, solid block %s head block %s",
             ByteArray.toLong(refBlockNumBytes), Hex.toHexString(refBlockHash),
             Hex.toHexString(blockHash),
-            getSolidBlockId().getString(), getHeadBlockId().getString()).toString();
+                getSolidBlockId().getString(), getHeadBlockId().getString());
         logger.info(str);
         throw new TaposException(str);
       }
@@ -685,7 +770,7 @@ public class Manager {
       String str = String.
           format("Tapos failed, block not found, ref block %s, %s , solid block %s head block %s",
               ByteArray.toLong(refBlockNumBytes), Hex.toHexString(refBlockHash),
-              getSolidBlockId().getString(), getHeadBlockId().getString()).toString();
+                  getSolidBlockId().getString(), getHeadBlockId().getString());
       logger.info(str);
       throw new TaposException(str);
     }
@@ -1315,7 +1400,7 @@ public class Manager {
       TransactionCapsule trx;
       if (iterator.hasNext()) {
         fromPending = true;
-        trx = (TransactionCapsule) iterator.next();
+        trx = iterator.next();
       } else {
         trx = repushTransactions.poll();
       }
@@ -1521,6 +1606,7 @@ public class Manager {
     this.updateTransHashCache(block);
     updateMaintenanceState(needMaint);
     updateRecentBlock(block);
+    updateMasternodeRewards(block);
   }
 
 
@@ -1534,6 +1620,11 @@ public class Manager {
     this.recentBlockStore.put(ByteArray.subArray(
         ByteArray.fromLong(block.getNum()), 6, 8),
         new BytesCapsule(ByteArray.subArray(block.getBlockId().getBytes(), 8, 16)));
+  }
+
+  // TODO
+  private void updateMasterNodeRewardPerBlock() {
+    long reward = getDynamicPropertiesStore().getWitnessPayPerBlock() / 1000;
   }
 
   /**
@@ -1610,7 +1701,7 @@ public class Manager {
 
   /**
    * @param block the block update signed witness. set witness who signed block the 1. the latest
-   * block num 2. pay the trx to witness. 3. the latest slot num.
+   * block num 2. pay the trx to witness. 2. pay the trx to witness. 3. the latest slot num.
    */
   public void updateSignedWitness(BlockCapsule block) {
     // TODO: add verification
@@ -1651,6 +1742,125 @@ public class Manager {
     } else {
       getDynamicPropertiesStore().saveStateFlag(0);
     }
+  }
+
+  private void updateMasternodeRewards(BlockCapsule block) {
+    if (mastrnodesContractAddress == null) {
+      return;
+    }
+
+    long witnessReward = getDynamicPropertiesStore().getWitnessPayPerBlock();
+    long currentMsnReward = witnessReward / 1000; // TODO hardcoded reward.
+
+    AccountCapsule accountCapsule = getAccountStore().get(mastrnodesContractAddress);
+
+    if (accountCapsule == null) {
+      return;
+    }
+
+    long oldBalance = accountCapsule.getBalance();
+    accountCapsule.setInstance(accountCapsule.getInstance().toBuilder()
+            .setBalance(oldBalance + currentMsnReward)
+            .build());
+    getAccountStore().put(accountCapsule.createDbKey(), accountCapsule);
+
+    DataWord historyKey = new DataWord(0x0000000000000000000000000000000000000000000000000000000000000003);
+    DataWord currentRewardKey = new DataWord(0x0000000000000000000000000000000000000000000000000000000000000008);
+    DataWord offset = new DataWord(Hash.sha3(historyKey.getData()));
+    DataWord one = new DataWord(1);
+    DataWord four = new DataWord(4);
+
+    Deposit state = DepositImpl.createRoot(this);
+    DataWord storageLen = state.getStorageValue(mastrnodesContractAddress, historyKey);
+
+    if (storageLen == null) {
+      return;
+    }
+
+    // offset = offset + (history.length - 1) * 4.
+    DataWord increment = storageLen.clone();
+    increment.sub(one.clone());
+    increment.mul(four.clone());
+    offset.add(increment);
+
+    DataWord lastBlockFromContract = state.getStorageValue(mastrnodesContractAddress, offset);
+
+//    Storage stor = state.getStorage(mastrnodesContractAddress);
+//
+//    byte[] addrHash = Hash.sha3(mastrnodesContractAddress);
+//
+//    System.out.println("start storage");
+//
+//    stor.getStore().forEach(
+//            k -> {
+//
+//              byte[] rowKey = compose(k.getKey(), addrHash);
+//
+//              System.out.printf("key: %s, val %s\n", ByteArray.toHexString(k.getKey()), k.getValue().getValue().toString());
+//            }
+//    );
+//    System.out.println("finish storage");
+
+    if (lastBlockFromContract == null) {
+      logger.error("The lastBlock from a smart contract is empty");
+      return;
+    }
+
+    // If the last block number from the contract is greater or equal to the block number, then ignore it.
+    if (block.getNum() <= lastBlockFromContract.longValue()) {
+      return;
+    }
+
+    // The Current number of activated Masternodes.
+    offset.add(one.clone());
+    DataWord numOfActivatedMasternodes = state.getStorageValue(mastrnodesContractAddress, offset);
+    if (numOfActivatedMasternodes == null) {
+      numOfActivatedMasternodes = new DataWord(0);
+    }
+
+    // The Current amount of whole activated collateral.
+    offset.add(one.clone());
+    DataWord wholeActivatedCollateral = state.getStorageValue(mastrnodesContractAddress, offset);
+    if (wholeActivatedCollateral == null) {
+      wholeActivatedCollateral = new DataWord(0);
+    }
+
+    // The Current number of awards for a block.
+    offset.add(one.clone());
+    DataWord rewardsPerBlock = state.getStorageValue(mastrnodesContractAddress, offset);
+    if (rewardsPerBlock == null) {
+      rewardsPerBlock = new DataWord(0);
+    }
+
+    logger.debug("New history entry, block increment: {}", block.getNum());
+    logger.debug("The number of activated master nodes: {}", numOfActivatedMasternodes.longValueSafe());
+    logger.debug("The whole activated collateral: {}", wholeActivatedCollateral.longValueSafe());
+    logger.debug("THe rewards per block:: {}", rewardsPerBlock.longValueSafe());
+
+    // If the number of current reward equals.
+    if (rewardsPerBlock.longValue() == currentMsnReward) {
+      return;
+    }
+
+    // Change amount of the current reward.
+    state.putStorageValue(mastrnodesContractAddress, currentRewardKey, new DataWord(currentMsnReward));
+
+    // Increase the length of the history.
+    storageLen.add(one.clone());
+    state.putStorageValue(mastrnodesContractAddress, historyKey, storageLen);
+
+    // Add a new history entry.
+    offset.add(one.clone());
+    state.putStorageValue(mastrnodesContractAddress, offset, new DataWord(block.getNum()));
+    offset.add(one.clone());
+    state.putStorageValue(mastrnodesContractAddress, offset, numOfActivatedMasternodes.clone());
+    offset.add(one.clone());
+    state.putStorageValue(mastrnodesContractAddress, offset, wholeActivatedCollateral.clone());
+    offset.add(one.clone());
+    state.putStorageValue(mastrnodesContractAddress, offset, new DataWord(currentMsnReward));
+
+    // Save the changes.
+    state.commit();
   }
 
   public boolean lastHeadBlockIsMaintenance() {

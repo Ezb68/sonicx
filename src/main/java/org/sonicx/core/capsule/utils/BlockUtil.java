@@ -16,20 +16,23 @@
 package org.sonicx.core.capsule.utils;
 
 import com.google.protobuf.ByteString;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.config.args.GenesisBlock;
+import org.sonicx.core.mastrnode.MasterNodeController;
+import org.sonicx.core.services.http.JsonFormat;
 import org.sonicx.protos.Protocol.Transaction;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class BlockUtil {
 
   /**
    * create genesis block from transactions.
    */
-  public static BlockCapsule newGenesisBlockCapsule() {
+  public static BlockCapsule newGenesisBlockCapsule() throws JsonFormat.ParseException {
 
     Args args = Args.getInstance();
     GenesisBlock genesisBlockArg = args.getGenesisBlock();
@@ -41,6 +44,12 @@ public class BlockUtil {
               return TransactionUtil.newGenesisTransaction(address, balance);
             })
             .collect(Collectors.toList());
+
+      if (args.getMasternode().isEnable()) {
+          ByteString ownerAddress = ByteString.copyFrom("0x000000000000000000000".getBytes());
+          Transaction mnTx = MasterNodeController.deploy(ownerAddress.toByteArray(), 32000L);
+          transactionList.add(mnTx);
+      }
 
     long timestamp = Long.parseLong(genesisBlockArg.getTimestamp());
     ByteString parentHash =

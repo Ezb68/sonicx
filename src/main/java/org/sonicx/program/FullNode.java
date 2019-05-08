@@ -1,24 +1,24 @@
 package org.sonicx.program;
 
-import ch.qos.logback.classic.Level;
 import ch.qos.logback.classic.LoggerContext;
 import ch.qos.logback.classic.joran.JoranConfigurator;
-import java.io.File;
 import lombok.extern.slf4j.Slf4j;
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
 import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.core.Constant;
 import org.sonicx.core.config.DefaultConfig;
 import org.sonicx.core.config.args.Args;
+import org.sonicx.core.mastrnode.MasterNodeService;
 import org.sonicx.core.services.RpcApiService;
 import org.sonicx.core.services.WitnessService;
 import org.sonicx.core.services.http.FullNodeHttpApiService;
 import org.sonicx.core.services.interfaceOnSolidity.RpcApiServiceOnSolidity;
 import org.sonicx.core.services.interfaceOnSolidity.http.solidity.HttpApiOnSolidityService;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+
+import java.io.File;
 
 @Slf4j(topic = "app")
 public class FullNode {
@@ -89,6 +89,10 @@ public class FullNode {
       HttpApiOnSolidityService httpApiOnSolidityService = context
           .getBean(HttpApiOnSolidityService.class);
       appT.addService(httpApiOnSolidityService);
+    }
+
+    if (Args.getInstance().getMasternode().isEnable()) {
+      appT.addService(new MasterNodeService(appT, context));
     }
 
     appT.initServices(cfgArgs);
