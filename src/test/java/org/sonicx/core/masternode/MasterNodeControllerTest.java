@@ -58,8 +58,8 @@ public class MasterNodeControllerTest {
         Args.setParam(new String[]{"--output-directory", dbPath, "--debug"}, Constant.TEST_CONF);
         Args.getInstance().getMasternode().setMinBlocksBeforeActivation(0);
         context = new SonicxApplicationContext(DefaultConfig.class);
-        ownerAddress = Wallet.getAddressPreFixString() + "abd4b9367799eaa3197fecb144eb71de1e049abc";
-        operatorAddress = Wallet.getAddressPreFixString() + "548794500882809695a8a687866e76d4271a1abc";
+        ownerAddress = Wallet.getAddressPreFixString() + "9cd9269ab632fc5094cbb891296a9ad1687dcc6d";
+        operatorAddress = Wallet.getAddressPreFixString() + "216b8cdb1353f98d8b8360795ab506f6f40ed40c";
 
         manager = context.getBean(Manager.class);
         controller = context.getBean(MasterNodeController.class);
@@ -117,8 +117,9 @@ public class MasterNodeControllerTest {
                 .statsByVersion(ForkBlockVersionConsts.ENERGY_LIMIT, stats);
         VMConfig.initVmHardFork();
         byte[] address = Hex.decode(ownerAddress);
+        long minimumCollateral = Args.getInstance().getMasternode().getMinimumCollateral();
 
-        Transaction aTx = MasterNodeController.deploy(address, 32000L);
+        Transaction aTx = MasterNodeController.deploy(address, 32000L, minimumCollateral);
 
         Runtime runtime = null;
         try {
@@ -267,6 +268,80 @@ public class MasterNodeControllerTest {
         Assert.assertEquals(history.RewardsPerBlock.longValue(), 32000L);
     }
 
+    // getMasternodesHistorySize
+    @Test
+    public void getMasternodesHistorySizeTest() {
+        Transaction aTx = deploy();
+        byte[] masternodeAddress = Wallet.generateContractAddress(aTx);
+
+        GrpcAPI.TransactionExtention result = controller.getMasternodesHistorySize(masternodeAddress);
+        Assert.assertTrue(result.getResult().getResult());
+        Assert.assertEquals(result.getConstantResultCount(), 1);
+        Assert.assertEquals(result.getConstantResult(0).toByteArray(), new DataWord(0).getData());
+    }
+
+    // minimumCollateral
+    @Test
+    public void minimumCollateralTest() {
+        Transaction aTx = deploy();
+        byte[] masternodeAddress = Wallet.generateContractAddress(aTx);
+        long exp = Args.getInstance().getMasternode().getMinimumCollateral();
+
+        GrpcAPI.TransactionExtention result = controller.minimumCollateral(masternodeAddress);
+        Assert.assertTrue(result.getResult().getResult());
+        Assert.assertEquals(result.getConstantResultCount(), 1);
+        Assert.assertEquals(result.getConstantResult(0).toByteArray(), new DataWord(exp).getData());
+    }
+
+    // getMasternodesNum
+    @Test
+    public void getMasternodesNumTest() {
+        Transaction aTx = deploy();
+        byte[] masternodeAddress = Wallet.generateContractAddress(aTx);
+
+        GrpcAPI.TransactionExtention result = controller.getMasternodesNum(masternodeAddress);
+        Assert.assertTrue(result.getResult().getResult());
+        Assert.assertEquals(result.getConstantResultCount(), 1);
+        Assert.assertEquals(result.getConstantResult(0).toByteArray(), new DataWord(0).getData());
+    }
+
+    // getMasternodeRewardInfo
+
+    // getMasternodeRewardPerBlock
+
+    // getOperatorReward
+
+    // masternodesArray
+//    @Test
+//    public void masternodesArrayTest() {
+//        Transaction aTx = deploy();
+//
+//        byte[] masternodeAddress = Wallet.generateContractAddress(aTx);
+//        byte[] caller = ByteArray.fromHexString(ownerAddress);
+//        byte[] caller2 = ByteArray.fromHexString(operatorAddress);
+//        long feeLimit = 100000000L;
+//        long operatorRewardRatio = 300000L;
+//        long callValue = 10000000000000L;
+//
+//        GrpcAPI.TransactionExtention result = announceMasternode(masternodeAddress, caller, caller2,
+//                operatorRewardRatio, feeLimit, callValue);
+//        Assert.assertEquals(result.getTransaction().getRet(0).getRet(), Transaction.Result.code.SUCESS);
+//
+//        result = controller.mnOwnerIndexes(masternodeAddress, ownerAddress);
+//
+//        MasterNodeController.MasternodesArrayResults masterNode = controller.masternodesArray(masternodeAddress,
+//                new BigInteger(result.getConstantResult(0).toByteArray()));
+//        System.out.println(ByteArray.toHexString(masterNode.OperatorAuthAddress));
+//        System.out.println(ByteArray.toHexString(caller2));
+//    }
+
+    // masternodesRewardsPerBlock
+
+    // maxRewardHistoryHops
+
+    // maxRewardRatio
+
+    // minBlocksBeforeMnActivation
     @Test
     public void minBlocksBeforeMnActivationTest() {
         Transaction aTx = deploy();
@@ -277,6 +352,24 @@ public class MasterNodeControllerTest {
         Assert.assertEquals(result.getConstantResultCount(), 1);
         Assert.assertEquals(result.getConstantResult(0).toByteArray(), new DataWord(0).getData());
     }
+
+    // mnOperatorIndexes
+
+    // mnOwnerIndexes
+
+    // mnsHistory
+
+    // wholeActivatedCollateral
+
+    // wholeCollateral
+
+    // claimMasternodeReward
+
+    // resign
+
+    // setOperator
+
+    // currentRewardsPerBlock
 
     @After
     public void destroy() {

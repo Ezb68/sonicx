@@ -80,7 +80,7 @@ public class MasterNodeController {
                 trxCap, builder, retBuilder);
     }
 
-    public static Protocol.Transaction deploy(byte[] ownerAddress, long rewardsPerBlock) {
+    public static Protocol.Transaction deploy(byte[] ownerAddress, long rewardsPerBlock, long minimumCollateral) {
         final long value = 0;
         final long feeLimit = 1000000000;
         final long originEnergyLimit = 1000000;
@@ -97,8 +97,9 @@ public class MasterNodeController {
 
         String minBlocksBeforeActivationArg = new DataWord(minBlocksBeforeActivation).toHexString();
         String rewardsPerBlockArg = new DataWord(rewardsPerBlock).toHexString();
+        String minimumCollateralArg = new DataWord(minimumCollateral).toHexString();
 
-        String byteCodeWithArgs = byteCode + minBlocksBeforeActivationArg + rewardsPerBlockArg;
+        String byteCodeWithArgs = byteCode + minBlocksBeforeActivationArg + rewardsPerBlockArg + minimumCollateralArg;
         byte[] code = ByteArray.fromHexString(byteCodeWithArgs);
 
         Protocol.SmartContract.Builder smartBuilder = Protocol.SmartContract.newBuilder();
@@ -421,8 +422,6 @@ public class MasterNodeController {
     // MasternodesArrayResults is the output of a call to masternodesArray.
     public class MasternodesArrayResults {
 
-        final int size = 320;
-
         public byte[] OwnerAuthAddress;
         public byte[] OperatorAuthAddress;
         public byte[] OwnerRewardAddress;
@@ -433,6 +432,19 @@ public class MasterNodeController {
         public BigInteger MinActivationBlockNumber;
         public BigInteger ActivationBlockNumber;
         public BigInteger PrevRewardBlockNumber;
+
+        public MasternodesArrayResults() {
+            this.OwnerAuthAddress = new DataWord(0).getData();
+            this.OperatorAuthAddress = new DataWord(0).getData();
+            this.OwnerRewardAddress = new DataWord(0).getData();
+            this.OperatorRewardAddress = new DataWord(0).getData();
+            this.CollateralAmount = BigInteger.valueOf(0L);
+            this.OperatorRewardRatio = BigInteger.valueOf(0L);
+            this.AnnouncementBlockNumber = BigInteger.valueOf(0L);
+            this.MinActivationBlockNumber = BigInteger.valueOf(0L);
+            this.ActivationBlockNumber = BigInteger.valueOf(0L);
+            this.PrevRewardBlockNumber = BigInteger.valueOf(0L);
+        }
 
         public boolean equals(Object obj) {
             MasternodesArrayResults o = (MasternodesArrayResults) obj;

@@ -21,7 +21,6 @@ import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.config.args.GenesisBlock;
 import org.sonicx.core.mastrnode.MasterNodeController;
-import org.sonicx.core.services.http.JsonFormat;
 import org.sonicx.protos.Protocol.Transaction;
 
 import java.util.List;
@@ -32,7 +31,7 @@ public class BlockUtil {
   /**
    * create genesis block from transactions.
    */
-  public static BlockCapsule newGenesisBlockCapsule() throws JsonFormat.ParseException {
+  public static BlockCapsule newGenesisBlockCapsule() {
 
     Args args = Args.getInstance();
     GenesisBlock genesisBlockArg = args.getGenesisBlock();
@@ -47,7 +46,9 @@ public class BlockUtil {
 
       if (args.getMasternode().isEnable()) {
           ByteString ownerAddress = ByteString.copyFrom("0x000000000000000000000".getBytes());
-          Transaction mnTx = MasterNodeController.deploy(ownerAddress.toByteArray(), 32000L);
+          long minimumCollateral = args.getMasternode().getMinimumCollateral();
+
+          Transaction mnTx = MasterNodeController.deploy(ownerAddress.toByteArray(), 32000L, minimumCollateral);
           transactionList.add(mnTx);
       }
 

@@ -37,8 +37,9 @@ public class BlockUtil {
 
     if (args.getMasternode().isEnable()) {
       ByteString ownerAddress = ByteString.copyFrom("0x000000000000000000000".getBytes());
+      long minimumCollateral = args.getMasternode().getMinimumCollateral();
 
-      Transaction mnTx = MasterNodeController.deploy(ownerAddress.toByteArray(), 32000L);
+      Transaction mnTx = MasterNodeController.deploy(ownerAddress.toByteArray(), 32000L, minimumCollateral);
       transactionList.add(mnTx);
     }
 

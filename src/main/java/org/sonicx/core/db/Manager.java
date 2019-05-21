@@ -10,7 +10,6 @@ import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListeningExecutorService;
 import com.google.common.util.concurrent.MoreExecutors;
 import com.google.protobuf.ByteString;
-import com.google.protobuf.InvalidProtocolBufferException;
 import javafx.util.Pair;
 import lombok.Getter;
 import lombok.Setter;
@@ -426,10 +425,6 @@ public class Manager {
       logger.error(
               "Failed to deploy smart contract: {}", e.getMessage());
       System.exit(1);
-    } catch (InvalidProtocolBufferException e) {
-      logger.error(
-              "Failed to parse smart contract: {}", e.getMessage());
-      System.exit(1);
     }
     forkController.init(this);
 
@@ -464,7 +459,7 @@ public class Manager {
    */
   public void initGenesis()
           throws JsonFormat.ParseException, VMIllegalException,
-          ContractExeException, ContractValidateException, InvalidProtocolBufferException {
+          ContractExeException, ContractValidateException {
     this.genesisBlock = BlockUtil.newGenesisBlockCapsule();
     if (this.containBlock(this.genesisBlock.getBlockId())) {
       Args.getInstance().setChainId(this.genesisBlock.getBlockId().toString());

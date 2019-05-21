@@ -31,7 +31,10 @@ public class MasterNode {
     @Setter
     private long rewardsPeriod;
 
+    @Getter
+    @Setter
+    private  long minimumCollateral;
+
     public MasterNode() {
-        rewardsPeriod = 100;
     }
 }

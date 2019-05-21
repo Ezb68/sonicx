@@ -612,7 +612,7 @@ public class Args {
     if (config.hasPath("masterNodes") && config.hasPath("masterNodes.enable")) {
       if (config.getBoolean("masterNodes.enable") && config.hasPath("masterNodes.byteCode") &&
               config.hasPath("masterNodes.abi") && config.hasPath("masterNodes.operatorPrivateKey") &&
-              config.hasPath("masterNodes.rewardsPeriod")) {
+              config.hasPath("masterNodes.rewardsPeriod") && config.hasPath("masterNodes.minimumCollateral"))  {
 
         INSTANCE.masternode.setByteCode(config.getString("masterNodes.byteCode"));
         INSTANCE.masternode.setAbi(config.getString("masterNodes.abi"));
@@ -620,7 +620,7 @@ public class Args {
         INSTANCE.masternode.setEnable(true);
         INSTANCE.masternode.setOperatorPrivateKey(config.getString("masterNodes.operatorPrivateKey"));
         INSTANCE.masternode.setRewardsPeriod(config.getLong("masterNodes.rewardsPeriod"));
-
+        INSTANCE.masternode.setMinimumCollateral(config.getLong("masterNodes.minimumCollateral"));
       } else {
         INSTANCE.masternode.setEnable(false);
       }

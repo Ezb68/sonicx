@@ -7,7 +7,6 @@ contract Masternodes {
     **/
     uint256 public constant maxRewardRatio = 1000000;
     uint256 public constant maxRewardHistoryHops = 64;
-    uint256 public constant minimumCollateral = 10000000 trx;
 
     struct Masternode {
         address ownerAuthAddress;
@@ -49,10 +48,12 @@ contract Masternodes {
     uint256 public numOfActivatedMasternodes;
     uint256 public minBlocksBeforeMnActivation;
     uint256 public currentRewardsPerBlock;
+    uint256 public minimumCollateral;
 
-    constructor(uint256 _minBlocksBeforeMnActivation, uint256 _currentRewardsPerBlock) public {
+    constructor(uint256 _minBlocksBeforeMnActivation, uint256 _currentRewardsPerBlock, uint256 _minimumCollateral) public {
         minBlocksBeforeMnActivation = _minBlocksBeforeMnActivation;
         currentRewardsPerBlock = _currentRewardsPerBlock;
+        minimumCollateral = _minimumCollateral;
     }
 
     /**
