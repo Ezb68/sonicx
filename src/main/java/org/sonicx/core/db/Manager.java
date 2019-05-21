@@ -1696,7 +1696,7 @@ public class Manager {
 
   /**
    * @param block the block update signed witness. set witness who signed block the 1. the latest
-   * block num 2. pay the trx to witness. 2. pay the trx to witness. 3. the latest slot num.
+   * block num 2. pay the sox to witness. 2. pay the sox to witness. 3. the latest slot num.
    */
   public void updateSignedWitness(BlockCapsule block) {
     // TODO: add verification

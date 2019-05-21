@@ -140,7 +140,7 @@ public class CreateTransaction2Test {
         blockingStubFull);
     Assert.assertEquals(ret1.getCode(), Return.response_code.CONTRACT_VALIDATE_ERROR);
     Assert.assertEquals(ret1.getMessage().toStringUtf8(),
-        "contract validate error : Cannot transfer trx to yourself.");
+        "contract validate error : Cannot transfer sox to yourself.");
     //transfer all balance
     ret1 = PublicMethed.sendcoin2(receiptAccountAddress, 40119900000L,
         sendAccountAddress, sendAccountKey, blockingStubFull);

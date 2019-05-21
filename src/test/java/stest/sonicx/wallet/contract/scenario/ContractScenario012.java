@@ -125,7 +125,7 @@ public class ContractScenario012 {
     receiverAddress = ecKey2.getAddress();
     receiverKey = ByteArray.toHexString(ecKey2.getPrivKeyBytes());
 
-    //Send some trx to the contract account.
+    //Send some sox to the contract account.
     Assert.assertTrue(PublicMethed.sendcoin(contractAddress, 1000000000L, toAddress,
         testKey003, blockingStubFull));
 
