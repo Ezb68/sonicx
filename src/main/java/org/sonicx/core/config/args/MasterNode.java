@@ -36,7 +36,5 @@ public class MasterNode {
     private  long minimumCollateral;
 
     public MasterNode() {
-        this.abi = "";
-        this.abi = "";
     }
 }
