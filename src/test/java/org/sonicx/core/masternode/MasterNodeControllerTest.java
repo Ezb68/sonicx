@@ -312,28 +312,50 @@ public class MasterNodeControllerTest {
     // getOperatorReward
 
     // masternodesArray
-//    @Test
-//    public void masternodesArrayTest() {
-//        Transaction aTx = deploy();
-//
-//        byte[] masternodeAddress = Wallet.generateContractAddress(aTx);
-//        byte[] caller = ByteArray.fromHexString(ownerAddress);
-//        byte[] caller2 = ByteArray.fromHexString(operatorAddress);
-//        long feeLimit = 100000000L;
-//        long operatorRewardRatio = 300000L;
-//        long callValue = 10000000000000L;
-//
-//        GrpcAPI.TransactionExtention result = announceMasternode(masternodeAddress, caller, caller2,
-//                operatorRewardRatio, feeLimit, callValue);
-//        Assert.assertEquals(result.getTransaction().getRet(0).getRet(), Transaction.Result.code.SUCESS);
-//
-//        result = controller.mnOwnerIndexes(masternodeAddress, ownerAddress);
-//
-//        MasterNodeController.MasternodesArrayResults masterNode = controller.masternodesArray(masternodeAddress,
-//                new BigInteger(result.getConstantResult(0).toByteArray()));
-//        System.out.println(ByteArray.toHexString(masterNode.OperatorAuthAddress));
-//        System.out.println(ByteArray.toHexString(caller2));
-//    }
+    @Test
+    public void masternodesArrayTest() {
+        Transaction aTx = deploy();
+
+        byte[] masternodeAddress = Wallet.generateContractAddress(aTx);
+        byte[] caller = ByteArray.fromHexString(ownerAddress);
+        byte[] caller2 = ByteArray.fromHexString(operatorAddress);
+        long feeLimit = 100000000L;
+        long operatorRewardRatio = 300000L;
+        long callValue = 10000000000000L;
+
+        GrpcAPI.TransactionExtention result = announceMasternode(masternodeAddress, caller, caller2,
+                operatorRewardRatio, feeLimit, callValue);
+        Assert.assertEquals(result.getTransaction().getRet(0).getRet(), Transaction.Result.code.SUCESS);
+
+        result = controller.mnOwnerIndexes(masternodeAddress, ownerAddress);
+
+        MasterNodeController.MasternodesArrayResults masterNode = controller.masternodesArray(masternodeAddress,
+                new BigInteger(result.getConstantResult(0).toByteArray()));
+
+        String ownerAuthAddress = Wallet.getAddressPreFixString() +
+                ByteArray.toHexString(Arrays.copyOfRange(masterNode.OwnerAuthAddress, 12, 32));
+        Assert.assertEquals(ownerAuthAddress, ownerAddress);
+
+        String operatorAuthAddress = Wallet.getAddressPreFixString() +
+                ByteArray.toHexString(Arrays.copyOfRange(masterNode.OperatorAuthAddress, 12, 32));
+        Assert.assertEquals(operatorAuthAddress, operatorAddress);
+
+        String ownerRewardAddress = Wallet.getAddressPreFixString() +
+                ByteArray.toHexString(Arrays.copyOfRange(masterNode.OwnerRewardAddress, 12, 32));
+        Assert.assertEquals(ownerRewardAddress, ownerAddress);
+
+        String operatorRewardAddress = Wallet.getAddressPreFixString() +
+                ByteArray.toHexString(Arrays.copyOfRange(masterNode.OperatorRewardAddress, 12, 32));
+        Assert.assertEquals(operatorRewardAddress, operatorAddress);
+
+        long minimumCollateral = Args.getInstance().getMasternode().getMinimumCollateral();
+        Assert.assertEquals(masterNode.CollateralAmount, BigInteger.valueOf(minimumCollateral));
+        Assert.assertEquals(masterNode.OperatorRewardRatio, BigInteger.valueOf(operatorRewardRatio));
+        Assert.assertEquals(masterNode.AnnouncementBlockNumber, BigInteger.valueOf(0L));
+        Assert.assertEquals(masterNode.MinActivationBlockNumber, BigInteger.valueOf(0L));
+        Assert.assertEquals(masterNode.ActivationBlockNumber, BigInteger.valueOf(0L));
+        Assert.assertEquals(masterNode.PrevRewardBlockNumber, BigInteger.valueOf(0L));
+    }
 
     // masternodesRewardsPerBlock
 
