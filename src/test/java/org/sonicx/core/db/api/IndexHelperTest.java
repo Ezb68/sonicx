@@ -187,7 +187,6 @@ public class IndexHelperTest {
     return witnessImmutableList.size();
   }
 
-    @Ignore // TODO: remove it
     @Test
     public void addAndRemoveTransaction() {
         TransactionCapsule transactionCapsule =
@@ -203,10 +202,10 @@ public class IndexHelperTest {
                 .put(transactionCapsule.getTransactionId().getBytes(), transactionCapsule);
         indexHelper.add(transactionCapsule.getInstance());
         int size = getIndexSizeOfTransaction();
-        Assert.assertEquals("account index add", 1, size);
+        Assert.assertEquals("account index add", 2, size);
         indexHelper.remove(transactionCapsule.getInstance());
         size = getIndexSizeOfTransaction();
-        Assert.assertEquals("account index remove", 0, size);
+        Assert.assertEquals("account index remove", 1, size);
     }
 
   private int getIndexSizeOfTransaction() {
