@@ -1,20 +1,21 @@
 package org.sonicx.core.db;
 
 import com.google.protobuf.ByteString;
-import java.util.Arrays;
-import java.util.Optional;
-import java.util.stream.IntStream;
 import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BytesCapsule;
 import org.sonicx.core.config.Parameter;
 import org.sonicx.core.config.Parameter.ChainConstant;
 import org.sonicx.core.config.args.Args;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+import java.util.Arrays;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 @Slf4j(topic = "DB")
 @Component
@@ -278,10 +279,11 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
       this.saveWitnessAllowanceFrozenTime(1);
     }
 
+      // TODO: It is 90%. The total default reward is 36 000 Sox.
     try {
       this.getWitnessPayPerBlock();
     } catch (IllegalArgumentException e) {
-      this.saveWitnessPayPerBlock(32000000L);
+        this.saveWitnessPayPerBlock(32400000L);
     }
 
     try {
@@ -299,7 +301,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getAccountUpgradeCost();
     } catch (IllegalArgumentException e) {
-      this.saveAccountUpgradeCost(9_999_000_000L);
+        this.saveAccountUpgradeCost(16_667_000_000L);
     }
 
     try {

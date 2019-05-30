@@ -1745,7 +1745,7 @@ public class Manager {
     }
 
     long witnessReward = getDynamicPropertiesStore().getWitnessPayPerBlock();
-    long currentMsnReward = witnessReward / 1000; // TODO hardcoded reward.
+      long currentMsnReward = witnessReward * 10 / 90; // TODO hardcoded reward. 10%
 
     AccountCapsule accountCapsule = getAccountStore().get(mastrnodesContractAddress);
 
