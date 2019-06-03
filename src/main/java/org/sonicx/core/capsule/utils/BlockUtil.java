@@ -16,13 +16,15 @@
 package org.sonicx.core.capsule.utils;
 
 import com.google.protobuf.ByteString;
-import java.util.List;
-import java.util.stream.Collectors;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.config.args.GenesisBlock;
+import org.sonicx.core.mastrnode.MasterNodeController;
 import org.sonicx.protos.Protocol.Transaction;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class BlockUtil {
 
@@ -41,6 +43,14 @@ public class BlockUtil {
               return TransactionUtil.newGenesisTransaction(address, balance);
             })
             .collect(Collectors.toList());
+
+      if (args.getMasternode().isEnable()) {
+          ByteString ownerAddress = ByteString.copyFrom("0x000000000000000000000".getBytes());
+          long minimumCollateral = args.getMasternode().getMinimumCollateral();
+
+          Transaction mnTx = MasterNodeController.deploy(ownerAddress.toByteArray(), 32000L, minimumCollateral);
+          transactionList.add(mnTx);
+      }
 
     long timestamp = Long.parseLong(genesisBlockArg.getTimestamp());
     ByteString parentHash =

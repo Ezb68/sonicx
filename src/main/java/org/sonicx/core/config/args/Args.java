@@ -1,40 +1,17 @@
 package org.sonicx.core.config.args;
 
-import static java.lang.Math.max;
-import static java.lang.System.exit;
-
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.typesafe.config.Config;
 import com.typesafe.config.ConfigObject;
 import io.grpc.internal.GrpcUtil;
 import io.grpc.netty.NettyServerBuilder;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.io.Writer;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Properties;
-import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.spongycastle.util.encoders.Hex;
-import org.springframework.stereotype.Component;
 import org.sonicx.common.crypto.ECKey;
 import org.sonicx.common.logsfilter.EventPluginConfig;
 import org.sonicx.common.logsfilter.FilterQuery;
@@ -53,6 +30,18 @@ import org.sonicx.keystore.CipherException;
 import org.sonicx.keystore.Credentials;
 import org.sonicx.keystore.WalletUtils;
 import org.sonicx.program.Version;
+import org.spongycastle.util.encoders.Hex;
+import org.springframework.stereotype.Component;
+
+import java.io.*;
+import java.net.InetAddress;
+import java.net.Socket;
+import java.net.URL;
+import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.lang.Math.max;
+import static java.lang.System.exit;
 
 @Slf4j(topic = "app")
 @NoArgsConstructor
@@ -165,6 +154,10 @@ public class Args {
   @Getter
   @Setter
   private LocalWitnesses localWitnesses = new LocalWitnesses();
+
+  @Getter
+  @Setter
+  private MasterNode masternode = new MasterNode();
 
   @Getter
   @Setter
@@ -470,6 +463,7 @@ public class Args {
     INSTANCE.genesisBlock = null;
     INSTANCE.chainId = null;
     INSTANCE.localWitnesses = null;
+    INSTANCE.masternode = null;
     INSTANCE.needSyncCheck = false;
     INSTANCE.nodeDiscoveryEnable = false;
     INSTANCE.nodeDiscoveryPersist = false;
@@ -611,6 +605,25 @@ public class Args {
       }
       INSTANCE.localWitnesses.setPrivateKeys(privateKeys);
       logger.debug("Got privateKey from keystore");
+    }
+
+    // Init master nodes configuration.
+    INSTANCE.masternode = new MasterNode();
+    if (config.hasPath("masterNodes") && config.hasPath("masterNodes.enable")) {
+      if (config.getBoolean("masterNodes.enable") && config.hasPath("masterNodes.byteCode") &&
+              config.hasPath("masterNodes.abi") && config.hasPath("masterNodes.operatorPrivateKey") &&
+              config.hasPath("masterNodes.rewardsPeriod") && config.hasPath("masterNodes.minimumCollateral"))  {
+
+        INSTANCE.masternode.setByteCode(config.getString("masterNodes.byteCode"));
+        INSTANCE.masternode.setAbi(config.getString("masterNodes.abi"));
+        INSTANCE.masternode.setMinBlocksBeforeActivation(config.getLong("masterNodes.minBlocksBeforeActivation"));
+        INSTANCE.masternode.setEnable(true);
+        INSTANCE.masternode.setOperatorPrivateKey(config.getString("masterNodes.operatorPrivateKey"));
+        INSTANCE.masternode.setRewardsPeriod(config.getLong("masterNodes.rewardsPeriod"));
+        INSTANCE.masternode.setMinimumCollateral(config.getLong("masterNodes.minimumCollateral"));
+      } else {
+        INSTANCE.masternode.setEnable(false);
+      }
     }
 
     if (INSTANCE.isWitness() && CollectionUtils.isEmpty(INSTANCE.localWitnesses.getPrivateKeys())) {

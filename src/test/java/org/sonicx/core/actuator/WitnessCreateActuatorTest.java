@@ -1,16 +1,9 @@
 package org.sonicx.core.actuator;
 
-import static junit.framework.TestCase.fail;
-
 import com.google.protobuf.Any;
 import com.google.protobuf.ByteString;
-import java.io.File;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.AfterClass;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.BeforeClass;
-import org.junit.Test;
+import org.junit.*;
 import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.FileUtil;
@@ -27,6 +20,10 @@ import org.sonicx.core.exception.ContractValidateException;
 import org.sonicx.protos.Contract;
 import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.Transaction.Result.code;
+
+import java.io.File;
+
+import static junit.framework.TestCase.fail;
 
 @Slf4j
 
@@ -87,7 +84,7 @@ public class WitnessCreateActuatorTest {
             ByteString.copyFromUtf8(ACCOUNT_NAME_FIRST),
             ByteString.copyFrom(ByteArray.fromHexString(OWNER_ADDRESS_FIRST)),
             AccountType.Normal,
-            200_000_000_000L);
+                200_000_000_000_000L);
 
     dbManager.getAccountStore()
         .put(ownerAccountSecondCapsule.getAddress().toByteArray(), ownerAccountSecondCapsule);

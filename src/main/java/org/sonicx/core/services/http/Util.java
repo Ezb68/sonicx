@@ -4,14 +4,8 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.google.protobuf.Any;
 import com.google.protobuf.InvalidProtocolBufferException;
-import java.util.List;
 import lombok.extern.slf4j.Slf4j;
-import org.sonicx.api.GrpcAPI.BlockList;
-import org.sonicx.api.GrpcAPI.EasyTransferResponse;
-import org.sonicx.api.GrpcAPI.TransactionApprovedList;
-import org.sonicx.api.GrpcAPI.TransactionExtention;
-import org.sonicx.api.GrpcAPI.TransactionList;
-import org.sonicx.api.GrpcAPI.TransactionSignWeight;
+import org.sonicx.api.GrpcAPI.*;
 import org.sonicx.common.crypto.Hash;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.Sha256Hash;
@@ -19,36 +13,13 @@ import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.capsule.TransactionCapsule;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.services.http.JsonFormat.ParseException;
-import org.sonicx.protos.Contract.AccountCreateContract;
-import org.sonicx.protos.Contract.AccountPermissionUpdateContract;
-import org.sonicx.protos.Contract.AccountUpdateContract;
-import org.sonicx.protos.Contract.AssetIssueContract;
-import org.sonicx.protos.Contract.CreateSmartContract;
-import org.sonicx.protos.Contract.ExchangeCreateContract;
-import org.sonicx.protos.Contract.ExchangeInjectContract;
-import org.sonicx.protos.Contract.ExchangeTransactionContract;
-import org.sonicx.protos.Contract.ExchangeWithdrawContract;
-import org.sonicx.protos.Contract.FreezeBalanceContract;
-import org.sonicx.protos.Contract.ParticipateAssetIssueContract;
-import org.sonicx.protos.Contract.ProposalApproveContract;
-import org.sonicx.protos.Contract.ProposalCreateContract;
-import org.sonicx.protos.Contract.ProposalDeleteContract;
-import org.sonicx.protos.Contract.TransferAssetContract;
-import org.sonicx.protos.Contract.TransferContract;
-import org.sonicx.protos.Contract.TriggerSmartContract;
-import org.sonicx.protos.Contract.UnfreezeAssetContract;
-import org.sonicx.protos.Contract.UnfreezeBalanceContract;
-import org.sonicx.protos.Contract.UpdateAssetContract;
-import org.sonicx.protos.Contract.UpdateEnergyLimitContract;
-import org.sonicx.protos.Contract.UpdateSettingContract;
-import org.sonicx.protos.Contract.VoteAssetContract;
-import org.sonicx.protos.Contract.VoteWitnessContract;
-import org.sonicx.protos.Contract.WithdrawBalanceContract;
-import org.sonicx.protos.Contract.WitnessCreateContract;
-import org.sonicx.protos.Contract.WitnessUpdateContract;
+import org.sonicx.protos.Contract.*;
 import org.sonicx.protos.Protocol.Block;
 import org.sonicx.protos.Protocol.SmartContract;
 import org.sonicx.protos.Protocol.Transaction;
+
+import javax.servlet.http.HttpServletResponse;
+import java.util.List;
 
 
 @Slf4j(topic = "API")
@@ -586,4 +557,23 @@ public class Util {
       throw new Exception("body size is too big, limit is " + args.getMaxMessageSize());
     }
   }
+
+  public static String printAddress(byte[] address) {
+    JSONObject jsonObject = new JSONObject();
+      jsonObject.put("address", ByteArray.toHexString(address));
+      return jsonObject.toJSONString();
+  }
+
+    public static String printArgs(byte[]... args) {
+        JSONObject jsonObject = new JSONObject();
+
+        for (int i = 0; i < args.length; i++) {
+            jsonObject.put("arg" + i, ByteArray.toHexString(args[i]));
+        }
+    return jsonObject.toJSONString();
+  }
+
+    public static void addJsonHeader(HttpServletResponse response) {
+        response.setHeader("Content-Type", "application/json");
+    }
 }

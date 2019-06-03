@@ -24,8 +24,12 @@ import org.junit.Test;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BlockCapsule;
+import org.sonicx.core.capsule.TransactionCapsule;
 import org.sonicx.core.capsule.utils.BlockUtil;
 import org.sonicx.core.config.args.Args;
+import org.sonicx.core.exception.BadTransactionException;
+import org.sonicx.core.exception.ContractValidateException;
+import org.sonicx.core.services.http.JsonFormat;
 import org.sonicx.protos.Protocol.Block;
 import org.sonicx.protos.Protocol.BlockHeader;
 import org.sonicx.protos.Protocol.BlockHeader.raw;
@@ -44,7 +48,7 @@ public class BlockUtilTest {
   }
 
   @Test
-  public void testBlockUtil() {
+  public void testBlockUtil() throws BadTransactionException, ContractValidateException, JsonFormat.ParseException {
     //test create GenesisBlockCapsule
     BlockCapsule blockCapsule1 = BlockUtil.newGenesisBlockCapsule();
     Sha256Hash sha256Hash = Sha256Hash.wrap(ByteArray
@@ -73,5 +77,16 @@ public class BlockUtilTest {
     Assert.assertFalse(BlockUtil.isParentOf(blockCapsule1, blockCapsule2));
     Assert.assertEquals(true, BlockUtil.isParentOf(blockCapsule2, blockCapsule3));
     Assert.assertTrue(BlockUtil.isParentOf(blockCapsule2, blockCapsule3));
+  }
+
+  @Test
+  public void testGenesisBlock() throws BadTransactionException, ContractValidateException, JsonFormat.ParseException {
+    //test create GenesisBlockCapsule
+    BlockCapsule blockCapsule1 = BlockUtil.newGenesisBlockCapsule();
+    Assert.assertEquals(5, blockCapsule1.getTransactions().size());
+
+    for (TransactionCapsule tx : blockCapsule1.getTransactions()) {
+      System.out.printf("%s", tx.getInstance());
+    }
   }
 }

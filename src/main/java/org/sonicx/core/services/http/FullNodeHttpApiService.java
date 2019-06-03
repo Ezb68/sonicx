@@ -4,10 +4,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
 import org.sonicx.common.application.Service;
 import org.sonicx.core.config.args.Args;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j(topic = "API")
@@ -158,6 +158,58 @@ public class FullNodeHttpApiService implements Service {
   @Autowired
   private GetDelegatedResourceServlet getDelegatedResourceServlet;
 
+  // TODO move from this and rename classes.
+  @Autowired
+  private MasterNodesGetHistorySizeServlet masterNodesGetHistorySizeServlet;
+
+    @Autowired
+    private MasterNodesMinimumCollateralServlet masterNodesMinimumCollateralServlet;
+
+    @Autowired
+    private MasterNodesAnnounceMasternodeServlet masterNodesAnnounceMasternodeServlet;
+
+    @Autowired
+    private MasterNodesGetMasterNodesNumServlet masterNodesGetMasternodesNumServlet;
+
+    @Autowired
+    private MasterNodesGetGenesisContractAddressServlet masterNodesGetGenesisContractAddressServlet;
+
+  @Autowired
+  private MasterNodesActivateMasterNodeServlet masterNodesActivateMasternodeServlet;
+
+  @Autowired
+  private MasterNodesMasterNodeByIndexServlet masterNodesMasterNodeByIndexServlet;
+
+  @Autowired
+  private MasterNodesMinBlocksBeforeMnActivationServlet masterNodesMinBlocksBeforeMnActivationServlet;
+
+  @Autowired
+  private MasterNodesOperatorByIndexServlet masterNodesOperatorByIndexServlet;
+
+  @Autowired
+  private MasterNodesOwnerByIndexServlet masterNodesOwnerByIndexServlet;
+
+    @Autowired
+    private MasterNodesMnsHistoryServlet masterNodesMnsHistoryServlet;
+
+    @Autowired
+    private MasterNodesNumOfActivatedMasterNodesServlet masterNodesNumOfActivatedMasternodesServlet;
+
+    @Autowired
+    private MasterNodesWholeActivatedCollateralServlet masterNodesWholeActivatedCollateralServlet;
+
+    @Autowired
+    private MasterNodesWholeCollateralServlet masterNodesWholeCollateralServlet;
+
+    @Autowired
+    private MasterNodesResignServlet masterNodesResignServlet;
+
+    @Autowired
+    private MasterNodesSetOperatorServlet masterNodesSetOperatorServlet;
+
+    @Autowired
+    private MasterNodesCurrentRewardsPerBlockServlet masterNodesCurrentRewardsPerBlockServlet;
+
   @Override
   public void init() {
 
@@ -258,6 +310,33 @@ public class FullNodeHttpApiService implements Service {
       context.addServlet(
           new ServletHolder(getDelegatedResourceAccountIndexServlet),
           "/getdelegatedresourceaccountindex");
+
+      /*
+        Masternodes servlets.
+       */
+        context.addServlet(new ServletHolder(masterNodesGetHistorySizeServlet), "/masternodes/gethistorysize");
+        context.addServlet(new ServletHolder(masterNodesMinimumCollateralServlet), "/masternodes/minimumcollateral");
+        context.addServlet(new ServletHolder(masterNodesAnnounceMasternodeServlet), "/masternodes/announcemasternode");
+        context.addServlet(new ServletHolder(masterNodesGetMasternodesNumServlet), "/masternodes/getmasternodesnum");
+        context.addServlet(new ServletHolder(masterNodesGetGenesisContractAddressServlet),
+                "/masternodes/getgenesiscontractaddress");
+        context.addServlet(new ServletHolder(masterNodesActivateMasternodeServlet), "/masternodes/activatemasternode");
+        context.addServlet(new ServletHolder(masterNodesMasterNodeByIndexServlet), "/masternodes/getmasternodebyindex");
+        context.addServlet(new ServletHolder(masterNodesMinBlocksBeforeMnActivationServlet),
+                "/masternodes/getminblocksbeforeactivation");
+        context.addServlet(new ServletHolder(masterNodesOperatorByIndexServlet), "/masternodes/getoperatorbyindex");
+        context.addServlet(new ServletHolder(masterNodesOwnerByIndexServlet), "/masternodes/getownerbyindex");
+        context.addServlet(new ServletHolder(masterNodesMnsHistoryServlet), "/masternodes/gethistorybyindex");
+        context.addServlet(new ServletHolder(masterNodesNumOfActivatedMasternodesServlet),
+                "/masternodes/getnumberofactivatedmasternode");
+        context.addServlet(new ServletHolder(masterNodesWholeActivatedCollateralServlet),
+                "/masternodes/getwholeactivatedcollateral");
+        context.addServlet(new ServletHolder(masterNodesWholeCollateralServlet), "/masternodes/getwholecollateral");
+        context.addServlet(new ServletHolder(masterNodesResignServlet), "/masternodes/resign");
+        context.addServlet(new ServletHolder(masterNodesSetOperatorServlet), "/masternodes/setoperator");
+        context.addServlet(new ServletHolder(masterNodesCurrentRewardsPerBlockServlet),
+                "/masternodes/getcurrentrewardsperblock");
+
 
       server.start();
     } catch (Exception e) {

@@ -1,9 +1,6 @@
 package org.sonicx.program;
 
 import com.beust.jcommander.JCommander;
-import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.sonicx.common.crypto.ECKey;
@@ -14,6 +11,11 @@ import org.sonicx.core.config.args.Args;
 import org.sonicx.keystore.CipherException;
 import org.sonicx.keystore.Credentials;
 import org.sonicx.keystore.WalletUtils;
+import org.spongycastle.util.encoders.Hex;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 
 @Slf4j(topic = "app")
 public class KeystoreFactory {
@@ -31,6 +33,20 @@ public class KeystoreFactory {
     }
     //Other rule;
     return true;
+  }
+
+  private void genKeyPair() throws CipherException, IOException {
+    ECKey eCkey = new ECKey(Utils.random);
+
+    Credentials credentials = Credentials.create(eCkey);
+    byte[] pk = eCkey.getPrivKeyBytes();
+    if (pk == null) {
+      throw new CipherException("private key is empty");
+    }
+
+    String privateKey = Hex.toHexString(pk).toUpperCase();
+    System.out.printf("Address key: %s\n", credentials.getAddress());
+    System.out.printf("Private key: %s\n", privateKey);
   }
 
   private void genKeystore() throws CipherException, IOException {
@@ -102,6 +118,7 @@ public class KeystoreFactory {
     System.out.println("GenKeystore");
     System.out.println("ImportPrivatekey");
     System.out.println("Exit or Quit");
+    System.out.println("GenKeyPair");
     System.out.println("Input any one of then, you will get more tips.");
   }
 
@@ -130,6 +147,10 @@ public class KeystoreFactory {
           }
           case "importprivatekey": {
             importPrivatekey();
+            break;
+          }
+          case "genkeypair": {
+            genKeyPair();
             break;
           }
           case "exit":
