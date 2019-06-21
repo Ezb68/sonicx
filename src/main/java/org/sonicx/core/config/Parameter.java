@@ -7,10 +7,10 @@ public interface Parameter {
   interface ChainConstant {
 
     long TRANSFER_FEE = 0; // free
-      int WITNESS_STANDBY_LENGTH = 127;
+    int WITNESS_STANDBY_LENGTH = 127;
     int SOLIDIFIED_THRESHOLD = 70; // 70%
     int PRIVATE_KEY_LENGTH = 64;
-      int MAX_ACTIVE_WITNESS_NUM = 27;
+    int MAX_ACTIVE_WITNESS_NUM = 27;
     int BLOCK_SIZE = 2_000_000;
     int BLOCK_PRODUCED_INTERVAL = 3000; //ms,produce block period, must be divisible by 60. millisecond
     long CLOCK_MAX_DELAY = 3600000; // 3600 * 1000 ms

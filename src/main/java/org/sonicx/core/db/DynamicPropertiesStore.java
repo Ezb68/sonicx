@@ -301,7 +301,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getAccountUpgradeCost();
     } catch (IllegalArgumentException e) {
-        this.saveAccountUpgradeCost(16_667_000_000L);
+        this.saveAccountUpgradeCost(50_000_000_000L);
     }
 
     try {
@@ -403,7 +403,7 @@ public class DynamicPropertiesStore extends SonicxStoreWithRevoking<BytesCapsule
     try {
       this.getAssetIssueFee();
     } catch (IllegalArgumentException e) {
-      this.saveAssetIssueFee(1024000000L);
+      this.saveAssetIssueFee(6666_000_000L);
     }
 
     try {
