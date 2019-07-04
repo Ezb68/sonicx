@@ -261,7 +261,7 @@ Using TaskInputs.file() with something that doesn't resolve to a File object has
 20:39:40.024 INFO [o.t.c.d.SonicxStoreWithRevoking] Address is [108, 97, 116, 101, 115, 116, 95, 98, 108, 111, 99, 107, 95, 104, 101, 97, 100, 101, 114, 95, 116, 105, 109, 101, 115, 116, 97, 109, 112], BytesCapsule is org.sonicx.core.capsule.BytesCapsule@ca6a6f8
 20:39:40.024 INFO [o.t.c.d.Manager] updateWitnessSchedule number:140,HeadBlockTimeStamp:1521722380001
 20:39:40.025 WARN [o.t.c.u.RandomGenerator] index[-3] is out of range[0,3],skip
-20:39:40.070 INFO [o.t.c.d.SonicxStoreWithRevoking] Address is [73, 72, -62, -24, -89, 86, -39, 67, 112, 55, -36, -40, -57, -32, -57, 61, 86, 12, -93, -115], AccountCapsule is account_name: "Kevin"
+20:39:40.070 INFO [o.t.c.d.SonicxStoreWithRevoking] Address is [73, 72, -62, -24, -89, 86, -39, 67, 112, 55, -36, -40, -57, -32, -57, 61, 86, 12, -93, -115], AccountCapsule is account_name: "Airdrop"
 address: "IH\302\350\247V\331Cp7\334\330\307\340\307=V\f\243\215"
 balance: 9223372036854775387
 

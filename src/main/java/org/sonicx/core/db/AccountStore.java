@@ -32,8 +32,8 @@ public class AccountStore extends SonicxStoreWithRevoking<AccountCapsule> {
   /**
    * Max SOX account.
    */
-  public AccountCapsule getKevin() {
-    return getUnchecked(assertsAddress.get("Kevin"));
+  public AccountCapsule getAirdrop() {
+    return getUnchecked(assertsAddress.get("Airdrop"));
   }
 
   /**
