@@ -1021,6 +1021,15 @@ public class Manager {
       TaposException, TooBigTransactionException, TooBigTransactionResultException, DupTransactionException, TransactionExpirationException,
       BadNumberBlockException, BadBlockException, NonCommonBlockException,
       ReceiptCheckErrException, VMIllegalException {
+      
+      /* TEMP: To stop syncing at specified block
+      logger.info("==========================TEMP block.getNum() = " + block.getNum());
+	  if (2983091 <= block.getNum()) {
+		  logger.info("==========================TEMP System exit ====================================");
+		  System.exit(1);
+	  }
+	  */
+
     long start = System.currentTimeMillis();
     try (PendingManager pm = new PendingManager(this)) {
 

@@ -417,6 +417,28 @@ public class Wallet {
     TransactionCapsule trx = new TransactionCapsule(signaturedTransaction);
     Message message = new TransactionMessage(signaturedTransaction);
 
+	/*
+	// TEMP: To block the speicified addresses
+	try {
+		Contract contract = signaturedTransaction.getRawData().getContract(0);
+		byte[] owner = TransactionCapsule.getOwner(contract);
+		String ownerAddress = ByteArray.toHexString(owner);
+		logger.info("addSign ownerAddress=" + ownerAddress);
+		if (
+				ownerAddress.equalsIgnoreCase("3fabb35e80b3e88e4a40e6ac73ec52e8c3776e14c0") 
+				|| ownerAddress.equalsIgnoreCase("3FE7F30C879BF07F96601545E46C20F5593D7CBA53")
+				|| ownerAddress.equalsIgnoreCase("3F17BDB1C6410585FE9137938F59B0B3BB2CFCC24C")
+				|| ownerAddress.equalsIgnoreCase("3FF490FFF1B2E41B29830415A5B4556F350DD55E06")
+		) {
+			logger.warn("=== Blocked address: " + ownerAddress);
+			return builder.setResult(false).setCode(response_code.OTHER_ERROR)
+				.setMessage(ByteString.copyFromUtf8("Not allowed"))
+				.build();
+		}
+	} catch (Exception ex) {
+	}
+	*/
+
     try {
       if (minEffectiveConnection != 0) {
         if (sonicxNetDelegate.getActivePeer().isEmpty()) {
