@@ -1,3 +1,4 @@
-#!/bin/bash
-kill -9 `cat /home/sonicx/pid.txt`
-nohup  java -jar /home/sonicx/SonicXChain/SonicX.jar -p $LOCAL_WITNESS_PRIVATE_KEY --witness -c /home/sonicx/config.conf > /home/sonicx/sonicx-shell.log 2>&1 & echo $! >/home/sonicx/pid.txt
+#!/bin/sh
+cd $(dirname $0)
+java -jar ./build/libs/FullNode.jar --witness -p 4ee0a2b5d1463479a843d06634507f40c337426842cf5dae83dfd49c8bc79c5b -c ./plugin/config.conf --es &
+cd -
