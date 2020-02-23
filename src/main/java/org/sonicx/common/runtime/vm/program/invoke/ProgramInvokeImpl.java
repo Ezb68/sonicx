@@ -21,12 +21,10 @@ import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
-import org.spongycastle.util.encoders.Hex;
 import org.sonicx.common.runtime.vm.DataWord;
 import org.sonicx.common.runtime.vm.program.Program.IllegalOperationException;
 import org.sonicx.common.storage.Deposit;
 import org.sonicx.core.capsule.BlockCapsule;
-import org.sonicx.core.db.BlockStore;
 import org.sonicx.core.exception.StoreException;
 
 @Slf4j
@@ -58,6 +56,7 @@ public class ProgramInvokeImpl implements ProgramInvoke {
   private boolean byTestingSuite = false;
   private int callDeep = 0;
   private boolean isStaticCall = false;
+  private boolean isConstantCall = false;
 
   public ProgramInvokeImpl(DataWord address, DataWord origin, DataWord caller, DataWord balance,
       DataWord callValue, DataWord tokenValue, DataWord tokenId, byte[] msgData,
@@ -374,17 +373,22 @@ public class ProgramInvokeImpl implements ProgramInvoke {
   }
 
   @Override
-  public void setStaticCall() {
-    isStaticCall = true;
-  }
-
-  @Override
   public BlockCapsule getBlockByNum(int index) {
     try {
       return deposit.getDbManager().getBlockByNum(index);
     } catch (StoreException e) {
       throw new IllegalOperationException("cannot find block num");
     }
+  }
+
+  @Override
+  public void setConstantCall() {
+    isConstantCall = true;
+  }
+
+  @Override
+  public boolean isConstantCall() {
+    return isConstantCall;
   }
 
 }

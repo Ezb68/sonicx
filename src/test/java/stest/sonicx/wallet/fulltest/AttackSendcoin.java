@@ -43,7 +43,7 @@ public class AttackSendcoin {
   //Zion
   private final String testKey002 =
       "FC8BF0238748587B9617EB6D15D47A66C0E07C1A1959033CF249C6532DC29FE6";
-  //Airdrop
+  //Sun
   private final String testKey003 =
       "6815B367FDDE637E53E9ADC8E69424E07724333C9A2B973CFA469975E20753FC";
   //Normal1

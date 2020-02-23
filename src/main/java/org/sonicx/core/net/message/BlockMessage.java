@@ -1,18 +1,23 @@
 package org.sonicx.core.net.message;
 
+import org.sonicx.common.overlay.message.Message;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
-import org.sonicx.core.exception.BadItemException;
+import org.sonicx.core.capsule.TransactionCapsule;
 
 public class BlockMessage extends SonicxMessage {
 
   private BlockCapsule block;
 
-  public BlockMessage(byte[] data) throws BadItemException {
+  public BlockMessage(byte[] data) throws Exception {
+    super(data);
     this.type = MessageTypes.BLOCK.asByte();
-    this.data = data;
-    this.block = new BlockCapsule(data);
+    this.block = new BlockCapsule(getCodedInputStream(data));
+    if (Message.isFilter()) {
+      Message.compareBytes(data, block.getInstance().toByteArray());
+      TransactionCapsule.validContractProto(block.getInstance().getTransactionsList());
+    }
   }
 
   public BlockMessage(BlockCapsule block) {

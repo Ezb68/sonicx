@@ -4,7 +4,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.utils.Sha256Hash;
-import org.sonicx.core.config.args.Args;
 import org.sonicx.core.net.SonicxNetDelegate;
 import org.sonicx.core.net.message.InventoryMessage;
 import org.sonicx.core.net.message.SonicxMessage;
@@ -13,7 +12,7 @@ import org.sonicx.core.net.peer.PeerConnection;
 import org.sonicx.core.net.service.AdvService;
 import org.sonicx.protos.Protocol.Inventory.InventoryType;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class InventoryMsgHandler implements SonicxMsgHandler {
 
@@ -28,16 +27,10 @@ public class InventoryMsgHandler implements SonicxMsgHandler {
 
   private int maxCountIn10s = 10_000;
 
-  private boolean fastForward = Args.getInstance().isFastForward();
-
   @Override
   public void processMessage(PeerConnection peer, SonicxMessage msg) {
     InventoryMessage inventoryMessage = (InventoryMessage) msg;
     InventoryType type = inventoryMessage.getInventoryType();
-
-    if (fastForward && inventoryMessage.getInventoryType().equals(InventoryType.TRX)) {
-      return;
-    }
 
     if (!check(peer, inventoryMessage)) {
       return;
@@ -53,10 +46,6 @@ public class InventoryMsgHandler implements SonicxMsgHandler {
   private boolean check(PeerConnection peer, InventoryMessage inventoryMessage) {
     InventoryType type = inventoryMessage.getInventoryType();
     int size = inventoryMessage.getHashList().size();
-
-//    if (size > NetConstants.MAX_INV_FETCH_PER_PEER) {
-//      throw new P2pException(TypeEnum.BAD_MESSAGE, "size: " + size);
-//    }
 
     if (peer.isNeedSyncFromPeer() || peer.isNeedSyncFromUs()) {
       logger.warn("Drop inv: {} size: {} from Peer {}, syncFromUs: {}, syncFromPeer: {}.",

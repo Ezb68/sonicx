@@ -18,6 +18,6 @@
 package org.sonicx.common.runtime.vm.program.listener;
 
 public interface ProgramListenerAware {
-    
+
   void setProgramListener(ProgramListener listener);
 }

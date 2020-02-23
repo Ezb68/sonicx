@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.sonicx.core.net.SonicxNetDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
@@ -15,12 +14,13 @@ import org.sonicx.core.config.Parameter.ChainConstant;
 import org.sonicx.core.config.Parameter.NodeConstant;
 import org.sonicx.core.exception.P2pException;
 import org.sonicx.core.exception.P2pException.TypeEnum;
+import org.sonicx.core.net.SonicxNetDelegate;
 import org.sonicx.core.net.message.ChainInventoryMessage;
 import org.sonicx.core.net.message.SonicxMessage;
 import org.sonicx.core.net.peer.PeerConnection;
 import org.sonicx.core.net.service.SyncService;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class ChainInventoryMsgHandler implements SonicxMsgHandler {
 
@@ -64,13 +64,14 @@ public class ChainInventoryMsgHandler implements SonicxMsgHandler {
       while (!peer.getSyncBlockToFetch().isEmpty() && sonicxNetDelegate
           .containBlock(peer.getSyncBlockToFetch().peek())) {
         BlockId blockId = peer.getSyncBlockToFetch().pop();
+        peer.setBlockBothHave(blockId);
         logger.info("Block {} from {} is processed", blockId.getString(), peer.getNode().getHost());
       }
     }
-//
-//    if (chainInventoryMessage.getRemainNum() == 0 && peer.getSyncBlockToFetch().isEmpty()) {
-//      peer.setNeedSyncFromPeer(false);
-//    }
+
+    //if (chainInventoryMessage.getRemainNum() == 0 && peer.getSyncBlockToFetch().isEmpty()) {
+    //  peer.setNeedSyncFromPeer(false);
+    //}
 
     if ((chainInventoryMessage.getRemainNum() == 0 && !peer.getSyncBlockToFetch().isEmpty()) ||
         (chainInventoryMessage.getRemainNum() != 0

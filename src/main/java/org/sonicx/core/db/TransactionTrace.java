@@ -8,11 +8,14 @@ import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ArrayUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.springframework.util.StringUtils;
 import org.sonicx.common.runtime.Runtime;
 import org.sonicx.common.runtime.RuntimeImpl;
+import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.runtime.vm.program.InternalTransaction;
+import org.sonicx.common.runtime.vm.program.InternalTransaction.TrxType;
 import org.sonicx.common.runtime.vm.program.Program.BadJumpDestinationException;
 import org.sonicx.common.runtime.vm.program.Program.IllegalOperationException;
 import org.sonicx.common.runtime.vm.program.Program.JVMStackOverFlowException;
@@ -22,16 +25,19 @@ import org.sonicx.common.runtime.vm.program.Program.OutOfTimeException;
 import org.sonicx.common.runtime.vm.program.Program.PrecompiledContractException;
 import org.sonicx.common.runtime.vm.program.Program.StackTooLargeException;
 import org.sonicx.common.runtime.vm.program.Program.StackTooSmallException;
+import org.sonicx.common.runtime.vm.program.Program.TransferException;
 import org.sonicx.common.runtime.vm.program.ProgramResult;
 import org.sonicx.common.runtime.vm.program.invoke.ProgramInvokeFactoryImpl;
 import org.sonicx.common.storage.DepositImpl;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.Constant;
+import org.sonicx.core.Wallet;
 import org.sonicx.core.capsule.AccountCapsule;
 import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.capsule.ContractCapsule;
 import org.sonicx.core.capsule.ReceiptCapsule;
 import org.sonicx.core.capsule.TransactionCapsule;
+import org.sonicx.core.capsule.TransactionResultCapsule;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.exception.BalanceInsufficientException;
 import org.sonicx.core.exception.ContractExeException;
@@ -39,6 +45,7 @@ import org.sonicx.core.exception.ContractValidateException;
 import org.sonicx.core.exception.ReceiptCheckErrException;
 import org.sonicx.core.exception.VMIllegalException;
 import org.sonicx.protos.Contract.TriggerSmartContract;
+import org.sonicx.protos.Protocol.SmartContract.ABI;
 import org.sonicx.protos.Protocol.Transaction;
 import org.sonicx.protos.Protocol.Transaction.Contract.ContractType;
 import org.sonicx.protos.Protocol.Transaction.Result.contractResult;
@@ -112,8 +119,27 @@ public class TransactionTrace {
   }
 
   public void checkIsConstant() throws ContractValidateException, VMIllegalException {
-    if (runtime.isCallConstant()) {
-      throw new VMIllegalException("cannot call constant method ");
+    if (VMConfig.allowSvmConstantinople()) {
+      return;
+    }
+
+    TriggerSmartContract triggerContractFromTransaction = ContractCapsule
+        .getTriggerContractFromTransaction(this.getTrx().getInstance());
+    if (TrxType.TRX_CONTRACT_CALL_TYPE == this.trxType) {
+      DepositImpl deposit = DepositImpl.createRoot(dbManager);
+      ContractCapsule contract = deposit
+          .getContract(triggerContractFromTransaction.getContractAddress().toByteArray());
+      if (contract == null) {
+        logger.info("contract: {} is not in contract store", Wallet
+            .encode58Check(triggerContractFromTransaction.getContractAddress().toByteArray()));
+        throw new ContractValidateException("contract: " + Wallet
+            .encode58Check(triggerContractFromTransaction.getContractAddress().toByteArray())
+            + " is not in contract store");
+      }
+      ABI abi = contract.getInstance().getAbi();
+      if (Wallet.isConstant(abi, triggerContractFromTransaction)) {
+        throw new VMIllegalException("cannot call constant method");
+      }
     }
   }
 
@@ -281,6 +307,12 @@ public class TransactionTrace {
       receipt.setResult(contractResult.JVM_STACK_OVER_FLOW);
       return;
     }
+    if (exception instanceof TransferException) {
+      receipt.setResult(contractResult.TRANSFER_FAILED);
+      return;
+    }
+
+    logger.info("uncaught exception", exception);
     receipt.setResult(contractResult.UNKNOWN);
   }
 

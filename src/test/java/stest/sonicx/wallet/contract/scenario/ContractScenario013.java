@@ -2,6 +2,7 @@ package stest.sonicx.wallet.contract.scenario;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -16,11 +17,9 @@ import org.sonicx.common.crypto.ECKey;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.Utils;
 import org.sonicx.core.Wallet;
-import org.sonicx.protos.Protocol.SmartContract;
 import org.sonicx.protos.Protocol.TransactionInfo;
 import stest.sonicx.wallet.common.client.Configuration;
 import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
-import stest.sonicx.wallet.common.client.utils.Base58;
 import stest.sonicx.wallet.common.client.utils.PublicMethed;
 
 @Slf4j
@@ -75,15 +74,20 @@ public class ContractScenario013 {
 
     logger.info("before energy limit is " + Long.toString(energyLimit));
     logger.info("before energy usage is " + Long.toString(energyUsage));
-    String contractName = "SonicxSoxAndDoleContract";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_ContractScenario013_deploySonicxSoxAndDoleContract");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_ContractScenario013_deploySonicxSoxAndDoleContract");
+
+    String filePath = "./src/test/resources/soliditycode/contractScenario013.sol";
+    String contractName = "timetest";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
+
     txid = PublicMethed.deployContractAndGetTransactionInfoById(contractName, abi, code, "",
         maxFeeLimit, 0L, 100, null, contract013Key, contract013Address, blockingStubFull);
     logger.info(txid);
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
+    logger.info("energytotal is " + infoById.get().getReceipt().getEnergyUsageTotal());
     Assert.assertTrue(infoById.get().getResultValue() == 0);
     Assert.assertTrue(infoById.get().getReceipt().getEnergyUsageTotal() > 0);
     Assert.assertFalse(infoById.get().getContractAddress().isEmpty());
@@ -98,19 +102,32 @@ public class ContractScenario013 {
 
     logger.info("before energy limit is " + Long.toString(energyLimit));
     logger.info("before energy usage is " + Long.toString(energyUsage));
-    String contractName = "SonicxSoxAndDoleContract";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_ContractScenario013_triggerSonicxSoxAndDoleContract");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_ContractScenario013_triggerSonicxSoxAndDoleContract");
-    contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
-        0L, 100, null, contract013Key, contract013Address, blockingStubFull);
+
+    String filePath = "./src/test/resources/soliditycode/contractScenario013.sol";
+    String contractName = "timetest";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
+
+    String txid = PublicMethed
+        .deployContractAndGetTransactionInfoById(contractName, abi, code, "", maxFeeLimit,
+            0L, 100, null, contract013Key, contract013Address, blockingStubFull);
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
+    infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
+    Assert.assertTrue(infoById.get().getResultValue() == 0);
+    logger.info("energytotal is " + infoById.get().getReceipt().getEnergyUsageTotal());
+
+    contractAddress = infoById.get().getContractAddress().toByteArray();
+
     txid = PublicMethed.triggerContract(contractAddress,
         "time()", "#", false,
         0, 100000000L, contract013Address, contract013Key, blockingStubFull);
     logger.info(txid);
+    PublicMethed.waitProduceNextBlock(blockingStubFull);
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
     logger.info("result is " + infoById.get().getResultValue());
+    logger.info("energytotal is " + infoById.get().getReceipt().getEnergyUsageTotal());
     Assert.assertTrue(infoById.get().getResultValue() == 0);
     Assert.assertTrue(infoById.get().getReceipt().getEnergyUsageTotal() > 0);
     Assert.assertTrue(infoById.get().getFee() == infoById.get().getReceipt().getEnergyFee());

@@ -1,4 +1,12 @@
 /*
+ * Copyright (c) [2019] SONICX
+ *
+ * It has been added for MasterNode
+ */
+
+/*
+ * SONICX: It has been added for MasterNode
+ *
  * Copyright (c) [2016] [ <ether.camp> ]
  * This file is part of the ethereumJ library.
  *

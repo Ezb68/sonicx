@@ -9,6 +9,7 @@ import org.junit.Test;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
 import org.sonicx.common.application.SonicxApplicationContext;
+import org.sonicx.common.storage.leveldb.LevelDbDataSourceImpl;
 import org.sonicx.common.utils.FileUtil;
 import org.sonicx.core.Constant;
 import org.sonicx.core.config.DefaultConfig;
@@ -91,7 +92,7 @@ public class SnapshotManagerTest {
     ProtoCapsuleTest protoCapsule = new ProtoCapsuleTest("close".getBytes());
     for (int i = 1; i < 11; i++) {
       ProtoCapsuleTest testProtoCapsule = new ProtoCapsuleTest(("close" + i).getBytes());
-      try (ISession _ = revokingDatabase.buildSession()) {
+      try (ISession ignored = revokingDatabase.buildSession()) {
         sonicxDatabase.put(protoCapsule.getData(), testProtoCapsule);
       }
     }

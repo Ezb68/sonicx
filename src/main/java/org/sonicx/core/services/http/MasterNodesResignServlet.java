@@ -39,6 +39,6 @@ public class MasterNodesResignServlet extends HttpServlet {
 
         GrpcAPI.TransactionExtention result = masternodeController.resign(contractAddress, callerAddress,
                 feeLimit);
-        response.getWriter().println(Util.printTransactionExtention(result));
+        response.getWriter().println(Util.printTransactionExtention(result, false));
     }
 }

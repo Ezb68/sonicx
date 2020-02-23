@@ -2,20 +2,20 @@ package org.sonicx.core.capsule.utils;
 
 
 import com.google.protobuf.ByteString;
+import java.util.List;
+import java.util.stream.Collectors;
 import org.sonicx.common.utils.ByteArray;
-import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.config.args.GenesisBlock;
+import org.sonicx.protos.Protocol.Transaction;
+
+import java.util.Map;
 import org.sonicx.core.db.Manager;
 import org.sonicx.core.mastrnode.MasterNodeController;
 import org.sonicx.core.services.http.JsonFormat;
 import org.sonicx.core.witness.WitnessController;
-import org.sonicx.protos.Protocol.Transaction;
-
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.sonicx.common.utils.Sha256Hash;
 
 public class BlockUtil {
 

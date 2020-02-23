@@ -1,39 +1,30 @@
 package org.sonicx.core.net;
 
-import java.io.File;
-import lombok.extern.slf4j.Slf4j;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.sonicx.common.application.SonicxApplicationContext;
-import org.testng.collections.Lists;
-import org.sonicx.common.net.udp.message.discover.FindNodeMessage;
-import org.sonicx.common.net.udp.message.Message;
-import org.sonicx.common.net.udp.message.discover.NeighborsMessage;
-import org.sonicx.common.net.udp.message.discover.PingMessage;
-import org.sonicx.common.net.udp.message.discover.PongMessage;
-import org.sonicx.common.overlay.discover.node.Node;
-import org.sonicx.common.overlay.discover.node.NodeManager;
-import org.sonicx.common.overlay.discover.RefreshTask;
-import org.sonicx.common.utils.FileUtil;
-import org.sonicx.core.config.DefaultConfig;
-import org.sonicx.core.config.args.Args;
-
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.util.Arrays;
 import java.util.List;
+import lombok.extern.slf4j.Slf4j;
+import org.junit.Assert;
+import org.testng.collections.Lists;
+import org.sonicx.common.application.SonicxApplicationContext;
+import org.sonicx.common.net.udp.message.Message;
+import org.sonicx.common.net.udp.message.discover.FindNodeMessage;
+import org.sonicx.common.net.udp.message.discover.NeighborsMessage;
+import org.sonicx.common.net.udp.message.discover.PingMessage;
+import org.sonicx.common.net.udp.message.discover.PongMessage;
+import org.sonicx.common.overlay.discover.node.Node;
+import org.sonicx.common.overlay.discover.node.NodeManager;
+import org.sonicx.core.config.args.Args;
 
 @Slf4j
 public class UdpTest {
 
   private NodeManager nodeManager;
   private int port = Args.getInstance().getNodeListenPort();
-  private volatile boolean finishFlag = false;
-  private long timeOut = 30_000;
+//  private volatile boolean finishFlag = false;
+//  private long timeOut = 30_000;
 
   public UdpTest(SonicxApplicationContext context) {
     nodeManager = context.getBean(NodeManager.class);
@@ -74,27 +65,14 @@ public class UdpTest {
     Assert.assertTrue(nodeManager.getTable().getAllNodes().isEmpty());
 
     PingMessage pingMessage = new PingMessage(from, nodeManager.getPublicHomeNode());
-
-    PongMessage pongMessage = new PongMessage(from);
-
-    FindNodeMessage findNodeMessage = new FindNodeMessage(from, RefreshTask.getNodeId());
-
-    List<Node> peers = Lists.newArrayList(peer1, peer2);
-    NeighborsMessage neighborsMessage = new NeighborsMessage(from, peers);
-
-    DatagramSocket socket = new DatagramSocket();
-
     DatagramPacket pingPacket = new DatagramPacket(pingMessage.getSendData(),
         pingMessage.getSendData().length, server, port);
 
-    DatagramPacket pongPacket = new DatagramPacket(pongMessage.getSendData(),
-        pongMessage.getSendData().length, server, port);
-
+    FindNodeMessage findNodeMessage = new FindNodeMessage(from, Node.getNodeId());
     DatagramPacket findNodePacket = new DatagramPacket(findNodeMessage.getSendData(),
         findNodeMessage.getSendData().length, server, port);
 
-    DatagramPacket neighborsPacket = new DatagramPacket(neighborsMessage.getSendData(),
-        neighborsMessage.getSendData().length, server, port);
+    DatagramSocket socket = new DatagramSocket();
 
     // send ping msg
     socket.send(pingPacket);
@@ -115,6 +93,9 @@ public class UdpTest {
         pingFlag = true;
         Assert.assertTrue(msg instanceof PingMessage);
         Assert.assertTrue(Arrays.equals(((PingMessage) msg).getTo().getId(), from.getId()));
+        PongMessage pongMessage = new PongMessage(from, msg.getTimestamp());
+        DatagramPacket pongPacket = new DatagramPacket(pongMessage.getSendData(),
+            pongMessage.getSendData().length, server, port);
         socket.send(pongPacket);
       } else if (!pongFlag) {
         pongFlag = true;
@@ -122,6 +103,10 @@ public class UdpTest {
       } else if (!findNodeFlag) {
         findNodeFlag = true;
         Assert.assertTrue(msg instanceof FindNodeMessage);
+        List<Node> peers = Lists.newArrayList(peer1, peer2);
+        NeighborsMessage neighborsMessage = new NeighborsMessage(from, peers, msg.getTimestamp());
+        DatagramPacket neighborsPacket = new DatagramPacket(neighborsMessage.getSendData(),
+            neighborsMessage.getSendData().length, server, port);
         socket.send(neighborsPacket);
         socket.send(findNodePacket);
       } else if (!neighborsFlag) {
@@ -136,7 +121,7 @@ public class UdpTest {
 
     socket.close();
 
-    finishFlag = true;
+//    finishFlag = true;
   }
 }
 

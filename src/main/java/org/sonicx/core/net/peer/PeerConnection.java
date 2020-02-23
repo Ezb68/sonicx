@@ -4,7 +4,9 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import java.util.Deque;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentLinkedDeque;
@@ -16,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
+import org.sonicx.common.overlay.discover.node.statistics.NodeStatistics.SimpleStatter;
 import org.sonicx.common.overlay.message.HelloMessage;
 import org.sonicx.common.overlay.message.Message;
 import org.sonicx.common.overlay.server.Channel;
@@ -40,15 +43,11 @@ public class PeerConnection extends Channel {
   @Autowired
   private AdvService advService;
 
-  private int invCacheSize = 100_000;
-
-  @Setter
-  @Getter
-  private BlockId signUpErrorBlockId;
-
   @Setter
   @Getter
   private HelloMessage helloMessage;
+
+  private int invCacheSize = 100_000;
 
   @Setter
   @Getter
@@ -64,6 +63,9 @@ public class PeerConnection extends Channel {
   @Getter
   private Map<Item, Long> advInvRequest = new ConcurrentHashMap<>();
 
+  @Setter
+  private BlockId fastForwardBlock;
+
   @Getter
   private BlockId blockBothHave = new BlockId();
 
@@ -73,7 +75,7 @@ public class PeerConnection extends Channel {
   }
 
   @Getter
-  private long blockBothHaveUpdateTime = System.currentTimeMillis();
+  private volatile long blockBothHaveUpdateTime = System.currentTimeMillis();
 
   @Setter
   @Getter
@@ -81,7 +83,7 @@ public class PeerConnection extends Channel {
 
   @Setter
   @Getter
-  private long remainNum;
+  private volatile long remainNum;
 
   @Getter
   private Cache<Sha256Hash, Long> syncBlockIdCache = CacheBuilder.newBuilder()
@@ -105,11 +107,11 @@ public class PeerConnection extends Channel {
 
   @Setter
   @Getter
-  private boolean needSyncFromPeer;
+  private volatile boolean needSyncFromPeer;
 
   @Setter
   @Getter
-  private boolean needSyncFromUs;
+  private volatile boolean needSyncFromUs;
 
   public boolean isIdle() {
     return advInvRequest.isEmpty() && syncBlockRequested.isEmpty() && syncChainRequested == null;
@@ -170,7 +172,8 @@ public class PeerConnection extends Channel {
 //        nodeStatistics.toString());
 ////
     return String.format(
-        "Peer %s: [ %18s, ping %6s ms]-----------\n"
+        "Peer %s [%8s]\n"
+            + "ping msg: count %d, max-average-min-last: %d %d %d %d\n"
             + "connect time: %ds\n"
             + "last know block num: %s\n"
             + "needSyncFromPeer:%b\n"
@@ -181,11 +184,17 @@ public class PeerConnection extends Channel {
             + "remainNum:%d\n"
             + "syncChainRequested:%d\n"
             + "blockInProcess:%d\n",
-        this.getNode().getHost() + ":" + this.getNode().getPort(),
-        this.getNode().getHexIdShort(),
-        (int) this.getPeerStats().getAvgLatency(),
-        (now - super.getStartTime()) / 1000,
-        blockBothHave.getNum(),
+        getNode().getHost() + ":" + getNode().getPort(),
+        getNode().getHexIdShort(),
+
+        getNodeStatistics().pingMessageLatency.getCount(),
+        getNodeStatistics().pingMessageLatency.getMax(),
+        getNodeStatistics().pingMessageLatency.getAvrg(),
+        getNodeStatistics().pingMessageLatency.getMin(),
+        getNodeStatistics().pingMessageLatency.getLast(),
+
+        (now - getStartTime()) / 1000,
+        fastForwardBlock != null ? fastForwardBlock.getNum() : blockBothHave.getNum(),
         isNeedSyncFromPeer(),
         isNeedSyncFromUs(),
         syncBlockToFetch.size(),

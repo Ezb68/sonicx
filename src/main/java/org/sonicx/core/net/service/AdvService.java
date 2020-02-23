@@ -10,6 +10,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map.Entry;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
@@ -18,7 +19,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.sonicx.core.net.SonicxNetDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.overlay.discover.node.statistics.MessageCount;
@@ -27,6 +27,7 @@ import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.common.utils.Time;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
 import org.sonicx.core.config.args.Args;
+import org.sonicx.core.net.SonicxNetDelegate;
 import org.sonicx.core.net.message.BlockMessage;
 import org.sonicx.core.net.message.FetchInvDataMessage;
 import org.sonicx.core.net.message.InventoryMessage;
@@ -35,7 +36,7 @@ import org.sonicx.core.net.peer.Item;
 import org.sonicx.core.net.peer.PeerConnection;
 import org.sonicx.protos.Protocol.Inventory.InventoryType;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class AdvService {
 
@@ -62,18 +63,23 @@ public class AdvService {
   @Getter
   private MessageCount trxCount = new MessageCount();
 
+  private int maxSpreadSize = 1_000;
+
   private boolean fastForward = Args.getInstance().isFastForward();
 
   public void init() {
-    if (!fastForward) {
-      spreadExecutor.scheduleWithFixedDelay(() -> {
-        try {
-          consumerInvToSpread();
-        } catch (Throwable t) {
-          logger.error("Spread thread error.", t);
-        }
-      }, 100, 10, TimeUnit.MILLISECONDS);
+
+    if (fastForward) {
+      return;
     }
+
+    spreadExecutor.scheduleWithFixedDelay(() -> {
+      try {
+        consumerInvToSpread();
+      } catch (Throwable t) {
+        logger.error("Spread thread error.", t);
+      }
+    }, 100, 30, TimeUnit.MILLISECONDS);
 
     fetchExecutor.scheduleWithFixedDelay(() -> {
       try {
@@ -81,7 +87,7 @@ public class AdvService {
       } catch (Throwable t) {
         logger.error("Fetch thread error.", t);
       }
-    }, 100, 10, TimeUnit.MILLISECONDS);
+    }, 100, 30, TimeUnit.MILLISECONDS);
   }
 
   public void close() {
@@ -89,7 +95,17 @@ public class AdvService {
     fetchExecutor.shutdown();
   }
 
+  synchronized public void addInvToCache(Item item) {
+    invToFetchCache.put(item, System.currentTimeMillis());
+    invToFetch.remove(item);
+  }
+
   synchronized public boolean addInv(Item item) {
+
+    if (fastForward && item.getType().equals(InventoryType.TRX)) {
+      return false;
+    }
+
     if (invToFetchCache.getIfPresent(item) != null) {
       return false;
     }
@@ -106,6 +122,11 @@ public class AdvService {
 
     invToFetchCache.put(item, System.currentTimeMillis());
     invToFetch.put(item, System.currentTimeMillis());
+
+    if (InventoryType.BLOCK.equals(item.getType())) {
+      consumerInvToFetch();
+    }
+
     return true;
   }
 
@@ -118,6 +139,16 @@ public class AdvService {
   }
 
   public void broadcast(Message msg) {
+
+    if (fastForward) {
+      return;
+    }
+
+    if (invToSpread.size() > maxSpreadSize) {
+      logger.warn("Drop message, type: {}, ID: {}.", msg.getType(), msg.getMessageId());
+      return;
+    }
+
     Item item;
     if (msg instanceof BlockMessage) {
       BlockMessage blockMsg = (BlockMessage) msg;
@@ -134,20 +165,38 @@ public class AdvService {
       TransactionMessage trxMsg = (TransactionMessage) msg;
       item = new Item(trxMsg.getMessageId(), InventoryType.TRX);
       trxCount.add();
-      trxCache.put(item,
-          new TransactionMessage(((TransactionMessage) msg).getTransactionCapsule().getInstance()));
+      trxCache.put(item, new TransactionMessage(trxMsg.getTransactionCapsule().getInstance()));
     } else {
       logger.error("Adv item is neither block nor trx, type: {}", msg.getType());
       return;
     }
-    synchronized (invToSpread) {
-      invToSpread.put(item, System.currentTimeMillis());
-    }
 
-    if (fastForward) {
+    invToSpread.put(item, System.currentTimeMillis());
+
+    if (InventoryType.BLOCK.equals(item.getType())) {
       consumerInvToSpread();
     }
   }
+
+  public void fastForward(BlockMessage msg) {
+    Item item = new Item(msg.getBlockId(), InventoryType.BLOCK);
+    List<PeerConnection> peers = sonicxNetDelegate.getActivePeer().stream()
+        .filter(peer -> !peer.isNeedSyncFromPeer() && !peer.isNeedSyncFromUs())
+        .filter(peer -> peer.getAdvInvReceive().getIfPresent(item) == null
+            && peer.getAdvInvSpread().getIfPresent(item) == null)
+        .collect(Collectors.toList());
+
+    if (!fastForward) {
+      peers = peers.stream().filter(peer -> peer.isFastForwardPeer()).collect(Collectors.toList());
+    }
+
+    peers.forEach(peer -> {
+      peer.sendMessage(msg);
+      peer.getAdvInvSpread().put(item, System.currentTimeMillis());
+      peer.setFastForwardBlock(msg.getBlockId());
+    });
+  }
+
 
   public void onDisconnect(PeerConnection peer) {
     if (!peer.getAdvInvRequest().isEmpty()) {
@@ -160,9 +209,13 @@ public class AdvService {
         }
       });
     }
+
+    if (invToFetch.size() > 0) {
+      consumerInvToFetch();
+    }
   }
 
-  private void consumerInvToFetch() {
+  synchronized private void consumerInvToFetch() {
     Collection<PeerConnection> peers = sonicxNetDelegate.getActivePeer().stream()
         .filter(peer -> peer.isIdle())
         .collect(Collectors.toList());
@@ -195,27 +248,26 @@ public class AdvService {
     invSender.sendFetch();
   }
 
-  private void consumerInvToSpread() {
-    if (invToSpread.isEmpty()) {
+  synchronized private void consumerInvToSpread() {
+
+    List<PeerConnection> peers = sonicxNetDelegate.getActivePeer().stream()
+        .filter(peer -> !peer.isNeedSyncFromPeer() && !peer.isNeedSyncFromUs())
+        .collect(Collectors.toList());
+
+    if (invToSpread.isEmpty() || peers.isEmpty()) {
       return;
     }
 
     InvSender invSender = new InvSender();
-    HashMap<Item, Long> spread = new HashMap<>();
-    synchronized (invToSpread) {
-      spread.putAll(invToSpread);
-      invToSpread.clear();
-    }
 
-    sonicxNetDelegate.getActivePeer().stream()
-        .filter(peer -> !peer.isNeedSyncFromPeer() && !peer.isNeedSyncFromUs())
-        .forEach(peer -> spread.entrySet().stream()
-            .filter(entry -> peer.getAdvInvReceive().getIfPresent(entry.getKey()) == null
-                && peer.getAdvInvSpread().getIfPresent(entry.getKey()) == null)
-            .forEach(entry -> {
-              peer.getAdvInvSpread().put(entry.getKey(), Time.getCurrentMillis());
-              invSender.add(entry.getKey(), peer);
-            }));
+    invToSpread.forEach((item, time) -> peers.forEach(peer -> {
+      if (peer.getAdvInvReceive().getIfPresent(item) == null &&
+          peer.getAdvInvSpread().getIfPresent(item) == null) {
+        peer.getAdvInvSpread().put(item, Time.getCurrentMillis());
+        invSender.add(item, peer);
+      }
+      invToSpread.remove(item);
+    }));
 
     invSender.sendInv();
   }
@@ -257,7 +309,7 @@ public class AdvService {
 
     public void sendInv() {
       send.forEach((peer, ids) -> ids.forEach((key, value) -> {
-        if (key.equals(InventoryType.TRX) && peer.isFastForwardPeer()) {
+        if (peer.isFastForwardPeer() && key.equals(InventoryType.TRX)) {
           return;
         }
         if (key.equals(InventoryType.BLOCK)) {

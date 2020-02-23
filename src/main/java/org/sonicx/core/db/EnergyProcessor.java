@@ -67,7 +67,7 @@ public class EnergyProcessor extends ResourceProcessor {
 
     result = Math.min(
         Math.max(result, totalEnergyLimit),
-        totalEnergyLimit * AdaptiveResourceLimitConstants.LIMIT_MULTIPLIER
+        totalEnergyLimit * dbManager.getDynamicPropertiesStore().getAdaptiveResourceLimitMultiplier()
     );
 
     dbManager.getDynamicPropertiesStore().saveTotalEnergyCurrentLimit(result);
@@ -103,6 +103,7 @@ public class EnergyProcessor extends ResourceProcessor {
     accountCapsule.setLatestOperationTime(latestOperationTime);
     accountCapsule.setLatestConsumeTimeForEnergy(latestConsumeTime);
 
+
     dbManager.getAccountStore().put(accountCapsule.createDbKey(), accountCapsule);
 
     if (dbManager.getDynamicPropertiesStore().getAllowAdaptiveEnergy() == 1) {
@@ -116,11 +117,11 @@ public class EnergyProcessor extends ResourceProcessor {
 
   public long calculateGlobalEnergyLimit(AccountCapsule accountCapsule) {
     long frozeBalance = accountCapsule.getAllFrozenBalanceForEnergy();
-    if (frozeBalance < 1000_000L) {
+    if (frozeBalance < 1_000_000L) {
       return 0;
     }
 
-    long energyWeight = frozeBalance / 1000_000L;
+    long energyWeight = frozeBalance / 1_000_000L;
     long totalEnergyLimit = dbManager.getDynamicPropertiesStore().getTotalEnergyCurrentLimit();
     long totalEnergyWeight = dbManager.getDynamicPropertiesStore().getTotalEnergyWeight();
 

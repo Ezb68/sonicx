@@ -1,4 +1,8 @@
-package org.sonicx.common.runtime.utils;
+/*
+ * Copyright (c) [2019] SONICX
+ *
+ * It has been added for MasterNode
+ */
 
 /*
  * Copyright (c) [2016] [ <ether.camp> ]
@@ -17,6 +21,8 @@ package org.sonicx.common.runtime.utils;
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
+
+package org.sonicx.common.runtime.utils;
 
 import org.spongycastle.util.encoders.Hex;
 

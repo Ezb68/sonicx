@@ -58,13 +58,26 @@ public class TransactionStore extends SonicxStoreWithRevoking<TransactionCapsule
   private TransactionCapsule getTransactionFromKhaosDatabase(byte[] key, long high) {
     List<KhaosBlock> khaosBlocks = khaosDatabase.getMiniStore().getBlockByNum(high);
     for (KhaosBlock bl : khaosBlocks) {
-      for (TransactionCapsule e : bl.blk.getTransactions()) {
+      for (TransactionCapsule e : bl.getBlk().getTransactions()) {
         if (e.getTransactionId().equals(Sha256Hash.wrap(key))) {
           return e;
         }
       }
     }
     return null;
+  }
+
+  public long getBlockNumber(byte[] key) throws BadItemException {
+    byte[] value = revokingDB.getUnchecked(key);
+    if (ArrayUtils.isEmpty(value)) {
+      return -1;
+    }
+
+    if (value.length == 8) {
+      return ByteArray.toLong(value);
+    }
+    TransactionCapsule transactionCapsule = new TransactionCapsule(value);
+    return transactionCapsule.getBlockNum();
   }
 
   @Override

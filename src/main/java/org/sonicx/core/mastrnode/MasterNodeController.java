@@ -90,7 +90,7 @@ public class MasterNodeController {
         String abiSB = "{" + "\"entrys\":" + abiJson + "}";
 
         try {
-            JsonFormat.merge(abiSB, abiBuilder);
+            JsonFormat.merge(abiSB, abiBuilder, false);
         } catch (JsonFormat.ParseException e) {
             return null;
         }

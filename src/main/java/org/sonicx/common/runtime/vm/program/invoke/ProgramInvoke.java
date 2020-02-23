@@ -71,7 +71,9 @@ public interface ProgramInvoke {
 
   long getEnergyLimit();
 
-  void setStaticCall();
-
   BlockCapsule getBlockByNum(int index);
+
+  void setConstantCall();
+
+  boolean isConstantCall();
 }

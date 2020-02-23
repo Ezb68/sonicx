@@ -10,8 +10,6 @@ import org.sonicx.core.exception.VMIllegalException;
 
 public interface Runtime {
 
-  boolean isCallConstant() throws ContractValidateException;
-
   void execute() throws ContractValidateException, ContractExeException, VMIllegalException;
 
   void go();

@@ -4,10 +4,10 @@ package org.sonicx.common.runtime.vm;
 import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
-import org.sonicx.common.runtime.SVMTestUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.runtime.Runtime;
+import org.sonicx.common.runtime.SvmTestUtils;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.runtime.vm.program.Program.OutOfEnergyException;
 import org.sonicx.common.storage.DepositImpl;
@@ -118,27 +118,27 @@ contract D {
         .statsByVersion(ForkBlockVersionEnum.VERSION_3_5.getValue(), stats);
     VMConfig.initAllowMultiSign(1);
 
-    Transaction aTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction aTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testA", address, abi, aCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime aRuntime = SVMTestUtils
+    Runtime aRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(aTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(aRuntime.getRuntimeError(), "REVERT opcode executed");
 
-    Transaction bTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction bTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testB", address, abi, bCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime bRuntime = SVMTestUtils
+    Runtime bRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(bTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(bRuntime.getRuntimeError(), "REVERT opcode executed");
 
-    Transaction cTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction cTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, cCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime cRuntime = SVMTestUtils
+    Runtime cRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(cTrx, DepositImpl.createRoot(manager), null);
     Assert.assertTrue(cRuntime.getResult().getException() instanceof OutOfEnergyException);
 
-    Transaction dTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction dTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, dCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime dRuntime = SVMTestUtils
+    Runtime dRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(dTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(dRuntime.getRuntimeError(), "REVERT opcode executed");
 
@@ -149,28 +149,28 @@ contract D {
       throws ContractExeException, ReceiptCheckErrException, VMIllegalException, ContractValidateException {
     VMConfig.initAllowMultiSign(0);
     byte[] address = Hex.decode(OWNER_ADDRESS);
-    Transaction aTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction aTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testA", address, abi, aCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime aRuntime = SVMTestUtils
+    Runtime aRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(aTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(aRuntime.getRuntimeError(), "Unknown Exception");
 //
 //
-    Transaction bTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction bTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testB", address, abi, bCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime bRuntime = SVMTestUtils
+    Runtime bRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(bTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(bRuntime.getRuntimeError(), "REVERT opcode executed");
 
-    Transaction cTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction cTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, cCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime cRuntime = SVMTestUtils
+    Runtime cRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(cTrx, DepositImpl.createRoot(manager), null);
     Assert.assertTrue(cRuntime.getResult().getException() instanceof OutOfEnergyException);
 
-    Transaction dTrx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction dTrx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         "testC", address, abi, dCode, value, fee, consumeUserResourcePercent, null, engeryLimit);
-    Runtime dRuntime = SVMTestUtils
+    Runtime dRuntime = SvmTestUtils
         .processTransactionAndReturnRuntime(dTrx, DepositImpl.createRoot(manager), null);
     Assert.assertEquals(dRuntime.getRuntimeError(), "REVERT opcode executed");
 

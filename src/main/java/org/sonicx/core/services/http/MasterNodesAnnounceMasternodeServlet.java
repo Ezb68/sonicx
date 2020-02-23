@@ -51,7 +51,7 @@ public class MasterNodesAnnounceMasternodeServlet extends HttpServlet {
         TransactionExtention result = masternodeController.announceMasternode(contractAddress, callerAddress, feeLimit,
                 callValue, ownerRewardAddress, operator, operatorRewardAddress, operatorRewardRatio);
 
-        response.getWriter().println(Util.printTransactionExtention(result));
+        response.getWriter().println(Util.printTransactionExtention(result, false));
         Util.addJsonHeader(response);
     }
 }

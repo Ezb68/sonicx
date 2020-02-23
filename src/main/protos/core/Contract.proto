@@ -84,6 +84,11 @@ message UpdateEnergyLimitContract {
   int64 origin_energy_limit = 3;
 }
 
+message ClearABIContract {
+  bytes owner_address = 1;
+  bytes contract_address = 2;
+}
+
 message WitnessCreateContract {
   bytes owner_address = 1;
   bytes url = 2;
@@ -248,4 +253,9 @@ message AccountPermissionUpdateContract {
   Permission owner = 2;  //Empty is invalidate
   Permission witness = 3;//Can be empty
   repeated Permission actives = 4;//Empty is invalidate
+}
+
+message UpdateBrokerageContract {
+  bytes owner_address = 1;
+  int32 brokerage = 2; // 1 mean 1%
 }

@@ -53,7 +53,7 @@ public class LogInfo {
   public List<String> getHexTopics() {
     List<String> list = new LinkedList<>();
     if (topics != null && !topics.isEmpty()) {
-      for (DataWord bytes: topics) {
+      for (DataWord bytes : topics) {
         list.add(bytes.toHexString());
       }
     }
@@ -63,7 +63,7 @@ public class LogInfo {
   public List<byte[]> getClonedTopics() {
     List<byte[]> list = new LinkedList<>();
     if (topics != null && topics.size() > 0) {
-      for (DataWord dataword: topics) {
+      for (DataWord dataword : topics) {
         list.add(dataword.getClonedData());
       }
     }

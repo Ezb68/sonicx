@@ -1,6 +1,7 @@
 package org.sonicx.core.net.services;
 
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BlockCapsule;
@@ -9,6 +10,7 @@ import org.sonicx.core.net.peer.Item;
 import org.sonicx.core.net.service.AdvService;
 import org.sonicx.protos.Protocol.Inventory.InventoryType;
 
+@Ignore
 public class AdvServiceTest {
 
   AdvService service = new AdvService();

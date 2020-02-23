@@ -2,6 +2,7 @@ package stest.sonicx.wallet.dailybuild.exceptionfee;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -18,6 +19,8 @@ import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.Utils;
 import org.sonicx.core.Wallet;
 import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.protos.Protocol.Transaction.Result.contractResult;
 import org.sonicx.protos.Protocol.TransactionInfo;
 import stest.sonicx.wallet.common.client.Configuration;
 import stest.sonicx.wallet.common.client.Parameter.CommonConstant;
@@ -94,11 +97,12 @@ public class AssertException {
             blockingStubFull));
     PublicMethed.waitProduceNextBlock(blockingStubFull);
 
-    String contractName = "divideInt";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_AssertException_testdivideInt");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_AssertException_testdivideInt");
+    String filePath = "src/test/resources/soliditycode/assertExceptiontest1DivideInt.sol";
+    String contractName = "divideIHaveArgsReturnStorage";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
 
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, contractExcKey,
@@ -127,11 +131,26 @@ public class AssertException {
     PublicMethed.waitProduceNextBlock(blockingStubFull1);
     Optional<TransactionInfo> infoById = null;
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
+    logger.info("infoById：" + infoById);
+    Optional<Transaction> ById = PublicMethed.getTransactionById(txid, blockingStubFull);
+    logger.info("getRet：" + ById.get().getRet(0));
+    logger.info("getNumber：" + ById.get().getRet(0).getContractRet().getNumber());
+    logger.info("getContractRetValue：" + ById.get().getRet(0).getContractRetValue());
+    logger.info("getContractRet：" + ById.get().getRet(0).getContractRet());
+
+    Assert.assertEquals(ById.get().getRet(0).getContractRet().getNumber(),
+        contractResult.ILLEGAL_OPERATION_VALUE);
+    Assert.assertEquals(ById.get().getRet(0).getContractRetValue(), 8);
+    Assert.assertEquals(ById.get().getRet(0).getContractRet(), contractResult.ILLEGAL_OPERATION);
+
+    Assert
+        .assertEquals(ByteArray.toHexString(infoById.get().getContractResult(0).toByteArray()), "");
+    Assert.assertEquals(contractResult.ILLEGAL_OPERATION, infoById.get().getReceipt().getResult());
+
     Long fee = infoById.get().getFee();
     Long netUsed = infoById.get().getReceipt().getNetUsage();
     Long energyUsed = infoById.get().getReceipt().getEnergyUsage();
     Long netFee = infoById.get().getReceipt().getNetFee();
-
     logger.info("fee:" + fee);
     logger.info("netUsed:" + netUsed);
     logger.info("energyUsed:" + energyUsed);
@@ -157,11 +176,13 @@ public class AssertException {
 
   @Test(enabled = true, description = "Trigger contract index out of bounds")
   public void test2FindArgsContractMinTest() {
-    String contractName = "findArgsContractTest";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_AssertException_testfindArgsContractMinTest");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_AssertException_testfindArgsContractMinTest");
+    String filePath =
+        "src/test/resources/soliditycode/assertExceptiontest2FindArgsContractMinTest.sol";
+    String contractName = "findArgsIContract";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, contractExcKey,
         contractExcAddress, blockingStubFull);
@@ -182,7 +203,7 @@ public class AssertException {
     String txid = "";
     Integer triggerNum = -1;
     txid = PublicMethed.triggerContract(contractAddress,
-        "findArgsByIndexTest(uint256)", triggerNum.toString(), false,
+        "findArgsByIndex1(uint256)", triggerNum.toString(), false,
         0, maxFeeLimit, contractExcAddress, contractExcKey, blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull1);
@@ -219,11 +240,12 @@ public class AssertException {
 
   @Test(enabled = true, description = "Trigger contract Bytes array index out of bounds")
   public void test3ByteMinContract() {
+    String filePath = "src/test/resources/soliditycode/assertExceptiontest3ByteMinContract.sol";
     String contractName = "byteContract";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_AssertException_testbyteMinContract");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_AssertException_testbyteMinContract");
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, contractExcKey,
         contractExcAddress, blockingStubFull);
@@ -281,11 +303,11 @@ public class AssertException {
 
   @Test(enabled = true, description = "Trigger contract convert too large value to enumerated type")
   public void test4Enum() {
-    String contractName = "enum";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_AssertException_testenum");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_AssertException_testenum");
+    String filePath = "src/test/resources/soliditycode/assertExceptiontest4Enum.sol";
+    String contractName = "enumContract";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, contractExcKey,
         contractExcAddress, blockingStubFull);
@@ -344,11 +366,12 @@ public class AssertException {
 
   @Test(enabled = true, description = "Trigger contract move a negative value to a binary")
   public void test5MoveRight() {
-    String contractName = "moveRight";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_AssertException_testmoveRight");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_AssertException_testmoveRight");
+    String filePath = "src/test/resources/soliditycode/assertExceptiontest5MoveRight.sol";
+    String contractName = "binaryRightContract";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
+
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, contractExcKey,
         contractExcAddress, blockingStubFull);
@@ -409,11 +432,13 @@ public class AssertException {
   @Test(enabled = true, description = "Trigger contract Call an uninitialized "
       + "internal function type variable")
   public void test6UninitializedContract() {
-    String contractName = "uninitializedContract";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_AssertException_testuninitializedContract");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_AssertException_testuninitializedContract");
+    String filePath =
+        "src/test/resources/soliditycode/assertExceptiontest6UninitializedContract.sol";
+    String contractName = "uni";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
+
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, contractExcKey,
         contractExcAddress, blockingStubFull);
@@ -471,11 +496,12 @@ public class AssertException {
 
   @Test(enabled = true, description = "Trigger contract assert exception")
   public void test7TestAssertContract() {
+    String filePath = "src/test/resources/soliditycode/assertExceptiontest7TestAssertContract.sol";
     String contractName = "TestThrowsContract";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_AssertException_testTestAssertContract");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_AssertException_testTestAssertContract");
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
+
     contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
         0L, 100, null, contractExcKey,
         contractExcAddress, blockingStubFull);

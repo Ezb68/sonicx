@@ -1,6 +1,7 @@
 package org.sonicx.core.services.http.solidity;
 
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.server.ConnectionLimit;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
@@ -8,21 +9,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.application.Service;
 import org.sonicx.core.config.args.Args;
+import org.sonicx.core.services.http.GetAccountByIdServlet;
 import org.sonicx.core.services.http.GetAccountServlet;
 import org.sonicx.core.services.http.GetAssetIssueByIdServlet;
 import org.sonicx.core.services.http.GetAssetIssueByNameServlet;
 import org.sonicx.core.services.http.GetAssetIssueListByNameServlet;
 import org.sonicx.core.services.http.GetAssetIssueListServlet;
+import org.sonicx.core.services.http.GetBlockByIdServlet;
+import org.sonicx.core.services.http.GetBlockByLatestNumServlet;
+import org.sonicx.core.services.http.GetBlockByLimitNextServlet;
 import org.sonicx.core.services.http.GetBlockByNumServlet;
+import org.sonicx.core.services.http.GetBrokerageServlet;
 import org.sonicx.core.services.http.GetDelegatedResourceAccountIndexServlet;
 import org.sonicx.core.services.http.GetDelegatedResourceServlet;
 import org.sonicx.core.services.http.GetExchangeByIdServlet;
 import org.sonicx.core.services.http.GetNodeInfoServlet;
 import org.sonicx.core.services.http.GetNowBlockServlet;
 import org.sonicx.core.services.http.GetPaginatedAssetIssueListServlet;
+import org.sonicx.core.services.http.GetRewardServlet;
 import org.sonicx.core.services.http.GetTransactionCountByBlockNumServlet;
 import org.sonicx.core.services.http.ListExchangesServlet;
 import org.sonicx.core.services.http.ListWitnessesServlet;
+import org.sonicx.core.services.http.TriggerConstantContractServlet;
+
 
 @Component
 @Slf4j(topic = "API")
@@ -34,7 +43,6 @@ public class SolidityNodeHttpApiService implements Service {
 
   @Autowired
   private GetAccountServlet getAccountServlet;
-
 
   @Autowired
   private GetTransactionByIdSolidityServlet getTransactionByIdServlet;
@@ -71,9 +79,22 @@ public class SolidityNodeHttpApiService implements Service {
   private GetNowBlockServlet getNowBlockServlet;
   @Autowired
   private GetBlockByNumServlet getBlockByNumServlet;
-
   @Autowired
   private GetNodeInfoServlet getNodeInfoServlet;
+  @Autowired
+  private GetAccountByIdServlet getAccountByIdServlet;
+  @Autowired
+  private GetBlockByIdServlet getBlockByIdServlet;
+  @Autowired
+  private GetBlockByLimitNextServlet getBlockByLimitNextServlet;
+  @Autowired
+  private GetBlockByLatestNumServlet getBlockByLatestNumServlet;
+  @Autowired
+  private GetBrokerageServlet getBrokerageServlet;
+  @Autowired
+  private GetRewardServlet getRewardServlet;
+  @Autowired
+  private TriggerConstantContractServlet triggerConstantContractServlet;
 
   @Override
   public void init() {
@@ -114,18 +135,32 @@ public class SolidityNodeHttpApiService implements Service {
       context.addServlet(new ServletHolder(getDelegatedResourceAccountIndexServlet),
           "/walletsolidity/getdelegatedresourceaccountindex");
       context
-          .addServlet(new ServletHolder(getExchangeByIdServlet), "/walletsolidity/getexchangebyid");
-      context.addServlet(new ServletHolder(listExchangesServlet), "/walletsolidity/listexchanges");
+          .addServlet(new ServletHolder(getExchangeByIdServlet),
+              "/walletsolidity/getexchangebyid");
+      context.addServlet(new ServletHolder(listExchangesServlet),
+          "/walletsolidity/listexchanges");
+
+      context.addServlet(new ServletHolder(getAccountByIdServlet),
+          "/walletsolidity/getaccountbyid");
+      context.addServlet(new ServletHolder(getBlockByIdServlet),
+          "/walletsolidity/getblockbyid");
+      context.addServlet(new ServletHolder(getBlockByLimitNextServlet),
+          "/walletsolidity/getblockbylimitnext");
+      context.addServlet(new ServletHolder(getBlockByLatestNumServlet),
+          "/walletsolidity/getblockbylatestnum");
 
       // only for SolidityNode
       context.addServlet(new ServletHolder(getTransactionByIdServlet),
           "/walletsolidity/gettransactionbyid");
+
       context
           .addServlet(new ServletHolder(getTransactionInfoByIdServlet),
               "/walletsolidity/gettransactioninfobyid");
       context
           .addServlet(new ServletHolder(getTransactionCountByBlockNumServlet),
               "/walletsolidity/gettransactioncountbyblocknum");
+      context.addServlet(new ServletHolder(triggerConstantContractServlet),
+          "/walletsolidity/triggerconstantcontract");
 
       // for extension api
       if (args.isWalletExtensionApi()) {
@@ -137,6 +172,12 @@ public class SolidityNodeHttpApiService implements Service {
       }
 
       context.addServlet(new ServletHolder(getNodeInfoServlet), "/wallet/getnodeinfo");
+      context.addServlet(new ServletHolder(getBrokerageServlet), "/walletsolidity/getBrokerage");
+      context.addServlet(new ServletHolder(getRewardServlet), "/walletsolidity/getReward");
+      int maxHttpConnectNumber = Args.getInstance().getMaxHttpConnectNumber();
+      if (maxHttpConnectNumber > 0) {
+        server.addBean(new ConnectionLimit(maxHttpConnectNumber, server));
+      }
 
       server.start();
     } catch (Exception e) {

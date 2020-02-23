@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) [2019] SONICX
+ *
+ * It has been added for MasterNode
+ */
+
 package org.sonicx.core.services.http;
 
 import com.alibaba.fastjson.JSONObject;
@@ -41,6 +47,6 @@ public class MasterNodesActivateMasterNodeServlet extends HttpServlet {
 
         TransactionExtention result = masternodeController.activateMasternode(contractAddress, callerAddress,
                 feeLimit);
-        response.getWriter().println(Util.printTransactionExtention(result));
+        response.getWriter().println(Util.printTransactionExtention(result, false));
     }
 }

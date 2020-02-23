@@ -18,6 +18,7 @@ import org.sonicx.core.db.Manager;
 import org.sonicx.core.exception.ContractExeException;
 import org.sonicx.core.exception.ContractValidateException;
 import org.sonicx.protos.Contract.FreezeBalanceContract;
+import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.Transaction.Result.code;
 
 @Slf4j(topic = "actuator")
@@ -187,6 +188,13 @@ public class FreezeBalanceActuator extends AbstractActuator {
         String readableOwnerAddress = StringUtil.createReadableString(receiverAddress);
         throw new ContractValidateException(
             "Account[" + readableOwnerAddress + "] not exists");
+      }
+
+      if (dbManager.getDynamicPropertiesStore().getAllowSvmConstantinople() == 1
+          && receiverCapsule.getType() == AccountType.Contract) {
+        throw new ContractValidateException(
+            "Do not allow delegate resources to contract addresses");
+
       }
 
     }

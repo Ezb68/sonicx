@@ -24,15 +24,17 @@ import org.junit.Test;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BlockCapsule;
-import org.sonicx.core.capsule.TransactionCapsule;
 import org.sonicx.core.capsule.utils.BlockUtil;
 import org.sonicx.core.config.args.Args;
-import org.sonicx.core.exception.BadTransactionException;
-import org.sonicx.core.exception.ContractValidateException;
-import org.sonicx.core.services.http.JsonFormat;
 import org.sonicx.protos.Protocol.Block;
 import org.sonicx.protos.Protocol.BlockHeader;
 import org.sonicx.protos.Protocol.BlockHeader.raw;
+
+// These codes has been added for testing genesis block
+import org.sonicx.core.capsule.TransactionCapsule;
+import org.sonicx.core.exception.BadTransactionException;
+import org.sonicx.core.exception.ContractValidateException;
+import org.sonicx.core.services.http.JsonFormat;
 
 @Slf4j
 public class BlockUtilTest {

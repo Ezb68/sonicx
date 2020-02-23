@@ -16,15 +16,19 @@
 package org.sonicx.core.capsule.utils;
 
 import com.google.protobuf.ByteString;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import org.sonicx.common.utils.ByteArray;
+import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.config.args.GenesisBlock;
-import org.sonicx.core.mastrnode.MasterNodeController;
+import org.sonicx.core.db.Manager;
+import org.sonicx.core.witness.WitnessController;
 import org.sonicx.protos.Protocol.Transaction;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import org.sonicx.core.mastrnode.MasterNodeController;
 
 public class BlockUtil {
 
@@ -73,5 +77,18 @@ public class BlockUtil {
    */
   public static boolean isParentOf(BlockCapsule blockCapsule1, BlockCapsule blockCapsule2) {
     return blockCapsule1.getBlockId().equals(blockCapsule2.getParentHash());
+  }
+
+  public static BlockCapsule createTestBlockCapsule(Manager dbManager, long time,
+      long number, ByteString hash, Map<ByteString, String> addressToProvateKeys) {
+    WitnessController witnessController = dbManager.getWitnessController();
+    ByteString witnessAddress =
+        witnessController.getScheduledWitness(witnessController.getSlotAtTime(time));
+    BlockCapsule blockCapsule = new BlockCapsule(number, Sha256Hash.wrap(hash), time,
+        witnessAddress);
+    blockCapsule.generatedByMyself = true;
+    blockCapsule.setMerkleRoot();
+    blockCapsule.sign(ByteArray.fromHexString(addressToProvateKeys.get(witnessAddress)));
+    return blockCapsule;
   }
 }

@@ -42,9 +42,9 @@ public class UnfreezeAsset2Test {
 
   /*  //testng001、testng002、testng003、testng004
   private static final byte[] fromAddress = Base58
-      .decodeFromBase58Check("THph9K2M2nLvkianrMGswRhz5hjSA9fuH7");
+      .decodeFromBase58Check("SX2urn6u95nhGBSKonf8bPkZvo9ghpkaNq");
   private static final byte[] toAddress = Base58
-      .decodeFromBase58Check("TV75jZpdmP2juMe1dRwGrwpV6AMU6mr1EU");*/
+      .decodeFromBase58Check("SXYtFv2ax2oVixWdrz2tMiF1mjucBXEqJt");*/
 
   private final byte[] fromAddress = PublicMethed.getFinalAddress(testKey002);
   private final byte[] toAddress = PublicMethed.getFinalAddress(testKey003);

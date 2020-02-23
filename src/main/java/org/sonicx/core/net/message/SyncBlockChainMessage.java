@@ -1,7 +1,6 @@
 package org.sonicx.core.net.message;
 
 import java.util.List;
-import org.apache.commons.collections4.CollectionUtils;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
 import org.sonicx.protos.Protocol.BlockInventory.Type;
 

@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 
 option java_package = "org.sonicx.api"; //Specify the name of the package that generated the Java file
 option java_outer_classname = "GrpcAPI"; //Specify the class name of the generated Java file
-option go_package = "github.com/SonicXChain/grps-gateway/api";
+option go_package = "github.com/SonicXChain/grpc-gateway/api";
 
 service Wallet {
 
@@ -404,6 +404,12 @@ service Wallet {
   rpc TriggerContract (TriggerSmartContract) returns (TransactionExtention) {
   }
 
+  rpc TriggerConstantContract (TriggerSmartContract) returns (TransactionExtention) {
+  }
+
+  rpc ClearContractABI (ClearABIContract) returns (TransactionExtention) {
+  }
+
   rpc ListWitnesses (EmptyMessage) returns (WitnessList) {
     option (google.api.http) = {
       post: "/wallet/listwitnesses"
@@ -617,11 +623,21 @@ service Wallet {
 
   }
 
-  rpc GetTransactionApprovedList(Transaction) returns (TransactionApprovedList) {
+  rpc GetTransactionApprovedList (Transaction) returns (TransactionApprovedList) {
 
   }
 
   rpc GetNodeInfo (EmptyMessage) returns (NodeInfo) {
+  };
+
+  rpc GetRewardInfo (BytesMessage) returns (NumberMessage) {
+  };
+
+  rpc GetBrokerageInfo (BytesMessage) returns (NumberMessage) {
+  };
+
+  rpc UpdateBrokerage (UpdateBrokerageContract) returns (TransactionExtention) {
+
   };
 };
 
@@ -734,6 +750,7 @@ service WalletSolidity {
       }
     };
   }
+
   rpc GetTransactionInfoById (BytesMessage) returns (TransactionInfo) {
     option (google.api.http) = {
       post: "/walletsolidity/gettransactioninfobyid"
@@ -743,6 +760,7 @@ service WalletSolidity {
       }
     };
   }
+
   //Warning: do not invoke this interface provided by others.
   rpc GenerateAddress (EmptyMessage) returns (AddressPrKeyPairMessage) {
     option (google.api.http) = {
@@ -753,6 +771,16 @@ service WalletSolidity {
       }
     };
   }
+
+  rpc GetRewardInfo (BytesMessage) returns (NumberMessage) {
+  };
+
+  rpc GetBrokerageInfo (BytesMessage) returns (NumberMessage) {
+  };
+
+  rpc TriggerConstantContract (TriggerSmartContract) returns (TransactionExtention) {
+  }
+
 };
 
 service WalletExtension {

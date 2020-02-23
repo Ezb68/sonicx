@@ -28,7 +28,7 @@ import org.sonicx.protos.Protocol.Inventory.InventoryType;
 import org.sonicx.protos.Protocol.ReasonCode;
 import org.sonicx.protos.Protocol.Transaction;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class FetchInvDataMsgHandler implements SonicxMsgHandler {
 

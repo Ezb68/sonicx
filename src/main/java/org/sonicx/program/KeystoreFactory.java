@@ -1,6 +1,9 @@
 package org.sonicx.program;
 
 import com.beust.jcommander.JCommander;
+import java.io.File;
+import java.io.IOException;
+import java.util.Scanner;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.sonicx.common.crypto.ECKey;
@@ -11,11 +14,8 @@ import org.sonicx.core.config.args.Args;
 import org.sonicx.keystore.CipherException;
 import org.sonicx.keystore.Credentials;
 import org.sonicx.keystore.WalletUtils;
-import org.spongycastle.util.encoders.Hex;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Scanner;
+import org.spongycastle.util.encoders.Hex;
 
 @Slf4j(topic = "app")
 public class KeystoreFactory {

@@ -4,10 +4,10 @@ import java.util.Arrays;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.sonicx.common.runtime.SVMTestUtils;
 import org.spongycastle.util.encoders.Hex;
 import org.testng.Assert;
 import org.sonicx.common.runtime.SVMTestResult;
+import org.sonicx.common.runtime.SvmTestUtils;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.storage.Deposit;
 import org.sonicx.common.storage.DepositImpl;
@@ -96,10 +96,10 @@ public class StorageTest extends VMTestBase {
     long consumeUserResourcePercent = 0;
 
     // deploy contract
-    Transaction trx = SVMTestUtils.generateDeploySmartContractAndGetTransaction(
+    Transaction trx = SvmTestUtils.generateDeploySmartContractAndGetTransaction(
         contractName, address, ABI, code, value, fee, consumeUserResourcePercent, null);
     byte[] contractAddress = Wallet.generateContractAddress(trx);
-    runtime = SVMTestUtils.processTransactionAndReturnRuntime(trx, rootDeposit, null);
+    runtime = SvmTestUtils.processTransactionAndReturnRuntime(trx, rootDeposit, null);
     Assert.assertNull(runtime.getRuntimeError());
 
     // write storage
@@ -107,18 +107,18 @@ public class StorageTest extends VMTestBase {
     // 1,"abc"
     String params1 = "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000036162630000000000000000000000000000000000000000000000000000000000";
     String params2 = "0000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000004000000000000000000000000000000000000000000000000000000000000000033132330000000000000000000000000000000000000000000000000000000000";
-    byte[] triggerData = SVMTestUtils.parseABI("testPut(uint256,string)", params1);
-    SVMTestResult result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    byte[] triggerData = SvmTestUtils.parseAbi("testPut(uint256,string)", params1);
+    SVMTestResult result = SvmTestUtils
+        .triggerContractAndReturnSvmTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
 
     Assert.assertNull(result.getRuntime().getRuntimeError());
 
     // overwrite storage with same value
     // testPut(uint256,string) 1,"abc"
-    triggerData = SVMTestUtils.parseABI("testPut(uint256,string)", params1);
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    triggerData = SvmTestUtils.parseAbi("testPut(uint256,string)", params1);
+    result = SvmTestUtils
+        .triggerContractAndReturnSvmTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
 
     Assert.assertNull(result.getRuntime().getRuntimeError());
@@ -127,9 +127,9 @@ public class StorageTest extends VMTestBase {
     // overwrite storage with same value
     // testPut(uint256,string) 1,"123"
 
-    triggerData = SVMTestUtils.parseABI("testPut(uint256,string)", params2);
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    triggerData = SvmTestUtils.parseAbi("testPut(uint256,string)", params2);
+    result = SvmTestUtils
+        .triggerContractAndReturnSvmTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
 
     Assert.assertNull(result.getRuntime().getRuntimeError());
@@ -137,10 +137,10 @@ public class StorageTest extends VMTestBase {
 
     // delete storage
     // testDelete(uint256) 1
-    triggerData = SVMTestUtils.parseABI("testDelete(uint256)",
+    triggerData = SvmTestUtils.parseAbi("testDelete(uint256)",
         "0000000000000000000000000000000000000000000000000000000000000001");
-    result = SVMTestUtils
-        .triggerContractAndReturnSVMTestResult(Hex.decode(OWNER_ADDRESS),
+    result = SvmTestUtils
+        .triggerContractAndReturnSvmTestResult(Hex.decode(OWNER_ADDRESS),
             contractAddress, triggerData, 0, fee, manager, null);
     Assert.assertNull(result.getRuntime().getRuntimeError());
     Assert.assertNull(result.getRuntime().getResult().getException());

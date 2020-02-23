@@ -15,6 +15,7 @@
  * You should have received a copy of the GNU Lesser General Public License
  * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
  */
+
 package org.sonicx.common.runtime.vm.program;
 
 import static java.lang.StrictMath.min;
@@ -45,6 +46,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.tuple.Pair;
 import org.spongycastle.util.encoders.Hex;
+import org.sonicx.common.crypto.Hash;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.runtime.vm.DataWord;
 import org.sonicx.common.runtime.vm.EnergyCost;
@@ -75,7 +77,9 @@ import org.sonicx.core.config.args.Args;
 import org.sonicx.core.exception.ContractValidateException;
 import org.sonicx.core.exception.SonicxException;
 import org.sonicx.protos.Protocol;
+import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.SmartContract;
+import org.sonicx.protos.Protocol.SmartContract.Builder;
 
 /**
  * @author Roman Mandeleil
@@ -88,13 +92,14 @@ public class Program {
   private static final int MAX_DEPTH = 64;
   //Max size for stack checks
   private static final int MAX_STACK_SIZE = 1024;
-  public static final String VALIDATE_FOR_SMART_CONTRACT_FAILURE = "validateForSmartContract failure";
+  private static final String VALIDATE_FOR_SMART_CONTRACT_FAILURE =
+      "validateForSmartContract failure:%s";
+  private static final String INVALID_TOKEN_ID_MSG = "not valid token id";
 
   private BlockCapsule blockCap;
 
   private long nonce;
   private byte[] rootTransactionId;
-  private Boolean isRootCallConstant;
 
   private InternalTransaction internalTransaction;
 
@@ -162,14 +167,6 @@ public class Program {
 
   public void setNonce(long nonceValue) {
     nonce = nonceValue;
-  }
-
-  public Boolean getRootCallConstant() {
-    return isRootCallConstant;
-  }
-
-  public void setRootCallConstant(Boolean rootCallConstant) {
-    isRootCallConstant = rootCallConstant;
   }
 
   public ProgramPrecompile getProgramPrecompile() {
@@ -249,6 +246,11 @@ public class Program {
     stackPush(new DataWord(data));
   }
 
+  public void stackPush(DataWord stackWord) {
+    verifyStackOverflow(0, 1); //Sanity Check
+    stack.push(stackWord);
+  }
+
   public void stackPushZero() {
     stackPush(new DataWord(0));
   }
@@ -256,11 +258,6 @@ public class Program {
   public void stackPushOne() {
     DataWord stackWord = new DataWord(1);
     stackPush(stackWord);
-  }
-
-  public void stackPush(DataWord stackWord) {
-    verifyStackOverflow(0, 1); //Sanity Check
-    stack.push(stackWord);
   }
 
   public Stack getStack() {
@@ -319,7 +316,7 @@ public class Program {
   }
 
   /**
-   * Verifies that the stack is at least <code>stackSize</code>
+   * . Verifies that the stack is at least <code>stackSize</code>
    *
    * @param stackSize int
    * @throws StackTooSmallException If the stack is smaller than <code>stackSize</code>
@@ -345,12 +342,23 @@ public class Program {
     memory.write(addrB.intValue(), value.getData(), value.getData().length, false);
   }
 
-  public void memorySaveLimited(int addr, byte[] data, int dataSize) {
-    memory.write(addr, data, dataSize, true);
-  }
-
   public void memorySave(int addr, byte[] value) {
     memory.write(addr, value, value.length, false);
+  }
+
+  /**
+   * . Allocates a piece of memory and stores value at given offset address
+   *
+   * @param addr      is the offset address
+   * @param allocSize size of memory needed to write
+   * @param value     the data to write to memory
+   */
+  public void memorySave(int addr, int allocSize, byte[] value) {
+    memory.extendAndWrite(addr, allocSize, value);
+  }
+
+  public void memorySaveLimited(int addr, byte[] data, int dataSize) {
+    memory.write(addr, data, dataSize, true);
   }
 
   public void memoryExpand(DataWord outDataOffs, DataWord outDataSize) {
@@ -358,18 +366,6 @@ public class Program {
       memory.extend(outDataOffs.intValue(), outDataSize.intValue());
     }
   }
-
-  /**
-   * Allocates a piece of memory and stores value at given offset address
-   *
-   * @param addr is the offset address
-   * @param allocSize size of memory needed to write
-   * @param value the data to write to memory
-   */
-  public void memorySave(int addr, int allocSize, byte[] value) {
-    memory.extendAndWrite(addr, allocSize, value);
-  }
-
 
   public DataWord memoryLoad(DataWord addr) {
     return memory.readWord(addr.intValue());
@@ -384,10 +380,10 @@ public class Program {
   }
 
   /**
-   * Allocates extra memory in the program for a specified size, calculated from a given offset
+   * . Allocates extra memory in the program for a specified size, calculated from a given offset
    *
    * @param offset the memory address offset
-   * @param size the number of bytes to allocate
+   * @param size   the number of bytes to allocate
    */
   public void allocateMemory(int offset, int size) {
     memory.extend(offset, size);
@@ -420,12 +416,17 @@ public class Program {
         transferAllToken(getContractState(), owner, blackHoleAddress);
       }
     } else {
+      createAccountIfNotExist(getContractState(), obtainer);
       try {
         transfer(getContractState(), owner, obtainer, balance);
         if (VMConfig.allowSvmTransferSrc10()) {
           transferAllToken(getContractState(), owner, obtainer);
         }
       } catch (ContractValidateException e) {
+        if (VMConfig.allowSvmConstantinople()) {
+          throw new TransferException(
+              "transfer all token or transfer all sox failed in suicide: %s", e.getMessage());
+        }
         throw new BytecodeExecutionException("transfer failure");
       }
     }
@@ -444,8 +445,23 @@ public class Program {
       stackPushZero();
       return;
     }
+    // [1] FETCH THE CODE FROM THE MEMORY
+    byte[] programCode = memoryChunk(memStart.intValue(), memSize.intValue());
 
+    byte[] newAddress = Wallet
+        .generateContractAddress(rootTransactionId, nonce);
+
+    createContractImpl(value, programCode, newAddress, false);
+  }
+
+  private void createContractImpl(DataWord value, byte[] programCode, byte[] newAddress,
+      boolean isCreate2) {
     byte[] senderAddress = convertToSonicxAddress(this.getContractAddress().getLast20Bytes());
+
+    if (logger.isDebugEnabled()) {
+      logger.debug("creating a new contract inside contract run: [{}]",
+          Hex.toHexString(senderAddress));
+    }
 
     long endowment = value.value().longValueExact();
     if (getContractState().getBalance(senderAddress) < endowment) {
@@ -453,40 +469,55 @@ public class Program {
       return;
     }
 
-    // [1] FETCH THE CODE FROM THE MEMORY
-    byte[] programCode = memoryChunk(memStart.intValue(), memSize.intValue());
+    AccountCapsule existingAccount = getContractState().getAccount(newAddress);
+    boolean contractAlreadyExists = existingAccount != null;
 
-    if (logger.isDebugEnabled()) {
-      logger.debug("creating a new contract inside contract run: [{}]",
-          Hex.toHexString(senderAddress));
+    if (VMConfig.allowSvmConstantinople()) {
+      contractAlreadyExists =
+          contractAlreadyExists && isContractExist(existingAccount, getContractState());
+    }
+    Deposit deposit = getContractState().newDepositChild();
+    if (VMConfig.allowSvmConstantinople()) {
+      if (existingAccount == null) {
+        deposit.createAccount(newAddress, "CreatedByContract",
+            AccountType.Contract);
+      } else if (!contractAlreadyExists) {
+        existingAccount.updateAccountType(AccountType.Contract);
+        existingAccount.clearDelegatedResource();
+        deposit.updateAccount(newAddress, existingAccount);
+      }
+
+      if (!contractAlreadyExists) {
+        Builder builder = SmartContract.newBuilder();
+        builder.setContractAddress(ByteString.copyFrom(newAddress))
+            .setConsumeUserResourcePercent(100)
+            .setOriginAddress(ByteString.copyFrom(senderAddress));
+        if (isCreate2) {
+          builder.setTrxHash(ByteString.copyFrom(rootTransactionId));
+        }
+        SmartContract newSmartContract = builder.build();
+        deposit.createContract(newAddress, new ContractCapsule(newSmartContract));
+      }
+    } else {
+      deposit.createAccount(newAddress, "CreatedByContract",
+          Protocol.AccountType.Contract);
+      SmartContract newSmartContract = SmartContract.newBuilder()
+          .setContractAddress(ByteString.copyFrom(newAddress)).setConsumeUserResourcePercent(100)
+          .setOriginAddress(ByteString.copyFrom(senderAddress)).build();
+      deposit.createContract(newAddress, new ContractCapsule(newSmartContract));
+      // In case of hashing collisions, check for any balance before createAccount()
+      long oldBalance = deposit.getBalance(newAddress);
+      deposit.addBalance(newAddress, oldBalance);
     }
 
-    byte[] newAddress = Wallet
-        .generateContractAddress(rootTransactionId, nonce);
-
-    AccountCapsule existingAddr = getContractState().getAccount(newAddress);
-    boolean contractAlreadyExists = existingAddr != null;
-
-    Deposit deposit = getContractState().newDepositChild();
-
-    //In case of hashing collisions, check for any balance before createAccount()
-    long oldBalance = deposit.getBalance(newAddress);
-
-    SmartContract newSmartContract = SmartContract.newBuilder()
-        .setContractAddress(ByteString.copyFrom(newAddress)).setConsumeUserResourcePercent(100)
-        .setOriginAddress(ByteString.copyFrom(senderAddress)).build();
-    deposit.createContract(newAddress, new ContractCapsule(newSmartContract));
-    deposit.createAccount(newAddress, "CreatedByContract",
-        Protocol.AccountType.Contract);
-
-    deposit.addBalance(newAddress, oldBalance);
     // [4] TRANSFER THE BALANCE
     long newBalance = 0L;
     if (!byTestingSuite() && endowment > 0) {
       try {
         TransferActuator.validateForSmartContract(deposit, senderAddress, newAddress, endowment);
       } catch (ContractValidateException e) {
-        throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE);
+        // TODO: unreachable exception
+        throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE, e.getMessage());
       }
       deposit.addBalance(senderAddress, -endowment);
       newBalance = deposit.addBalance(newAddress, endowment);
@@ -506,7 +537,9 @@ public class Program {
         new DataWord(0),
         newBalance, null, deposit, false, byTestingSuite(), vmStartInUs,
         getVmShouldEndInUs(), energyLimit.longValueSafe());
-
+    if (isConstantCall()) {
+      programInvoke.setConstantCall();
+    }
     ProgramResult createResult = ProgramResult.createEmpty();
 
     if (contractAlreadyExists) {
@@ -517,7 +550,6 @@ public class Program {
       VM vm = new VM(config);
       Program program = new Program(programCode, programInvoke, internalTx, config, this.blockCap);
       program.setRootTransactionId(this.rootTransactionId);
-      program.setRootCallConstant(this.isRootCallConstant);
       vm.play(program);
       createResult = program.getResult();
       getTrace().merge(program.getTrace());
@@ -536,7 +568,7 @@ public class Program {
     if (!createResult.isRevert()) {
       if (afterSpend < 0) {
         createResult.setException(
-            Program.Exception.notEnoughSpendEnergy("No energy to save just created contract code",
+            Exception.notEnoughSpendEnergy("No energy to save just created contract code",
                 saveCodeEnergy, programInvoke.getEnergyLimit() - createResult.getEnergyUsed()));
       } else {
         createResult.spendEnergy(saveCodeEnergy);
@@ -588,7 +620,7 @@ public class Program {
   }
 
   /**
-   * That method is for internal code invocations
+   * . That method is for internal code invocations
    * <p/>
    * - Normal calls invoke a specified contract which updates itself - Stateless calls invoke code
    * from another contract, within the context of the caller
@@ -621,8 +653,18 @@ public class Program {
     Deposit deposit = getContractState().newDepositChild();
 
     // 2.1 PERFORM THE VALUE (endowment) PART
-    long endowment = msg.getEndowment().value().longValueExact();
-    // transfer sox validation
+    long endowment;
+    try {
+      endowment = msg.getEndowment().value().longValueExact();
+    } catch (ArithmeticException e) {
+      if (VMConfig.allowSvmConstantinople()) {
+        refundEnergy(msg.getEnergy().longValue(), "endowment out of long range");
+        throw new TransferException("endowment out of long range");
+      } else {
+        throw e;
+      }
+    }
+    // transfer trx validation
     byte[] tokenId = null;
 
     checkTokenId(msg);
@@ -636,9 +678,8 @@ public class Program {
         refundEnergy(msg.getEnergy().longValue(), "refund energy from message call");
         return;
       }
-    }
-    // transfer src10 token validation
-    else {
+    } else {
+      // transfer src10 token validation
       tokenId = String.valueOf(msg.getTokenId().longValue()).getBytes();
       long senderBalance = deposit.getTokenBalance(senderAddress, tokenId);
       if (senderBalance < endowment) {
@@ -663,12 +704,17 @@ public class Program {
           msg.getEndowment().getNoLeadZeroesData());
     } else if (!ArrayUtils.isEmpty(senderAddress) && !ArrayUtils.isEmpty(contextAddress)
         && senderAddress != contextAddress && endowment > 0) {
+      createAccountIfNotExist(deposit, contextAddress);
       if (!isTokenTransfer) {
         try {
           TransferActuator
               .validateForSmartContract(deposit, senderAddress, contextAddress, endowment);
         } catch (ContractValidateException e) {
-          throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE);
+          if (VMConfig.allowSvmConstantinople()) {
+            refundEnergy(msg.getEnergy().longValue(), "refund energy from message call");
+            throw new TransferException("transfer trx failed: %s", e.getMessage());
+          }
+          throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE, e.getMessage());
         }
         deposit.addBalance(senderAddress, -endowment);
         contextBalance = deposit.addBalance(contextAddress, endowment);
@@ -677,7 +723,11 @@ public class Program {
           TransferAssetActuator.validateForSmartContract(deposit, senderAddress, contextAddress,
               tokenId, endowment);
         } catch (ContractValidateException e) {
-          throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE);
+          if (VMConfig.allowSvmConstantinople()) {
+            refundEnergy(msg.getEnergy().longValue(), "refund energy from message call");
+            throw new TransferException("transfer trc10 failed: %s", e.getMessage());
+          }
+          throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE, e.getMessage());
         }
         deposit.addTokenBalance(senderAddress, tokenId, -endowment);
         deposit.addTokenBalance(contextAddress, tokenId, endowment);
@@ -705,11 +755,13 @@ public class Program {
           !isTokenTransfer ? new DataWord(0) : msg.getTokenId(),
           contextBalance, data, deposit, msg.getType().callIsStatic() || isStaticCall(),
           byTestingSuite(), vmStartInUs, getVmShouldEndInUs(), msg.getEnergy().longValueSafe());
+      if (isConstantCall()) {
+        programInvoke.setConstantCall();
+      }
       VM vm = new VM(config);
       Program program = new Program(programCode, programInvoke, internalTx, config,
           this.blockCap);
       program.setRootTransactionId(this.rootTransactionId);
-      program.setRootCallConstant(this.isRootCallConstant);
       vm.play(program);
       callResult = program.getResult();
 
@@ -784,7 +836,8 @@ public class Program {
   public void spendEnergy(long energyValue, String opName) {
     if (getEnergylimitLeftLong() < energyValue) {
       throw new OutOfEnergyException(
-          "Not enough energy for '%s' operation executing: curInvokeEnergyLimit[%d], curOpEnergy[%d], usedEnergy[%d]",
+          "Not enough energy for '%s' operation executing: curInvokeEnergyLimit[%d],"
+              + " curOpEnergy[%d], usedEnergy[%d]",
           opName, invoke.getEnergyLimit(), energyValue, getResult().getEnergyUsed());
     }
     getResult().spendEnergy(energyValue);
@@ -800,8 +853,8 @@ public class Program {
     long vmNowInUs = System.nanoTime() / 1000;
     if (vmNowInUs > getVmShouldEndInUs()) {
       logger.info(
-          "minTimeRatio: {}, maxTimeRatio: {}, vm should end time in us: {}, " +
-              "vm now time in us: {}, vm start time in us: {}",
+          "minTimeRatio: {}, maxTimeRatio: {}, vm should end time in us: {}, "
+              + "vm now time in us: {}, vm start time in us: {}",
           Args.getInstance().getMinTimeRatio(), Args.getInstance().getMaxTimeRatio(),
           getVmShouldEndInUs(), vmNowInUs, getVmStartInUs());
       throw Exception.notEnoughTime(opName);
@@ -845,6 +898,29 @@ public class Program {
     return nullToEmpty(code);
   }
 
+  public byte[] getCodeHashAt(DataWord address) {
+    byte[] sonicxAddr = convertToSonicxAddress(address.getLast20Bytes());
+    AccountCapsule account = getContractState().getAccount(sonicxAddr);
+    if (account != null) {
+      ContractCapsule contract = getContractState().getContract(sonicxAddr);
+      byte[] codeHash;
+      if (contract != null) {
+        codeHash = contract.getCodeHash();
+        if (ByteUtil.isNullOrZeroArray(codeHash)) {
+          byte[] code = getCodeAt(address);
+          codeHash = Hash.sha3(code);
+          contract.setCodeHash(codeHash);
+          getContractState().updateContract(sonicxAddr, contract);
+        }
+      } else {
+        codeHash = Hash.sha3(new byte[0]);
+      }
+      return codeHash;
+    } else {
+      return EMPTY_BYTE_ARRAY;
+    }
+  }
+
   public DataWord getContractAddress() {
     return invoke.getContractAddress().clone();
   }
@@ -869,6 +945,12 @@ public class Program {
   public DataWord getBalance(DataWord address) {
     long balance = getContractState().getBalance(convertToSonicxAddress(address.getLast20Bytes()));
     return new DataWord(balance);
+  }
+
+  public DataWord isContract(DataWord address) {
+    ContractCapsule contract = getContractState()
+        .getContract(convertToSonicxAddress(address.getLast20Bytes()));
+    return contract != null ? new DataWord(1) : new DataWord(0);
   }
 
   public DataWord getOriginAddress() {
@@ -971,6 +1053,10 @@ public class Program {
 
   public boolean isStaticCall() {
     return invoke.isStaticCall();
+  }
+
+  public boolean isConstantCall() {
+    return invoke.isConstantCall();
   }
 
   public ProgramResult getResult() {
@@ -1169,6 +1255,15 @@ public class Program {
     return sb.toString();
   }
 
+  public void createContract2(DataWord value, DataWord memStart, DataWord memSize, DataWord salt) {
+    byte[] senderAddress = convertToSonicxAddress(this.getCallerAddress().getLast20Bytes());
+    byte[] programCode = memoryChunk(memStart.intValue(), memSize.intValue());
+
+    byte[] contractAddress = Wallet
+        .generateContractAddress2(senderAddress, salt.getData(), programCode);
+    createContractImpl(value, programCode, contractAddress, true);
+  }
+
   static class ByteCodeIterator {
 
     private byte[] code;
@@ -1235,8 +1330,8 @@ public class Program {
           gotos.add(jumpPC);
         }
       }
-      if (it.getCurOpcode() == OpCode.JUMP || it.getCurOpcode() == OpCode.RETURN ||
-          it.getCurOpcode() == OpCode.STOP) {
+      if (it.getCurOpcode() == OpCode.JUMP || it.getCurOpcode() == OpCode.RETURN
+          || it.getCurOpcode() == OpCode.STOP) {
         if (gotos.isEmpty()) {
           break;
         }
@@ -1318,9 +1413,8 @@ public class Program {
     // transfer sox validation
     if (!isTokenTransfer) {
       senderBalance = deposit.getBalance(senderAddress);
-    }
-    // transfer src10 token validation
-    else {
+    } else {
+      // transfer src10 token validation
       tokenId = String.valueOf(msg.getTokenId().longValue()).getBytes();
       senderBalance = deposit.getTokenBalance(senderAddress, tokenId);
     }
@@ -1347,7 +1441,7 @@ public class Program {
           TransferAssetActuator
               .validateForSmartContract(deposit, senderAddress, contextAddress, tokenId, endowment);
         } catch (ContractValidateException e) {
-          throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE);
+          throw new BytecodeExecutionException(VALIDATE_FOR_SMART_CONTRACT_FAILURE, e.getMessage());
         }
         deposit.addTokenBalance(senderAddress, tokenId, -endowment);
         deposit.addTokenBalance(contextAddress, tokenId, endowment);
@@ -1362,12 +1456,13 @@ public class Program {
       this.stackPushZero();
     } else {
       // Delegate or not. if is delegated, we will use msg sender, otherwise use contract address
-      contract.setCallerAddress(convertToSonicxAddress(msg.getType().callIsDelegate() ?
-          getCallerAddress().getLast20Bytes() : getContractAddress().getLast20Bytes()));
+      contract.setCallerAddress(convertToSonicxAddress(msg.getType().callIsDelegate()
+          ? getCallerAddress().getLast20Bytes() : getContractAddress().getLast20Bytes()));
       // this is the depositImpl, not contractState as above
       contract.setDeposit(deposit);
       contract.setResult(this.result);
-      contract.setRootCallConstant(getRootCallConstant().booleanValue());
+      contract.setConstantCall(isConstantCall());
+      contract.setVmShouldEndInUs(getVmShouldEndInUs());
       Pair<Boolean, byte[]> out = contract.execute(data);
 
       if (out.getLeft()) { // success
@@ -1398,17 +1493,14 @@ public class Program {
   }
 
   /**
-   * check TokenId
-   *
-   * TokenId  \ isTransferToken
-   * TokenId  \ isTransferToken ---------------------------------------------------------------------------------------------
-   * false                                     true -------------------------------------------------------------------------
+   * check TokenId TokenId  \ isTransferToken -------------------------------------------------------------------
+   * false                                     true -----------------------------------------------
    * (-∞,Long.Min)        Not possible            error: msg.getTokenId().value().longValueExact()
    * ---------------------------------------------------------------------------------------------
    * [Long.Min, 0)        Not possible                               error
    * --------------------------------------------------------------------------------------------- 0
    * allowed and only allowed                    error (guaranteed in CALLTOKEN) transfertoken id=0
-   * should not transfer trx） ---------------------------------------------------------------------------------------------
+   * should not transfer sox） ---------------------------------------------------------------------
    * (0-100_0000]          Not possible                              error
    * ---------------------------------------------------------------------------------------------
    * (100_0000, Long.Max]  Not possible                             allowed
@@ -1419,14 +1511,27 @@ public class Program {
   public void checkTokenId(MessageCall msg) {
     if (VMConfig.allowMultiSign()) { //allowMultiSign proposal
       // tokenid should not get Long type overflow
-      long tokenId = msg.getTokenId().sValue().longValueExact();
+      long tokenId;
+      try {
+        tokenId = msg.getTokenId().sValue().longValueExact();
+      } catch (ArithmeticException e) {
+        if (VMConfig.allowSvmConstantinople()) {
+          refundEnergy(msg.getEnergy().longValue(), "refund energy from message call");
+          throw new TransferException(VALIDATE_FOR_SMART_CONTRACT_FAILURE, INVALID_TOKEN_ID_MSG);
+        }
+        throw e;
+      }
       // tokenId can only be 0 when isTokenTransferMsg == false
       // or tokenId can be (MIN_TOKEN_ID, Long.Max] when isTokenTransferMsg == true
-      if ((tokenId <= VMConstant.MIN_TOKEN_ID && tokenId != 0) ||
-          (tokenId == 0 && msg.isTokenTransferMsg())) {
+      if ((tokenId <= VMConstant.MIN_TOKEN_ID && tokenId != 0)
+          || (tokenId == 0 && msg.isTokenTransferMsg())) {
         // tokenId == 0 is a default value for token id DataWord.
+        if (VMConfig.allowSvmConstantinople()) {
+          refundEnergy(msg.getEnergy().longValue(), "refund energy from message call");
+          throw new TransferException(VALIDATE_FOR_SMART_CONTRACT_FAILURE, INVALID_TOKEN_ID_MSG);
+        }
         throw new BytecodeExecutionException(
-            VALIDATE_FOR_SMART_CONTRACT_FAILURE + ", not valid token id");
+            String.format(VALIDATE_FOR_SMART_CONTRACT_FAILURE, INVALID_TOKEN_ID_MSG));
       }
     }
   }
@@ -1442,11 +1547,20 @@ public class Program {
   public void checkTokenIdInTokenBalance(DataWord tokenIdDataWord) {
     if (VMConfig.allowMultiSign()) { //allowMultiSigns proposal
       // tokenid should not get Long type overflow
-      long tokenId = tokenIdDataWord.sValue().longValueExact();
+      long tokenId;
+      try {
+        tokenId = tokenIdDataWord.sValue().longValueExact();
+      } catch (ArithmeticException e) {
+        if (VMConfig.allowSvmConstantinople()) {
+          throw new TransferException(VALIDATE_FOR_SMART_CONTRACT_FAILURE, INVALID_TOKEN_ID_MSG);
+        }
+        throw e;
+      }
+
       // or tokenId can only be (MIN_TOKEN_ID, Long.Max]
       if (tokenId <= VMConstant.MIN_TOKEN_ID) {
         throw new BytecodeExecutionException(
-            VALIDATE_FOR_SMART_CONTRACT_FAILURE + ", not valid token id");
+            String.format(VALIDATE_FOR_SMART_CONTRACT_FAILURE, INVALID_TOKEN_ID_MSG));
       }
     }
   }
@@ -1461,6 +1575,17 @@ public class Program {
 
     public BytecodeExecutionException(String message) {
       super(message);
+    }
+
+    public BytecodeExecutionException(String message, Object... args) {
+      super(format(message, args));
+    }
+  }
+
+  public static class TransferException extends BytecodeExecutionException {
+
+    public TransferException(String message, Object... args) {
+      super(format(message, args));
     }
   }
 
@@ -1569,18 +1694,17 @@ public class Program {
           programEnergy);
     }
 
+    public static OutOfEnergyException notEnoughOpEnergy(OpCode op, DataWord opEnergy,
+        DataWord programEnergy) {
+      return notEnoughOpEnergy(op, opEnergy.longValue(), programEnergy.longValue());
+    }
+
     public static OutOfEnergyException notEnoughSpendEnergy(String hint, long needEnergy,
         long leftEnergy) {
       return new OutOfEnergyException(
           "Not enough energy for '%s' executing: needEnergy[%d], leftEnergy[%d];", hint, needEnergy,
           leftEnergy);
     }
-
-    public static OutOfEnergyException notEnoughOpEnergy(OpCode op, DataWord opEnergy,
-        DataWord programEnergy) {
-      return notEnoughOpEnergy(op, opEnergy.longValue(), programEnergy.longValue());
-    }
-
 
     public static OutOfTimeException notEnoughTime(String op) {
       return new OutOfTimeException(
@@ -1646,14 +1770,14 @@ public class Program {
   }
 
   /**
-   * used mostly for testing reasons
+   * . used mostly for testing reasons
    */
   public byte[] getMemory() {
     return memory.read(0, memory.size());
   }
 
   /**
-   * used mostly for testing reasons
+   * . used mostly for testing reasons
    */
   public void initMem(byte[] data) {
     this.memory.write(0, data, data.length, false);
@@ -1663,4 +1787,17 @@ public class Program {
     return this.invoke.getVmStartInUs();
   }
 
+  private boolean isContractExist(AccountCapsule existingAddr, Deposit deposit) {
+    return deposit.getContract(existingAddr.getAddress().toByteArray()) != null;
+  }
+
+  private void createAccountIfNotExist(Deposit deposit, byte[] contextAddress) {
+    if (VMConfig.allowSvmSolidity059()) {
+      //after solidity059 proposal , allow contract transfer trc10 or trx to non-exist address(would create one)
+      AccountCapsule sender = deposit.getAccount(contextAddress);
+      if (sender == null) {
+        deposit.createNormalAccount(contextAddress);
+      }
+    }
+  }
 }

@@ -19,25 +19,19 @@
 package org.sonicx.common.overlay.discover;
 
 import java.util.ArrayList;
-import java.util.Random;
+import lombok.extern.slf4j.Slf4j;
 import org.sonicx.common.overlay.discover.node.Node;
 import org.sonicx.common.overlay.discover.node.NodeManager;
 
+@Slf4j(topic = "discover")
 public class RefreshTask extends DiscoverTask {
 
   public RefreshTask(NodeManager nodeManager) {
     super(nodeManager);
   }
 
-  public static byte[] getNodeId() {
-    Random gen = new Random();
-    byte[] id = new byte[64];
-    gen.nextBytes(id);
-    return id;
-  }
-
   @Override
   public void run() {
-    discover(getNodeId(), 0, new ArrayList<Node>());
+    discover(Node.getNodeId(), 0, new ArrayList<>());
   }
 }

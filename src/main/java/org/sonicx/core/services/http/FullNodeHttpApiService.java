@@ -1,13 +1,14 @@
 package org.sonicx.core.services.http;
 
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.jetty.server.ConnectionLimit;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.servlet.ServletContextHandler;
 import org.eclipse.jetty.servlet.ServletHolder;
-import org.sonicx.common.application.Service;
-import org.sonicx.core.config.args.Args;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.sonicx.common.application.Service;
+import org.sonicx.core.config.args.Args;
 
 @Component
 @Slf4j(topic = "API")
@@ -112,7 +113,11 @@ public class FullNodeHttpApiService implements Service {
   @Autowired
   private TriggerSmartContractServlet triggerSmartContractServlet;
   @Autowired
+  private TriggerConstantContractServlet triggerConstantContractServlet;
+  @Autowired
   private GetContractServlet getContractServlet;
+  @Autowired
+  private ClearABIServlet clearABIServlet;
   @Autowired
   private ProposalCreateServlet proposalCreateServlet;
   @Autowired
@@ -157,58 +162,17 @@ public class FullNodeHttpApiService implements Service {
   private GetDelegatedResourceAccountIndexServlet getDelegatedResourceAccountIndexServlet;
   @Autowired
   private GetDelegatedResourceServlet getDelegatedResourceServlet;
-
-  // TODO move from this and rename classes.
   @Autowired
-  private MasterNodesGetHistorySizeServlet masterNodesGetHistorySizeServlet;
-
-    @Autowired
-    private MasterNodesMinimumCollateralServlet masterNodesMinimumCollateralServlet;
-
-    @Autowired
-    private MasterNodesAnnounceMasternodeServlet masterNodesAnnounceMasternodeServlet;
-
-    @Autowired
-    private MasterNodesGetMasterNodesNumServlet masterNodesGetMasternodesNumServlet;
-
-    @Autowired
-    private MasterNodesGetGenesisContractAddressServlet masterNodesGetGenesisContractAddressServlet;
-
+  private SetAccountIdServlet setAccountServlet;
   @Autowired
-  private MasterNodesActivateMasterNodeServlet masterNodesActivateMasternodeServlet;
-
+  private GetAccountByIdServlet getAccountByIdServlet;
   @Autowired
-  private MasterNodesMasterNodeByIndexServlet masterNodesMasterNodeByIndexServlet;
-
+  private GetBrokerageServlet getBrokerageServlet;
   @Autowired
-  private MasterNodesMinBlocksBeforeMnActivationServlet masterNodesMinBlocksBeforeMnActivationServlet;
-
+  private GetRewardServlet getRewardServlet;
   @Autowired
-  private MasterNodesOperatorByIndexServlet masterNodesOperatorByIndexServlet;
+  private UpdateBrokerageServlet updateBrokerageServlet;
 
-  @Autowired
-  private MasterNodesOwnerByIndexServlet masterNodesOwnerByIndexServlet;
-
-    @Autowired
-    private MasterNodesMnsHistoryServlet masterNodesMnsHistoryServlet;
-
-    @Autowired
-    private MasterNodesNumOfActivatedMasterNodesServlet masterNodesNumOfActivatedMasternodesServlet;
-
-    @Autowired
-    private MasterNodesWholeActivatedCollateralServlet masterNodesWholeActivatedCollateralServlet;
-
-    @Autowired
-    private MasterNodesWholeCollateralServlet masterNodesWholeCollateralServlet;
-
-    @Autowired
-    private MasterNodesResignServlet masterNodesResignServlet;
-
-    @Autowired
-    private MasterNodesSetOperatorServlet masterNodesSetOperatorServlet;
-
-    @Autowired
-    private MasterNodesCurrentRewardsPerBlockServlet masterNodesCurrentRewardsPerBlockServlet;
 
   @Override
   public void init() {
@@ -258,6 +222,7 @@ public class FullNodeHttpApiService implements Service {
       context.addServlet(new ServletHolder(getBlockByLimitNextServlet), "/getblockbylimitnext");
       context.addServlet(new ServletHolder(getBlockByLatestNumServlet), "/getblockbylatestnum");
       context.addServlet(new ServletHolder(getTransactionByIdServlet), "/gettransactionbyid");
+
       context.addServlet(
           new ServletHolder(getTransactionInfoByIdServlet), "/gettransactioninfobyid");
       context.addServlet(
@@ -284,7 +249,10 @@ public class FullNodeHttpApiService implements Service {
       context.addServlet(new ServletHolder(validateAddressServlet), "/validateaddress");
       context.addServlet(new ServletHolder(deployContractServlet), "/deploycontract");
       context.addServlet(new ServletHolder(triggerSmartContractServlet), "/triggersmartcontract");
+      context.addServlet(new ServletHolder(triggerConstantContractServlet),
+          "/triggerconstantcontract");
       context.addServlet(new ServletHolder(getContractServlet), "/getcontract");
+      context.addServlet(new ServletHolder(clearABIServlet), "/clearabi");
       context.addServlet(new ServletHolder(proposalCreateServlet), "/proposalcreate");
       context.addServlet(new ServletHolder(proposalApproveServlet), "/proposalapprove");
       context.addServlet(new ServletHolder(proposalDeleteServlet), "/proposaldelete");
@@ -310,33 +278,16 @@ public class FullNodeHttpApiService implements Service {
       context.addServlet(
           new ServletHolder(getDelegatedResourceAccountIndexServlet),
           "/getdelegatedresourceaccountindex");
+      context.addServlet(new ServletHolder(setAccountServlet), "/setaccountid");
+      context.addServlet(new ServletHolder(getAccountByIdServlet), "/getaccountbyid");
+      context.addServlet(new ServletHolder(getBrokerageServlet), "/getBrokerage");
+      context.addServlet(new ServletHolder(getRewardServlet), "/getReward");
+      context.addServlet(new ServletHolder(updateBrokerageServlet), "/updateBrokerage");
 
-      /*
-        Masternodes servlets.
-       */
-        context.addServlet(new ServletHolder(masterNodesGetHistorySizeServlet), "/masternodes/gethistorysize");
-        context.addServlet(new ServletHolder(masterNodesMinimumCollateralServlet), "/masternodes/minimumcollateral");
-        context.addServlet(new ServletHolder(masterNodesAnnounceMasternodeServlet), "/masternodes/announcemasternode");
-        context.addServlet(new ServletHolder(masterNodesGetMasternodesNumServlet), "/masternodes/getmasternodesnum");
-        context.addServlet(new ServletHolder(masterNodesGetGenesisContractAddressServlet),
-                "/masternodes/getgenesiscontractaddress");
-        context.addServlet(new ServletHolder(masterNodesActivateMasternodeServlet), "/masternodes/activatemasternode");
-        context.addServlet(new ServletHolder(masterNodesMasterNodeByIndexServlet), "/masternodes/getmasternodebyindex");
-        context.addServlet(new ServletHolder(masterNodesMinBlocksBeforeMnActivationServlet),
-                "/masternodes/getminblocksbeforeactivation");
-        context.addServlet(new ServletHolder(masterNodesOperatorByIndexServlet), "/masternodes/getoperatorbyindex");
-        context.addServlet(new ServletHolder(masterNodesOwnerByIndexServlet), "/masternodes/getownerbyindex");
-        context.addServlet(new ServletHolder(masterNodesMnsHistoryServlet), "/masternodes/gethistorybyindex");
-        context.addServlet(new ServletHolder(masterNodesNumOfActivatedMasternodesServlet),
-                "/masternodes/getnumberofactivatedmasternode");
-        context.addServlet(new ServletHolder(masterNodesWholeActivatedCollateralServlet),
-                "/masternodes/getwholeactivatedcollateral");
-        context.addServlet(new ServletHolder(masterNodesWholeCollateralServlet), "/masternodes/getwholecollateral");
-        context.addServlet(new ServletHolder(masterNodesResignServlet), "/masternodes/resign");
-        context.addServlet(new ServletHolder(masterNodesSetOperatorServlet), "/masternodes/setoperator");
-        context.addServlet(new ServletHolder(masterNodesCurrentRewardsPerBlockServlet),
-                "/masternodes/getcurrentrewardsperblock");
-
+      int maxHttpConnectNumber = Args.getInstance().getMaxHttpConnectNumber();
+      if (maxHttpConnectNumber > 0) {
+        server.addBean(new ConnectionLimit(maxHttpConnectNumber, server));
+      }
 
       server.start();
     } catch (Exception e) {

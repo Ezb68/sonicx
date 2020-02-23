@@ -11,12 +11,20 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.sonicx.core.Wallet;
 import org.sonicx.core.capsule.AccountCapsule;
+import org.sonicx.core.db.accountstate.callback.AccountStateCallBack;
+import org.sonicx.core.db.accountstate.storetrie.AccountStateStoreTrie;
 
 @Slf4j(topic = "DB")
 @Component
 public class AccountStore extends SonicxStoreWithRevoking<AccountCapsule> {
 
   private static Map<String, byte[]> assertsAddress = new HashMap<>(); // key = name , value = address
+
+  @Autowired
+  private AccountStateCallBack accountStateCallBack;
+
+  @Autowired
+  private AccountStateStoreTrie accountStateStoreTrie;
 
   @Autowired
   private AccountStore(@Value("account") String dbName) {
@@ -29,11 +37,18 @@ public class AccountStore extends SonicxStoreWithRevoking<AccountCapsule> {
     return ArrayUtils.isEmpty(value) ? null : new AccountCapsule(value);
   }
 
+
+  @Override
+  public void put(byte[] key, AccountCapsule item) {
+    super.put(key, item);
+    accountStateCallBack.accountCallBack(key, item);
+  }
+
   /**
    * Max SOX account.
    */
-  public AccountCapsule getAirdrop() {
-    return getUnchecked(assertsAddress.get("Airdrop"));
+  public AccountCapsule getSun() {
+    return getUnchecked(assertsAddress.get("Sun"));
   }
 
   /**
@@ -60,4 +75,9 @@ public class AccountStore extends SonicxStoreWithRevoking<AccountCapsule> {
     }
   }
 
+  @Override
+  public void close() {
+    super.close();
+    accountStateStoreTrie.close();
+  }
 }

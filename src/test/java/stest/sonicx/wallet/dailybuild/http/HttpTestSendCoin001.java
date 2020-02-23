@@ -4,16 +4,12 @@ import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.http.HttpResponse;
-
 import org.junit.Assert;
-
 import org.testng.annotations.AfterClass;
 import org.testng.annotations.Test;
-
 import org.sonicx.common.crypto.ECKey;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.Utils;
-
 import stest.sonicx.wallet.common.client.Configuration;
 import stest.sonicx.wallet.common.client.utils.HttpMethed;
 import stest.sonicx.wallet.common.client.utils.PublicMethed;
@@ -90,6 +86,12 @@ public class HttpTestSendCoin001 {
     Assert.assertEquals(response.getStatusLine().getStatusCode(), 200);
     responseContent = HttpMethed.parseResponseContent(response);
     HttpMethed.printJsonContent(responseContent);
+    JSONObject transactionObject = HttpMethed.parseStringContent(JSONArray.parseArray(
+        responseContent.getString("transaction")).get(0).toString());
+    String retString = transactionObject.getString("ret");
+    JSONArray array = JSONArray.parseArray(retString);
+    Assert.assertEquals(HttpMethed.parseStringContent(array.get(0).toString())
+        .getString("contractRet"), "SUCCESS");
     Assert.assertTrue(responseContent.size() == 1);
   }
 
@@ -103,6 +105,12 @@ public class HttpTestSendCoin001 {
     Assert.assertEquals(response.getStatusLine().getStatusCode(), 200);
     responseContent = HttpMethed.parseResponseContent(response);
     HttpMethed.printJsonContent(responseContent);
+    JSONObject transactionObject = HttpMethed.parseStringContent(
+        JSONArray.parseArray(responseContent.getString("transaction")).get(0).toString());
+    String retString = transactionObject.getString("ret");
+    JSONArray array = JSONArray.parseArray(retString);
+    Assert.assertEquals(HttpMethed.parseStringContent(array.get(0).toString()).getString(
+        "contractRet"), "SUCCESS");
     Assert.assertTrue(responseContent.size() == 1);
   }
 

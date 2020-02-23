@@ -230,7 +230,8 @@ public class RevokingDbWithCacheNewValueTest {
 
   public static class TestRevokingSonicxStore extends SonicxStoreWithRevoking<ProtoCapsuleTest> {
 
-    protected TestRevokingSonicxStore(String dbName) {super(dbName);
+    protected TestRevokingSonicxStore(String dbName) {
+		super(dbName);
     }
 
     @Override

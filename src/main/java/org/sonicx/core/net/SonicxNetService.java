@@ -5,8 +5,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.overlay.message.Message;
 import org.sonicx.common.overlay.server.ChannelManager;
+import org.sonicx.core.db.Manager;
 import org.sonicx.core.exception.P2pException;
 import org.sonicx.core.exception.P2pException.TypeEnum;
+import org.sonicx.core.net.message.BlockMessage;
 import org.sonicx.core.net.message.SonicxMessage;
 import org.sonicx.core.net.messagehandler.BlockMsgHandler;
 import org.sonicx.core.net.messagehandler.ChainInventoryMsgHandler;
@@ -20,7 +22,7 @@ import org.sonicx.core.net.service.AdvService;
 import org.sonicx.core.net.service.SyncService;
 import org.sonicx.protos.Protocol.ReasonCode;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class SonicxNetService {
 
@@ -55,7 +57,11 @@ public class SonicxNetService {
   @Autowired
   private TransactionsMsgHandler transactionsMsgHandler;
 
+  @Autowired
+  private Manager manager;
+
   public void start() {
+    manager.setSonicxNetService(this);
     channelManager.init();
     advService.init();
     syncService.init();
@@ -75,6 +81,10 @@ public class SonicxNetService {
 
   public void broadcast(Message msg) {
     advService.broadcast(msg);
+  }
+
+  public void fastForward(BlockMessage msg) {
+    advService.fastForward(msg);
   }
 
   protected void onMessage(PeerConnection peer, SonicxMessage msg) {
@@ -107,7 +117,7 @@ public class SonicxNetService {
   }
 
   private void processException(PeerConnection peer, SonicxMessage msg, Exception ex) {
-    ReasonCode code = null;
+    ReasonCode code;
 
     if (ex instanceof P2pException) {
       TypeEnum type = ((P2pException) ex).getType();
@@ -129,7 +139,7 @@ public class SonicxNetService {
         case UNLINK_BLOCK:
           code = ReasonCode.UNLINKABLE;
           break;
-        case DEFAULT:
+        default:
           code = ReasonCode.UNKNOWN;
           break;
       }

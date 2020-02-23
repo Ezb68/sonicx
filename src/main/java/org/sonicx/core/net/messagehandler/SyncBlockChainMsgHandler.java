@@ -4,19 +4,19 @@ import java.util.LinkedList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections4.CollectionUtils;
-import org.sonicx.core.net.SonicxNetDelegate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
 import org.sonicx.core.config.Parameter.NodeConstant;
 import org.sonicx.core.exception.P2pException;
 import org.sonicx.core.exception.P2pException.TypeEnum;
+import org.sonicx.core.net.SonicxNetDelegate;
 import org.sonicx.core.net.message.ChainInventoryMessage;
 import org.sonicx.core.net.message.SyncBlockChainMessage;
 import org.sonicx.core.net.message.SonicxMessage;
 import org.sonicx.core.net.peer.PeerConnection;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class SyncBlockChainMsgHandler implements SonicxMsgHandler {
 
@@ -42,12 +42,6 @@ public class SyncBlockChainMsgHandler implements SonicxMsgHandler {
       peer.setNeedSyncFromUs(true);
       remainNum = sonicxNetDelegate.getHeadBlockId().getNum() - blockIds.peekLast().getNum();
     }
-//
-//    if (!peer.isNeedSyncFromPeer()
-//        && !sonicxNetDelegate.contain(Iterables.getLast(summaryChainIds), MessageTypes.BLOCK)
-//        && sonicxNetDelegate.canChainRevoke(summaryChainIds.get(0).getNum())) {
-//      //startSyncWithPeer(peer);
-//    }
 
     peer.setLastSyncBlockId(blockIds.peekLast());
     peer.setRemainNum(remainNum);
@@ -87,6 +81,10 @@ public class SyncBlockChainMsgHandler implements SonicxMsgHandler {
         unForkId = blockIds.get(i);
         break;
       }
+    }
+
+    if (unForkId == null) {
+      throw new P2pException(TypeEnum.SYNC_FAILED, "unForkId is null");
     }
 
     long len = Math.min(sonicxNetDelegate.getHeadBlockId().getNum(),

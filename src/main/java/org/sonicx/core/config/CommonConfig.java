@@ -28,5 +28,4 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @ComponentScan(basePackages = "org.sonicx")
 public class CommonConfig {
 
-  private static CommonConfig defaultInstance;
 }

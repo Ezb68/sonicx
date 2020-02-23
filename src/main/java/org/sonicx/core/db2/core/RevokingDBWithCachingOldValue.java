@@ -1,15 +1,18 @@
 package org.sonicx.core.db2.core;
 
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.Getter;
 import org.apache.commons.lang3.ArrayUtils;
 import org.sonicx.common.storage.leveldb.LevelDbDataSourceImpl;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.db.AbstractRevokingStore;
 import org.sonicx.core.db.RevokingStore;
+import org.sonicx.core.db.common.WrappedByteArray;
 import org.sonicx.core.db2.common.IRevokingDB;
 import org.sonicx.core.exception.ItemNotFoundException;
 
@@ -129,5 +132,19 @@ public class RevokingDBWithCachingOldValue implements IRevokingDB {
   @Override
   public Set<byte[]> getValuesNext(byte[] key, long limit) {
     return dbSource.getValuesNext(key, limit);
+  }
+
+  @Override
+  public Set<byte[]> getValuesPrevious(byte[] key, long limit) {
+    return dbSource.getPrevious(key, limit, Long.SIZE / Byte.SIZE).values().stream()
+        .collect(Collectors.toSet());
+  }
+
+  public Map<WrappedByteArray, WrappedByteArray> getAllValues() {
+    Map<WrappedByteArray, WrappedByteArray> result = new HashMap<>();
+    dbSource.getAll().forEach((key, value) -> {
+      result.put(WrappedByteArray.of(key), WrappedByteArray.of(value));
+    });
+    return result;
   }
 }

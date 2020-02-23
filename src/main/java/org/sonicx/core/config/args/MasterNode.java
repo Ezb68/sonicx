@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) [2019] SONICX
+ *
+ * It has been added for MasterNode
+ */
+
 package org.sonicx.core.config.args;
 
 import lombok.Getter;

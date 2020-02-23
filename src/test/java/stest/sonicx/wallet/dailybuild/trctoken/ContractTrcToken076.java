@@ -2,6 +2,7 @@ package stest.sonicx.wallet.dailybuild.trctoken;
 
 import io.grpc.ManagedChannel;
 import io.grpc.ManagedChannelBuilder;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import lombok.extern.slf4j.Slf4j;
@@ -79,33 +80,38 @@ public class ContractTrcToken076 {
         .sendcoin(grammarAddress, 100000000000L, testNetAccountAddress, testNetAccountKey,
             blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
 
-    String contractName = "originTest";
-    String code = Configuration.getByPath("testng.conf")
-        .getString("code.code_ContractTrcToken076_originTest");
-    String abi = Configuration.getByPath("testng.conf")
-        .getString("abi.abi_ContractTrcToken076_originTest");
-    contractAddress = PublicMethed.deployContract(contractName, abi, code, "", maxFeeLimit,
-        0L, 100, null, testKeyForGrammarAddress,
-        grammarAddress, blockingStubFull);
+    String filePath = "./src/test/resources/soliditycode/contractTrcToken076.sol";
+    String contractName = "Test";
+    HashMap retMap = PublicMethed.getBycodeAbi(filePath, contractName);
+
+    String code = retMap.get("byteCode").toString();
+    String abi = retMap.get("abI").toString();
+    String txid = PublicMethed
+        .deployContractAndGetTransactionInfoById(contractName, abi, code, "", maxFeeLimit,
+            0L, 100, null, testKeyForGrammarAddress,
+            grammarAddress, blockingStubFull);
+
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
+    Optional<TransactionInfo> infoById = PublicMethed
+        .getTransactionInfoById(txid, blockingStubFull);
+    logger.info("Deploy energytotal is " + infoById.get().getReceipt().getEnergyUsageTotal());
+
+    contractAddress = infoById.get().getContractAddress().toByteArray();
+
     PublicMethed.triggerContract(contractAddress,
         "test()", "#", false,
         0, maxFeeLimit, grammarAddress, testKeyForGrammarAddress, blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
 
-    String txid = "";
     txid = PublicMethed.triggerContract(contractAddress,
         "getResult1()", "#", false,
         0, maxFeeLimit, grammarAddress, testKeyForGrammarAddress, blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
 
-    Optional<TransactionInfo> infoById = null;
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
+    logger.info("Deploy energytotal is " + infoById.get().getReceipt().getEnergyUsageTotal());
+
     logger.info("infoById:" + infoById);
     Long returnnumber = ByteArray.toLong(ByteArray.fromHexString(ByteArray.toHexString(
         infoById.get().getContractResult(0).toByteArray())));
@@ -116,9 +122,10 @@ public class ContractTrcToken076 {
         "getResult2()", "#", false,
         0, maxFeeLimit, grammarAddress, testKeyForGrammarAddress, blockingStubFull);
     PublicMethed.waitProduceNextBlock(blockingStubFull);
-    PublicMethed.waitProduceNextBlock(blockingStubFull);
 
     infoById = PublicMethed.getTransactionInfoById(txid, blockingStubFull);
+    logger.info("Deploy energytotal is " + infoById.get().getReceipt().getEnergyUsageTotal());
+
     logger.info("-------------------------");
 
     logger.info("infoById:" + infoById);

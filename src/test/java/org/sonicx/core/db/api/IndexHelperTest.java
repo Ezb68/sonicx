@@ -1,28 +1,39 @@
 package org.sonicx.core.db.api;
 
+import static com.googlecode.cqengine.query.QueryFactory.equal;
+
 import com.google.common.collect.ImmutableList;
 import com.google.protobuf.ByteString;
 import com.googlecode.cqengine.resultset.ResultSet;
+import java.io.File;
 import lombok.extern.slf4j.Slf4j;
-import org.junit.*;
+import org.junit.AfterClass;
+import org.junit.Assert;
+import org.junit.BeforeClass;
+import org.junit.Ignore;
+import org.junit.Test;
 import org.sonicx.common.application.Application;
 import org.sonicx.common.application.ApplicationFactory;
 import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.utils.ByteArray;
 import org.sonicx.common.utils.FileUtil;
-import org.sonicx.core.capsule.*;
+import org.sonicx.core.capsule.AccountCapsule;
+import org.sonicx.core.capsule.AssetIssueCapsule;
+import org.sonicx.core.capsule.BlockCapsule;
+import org.sonicx.core.capsule.TransactionCapsule;
+import org.sonicx.core.capsule.WitnessCapsule;
 import org.sonicx.core.config.DefaultConfig;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.db.Manager;
 import org.sonicx.core.db.api.index.AccountIndex;
 import org.sonicx.core.db.api.index.Index;
 import org.sonicx.protos.Contract.AssetIssueContract;
-import org.sonicx.protos.Protocol.*;
+import org.sonicx.protos.Protocol.Account;
+import org.sonicx.protos.Protocol.Block;
+import org.sonicx.protos.Protocol.BlockHeader;
 import org.sonicx.protos.Protocol.BlockHeader.raw;
-
-import java.io.File;
-
-import static com.googlecode.cqengine.query.QueryFactory.equal;
+import org.sonicx.protos.Protocol.Transaction;
+import org.sonicx.protos.Protocol.Witness;
 
 @Slf4j
 public class IndexHelperTest {
@@ -187,26 +198,26 @@ public class IndexHelperTest {
     return witnessImmutableList.size();
   }
 
-    @Test
-    public void addAndRemoveTransaction() {
-        TransactionCapsule transactionCapsule =
-                new TransactionCapsule(
-                        Transaction.newBuilder()
-                                .setRawData(
-                                        Transaction.raw
-                                                .newBuilder()
-                                                .setData(ByteString.copyFrom("i am trans".getBytes()))
-                                                .build())
-                                .build());
-        dbManager.getTransactionStore()
-                .put(transactionCapsule.getTransactionId().getBytes(), transactionCapsule);
-        indexHelper.add(transactionCapsule.getInstance());
-        int size = getIndexSizeOfTransaction();
-        Assert.assertEquals("account index add", 2, size);
-        indexHelper.remove(transactionCapsule.getInstance());
-        size = getIndexSizeOfTransaction();
-        Assert.assertEquals("account index remove", 1, size);
-    }
+  @Test
+  public void addAndRemoveTransaction() {
+    TransactionCapsule transactionCapsule =
+        new TransactionCapsule(
+            Transaction.newBuilder()
+                .setRawData(
+                    Transaction.raw
+                        .newBuilder()
+                        .setData(ByteString.copyFrom("i am trans".getBytes()))
+                        .build())
+                .build());
+    dbManager.getTransactionStore()
+        .put(transactionCapsule.getTransactionId().getBytes(), transactionCapsule);
+    indexHelper.add(transactionCapsule.getInstance());
+    int size = getIndexSizeOfTransaction();
+    Assert.assertEquals("account index add", 1, size);
+    indexHelper.remove(transactionCapsule.getInstance());
+    size = getIndexSizeOfTransaction();
+    Assert.assertEquals("account index remove", 0, size);
+  }
 
   private int getIndexSizeOfTransaction() {
     Index.Iface<Transaction> transactionIndex = indexHelper.getTransactionIndex();

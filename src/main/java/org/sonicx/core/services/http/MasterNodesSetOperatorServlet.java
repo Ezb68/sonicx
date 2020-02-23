@@ -46,6 +46,6 @@ public class MasterNodesSetOperatorServlet extends HttpServlet {
 
         GrpcAPI.TransactionExtention result = masternodeController.setOperator(contractAddress, callerAddress,
                 feeLimit, operator, operatorRewardAddress, new BigInteger(String.valueOf(operatorRewardRatio)));
-        response.getWriter().println(Util.printTransactionExtention(result));
+        response.getWriter().println(Util.printTransactionExtention(result, false));
     }
 }

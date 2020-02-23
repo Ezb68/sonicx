@@ -88,4 +88,3 @@ public class ProgramTraceListener extends ProgramListenerAdaptor {
     return actions;
   }
 }
-

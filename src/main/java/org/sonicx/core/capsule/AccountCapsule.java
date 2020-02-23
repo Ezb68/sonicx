@@ -28,6 +28,7 @@ import org.sonicx.protos.Contract.AccountCreateContract;
 import org.sonicx.protos.Contract.AccountUpdateContract;
 import org.sonicx.protos.Protocol.Account;
 import org.sonicx.protos.Protocol.Account.AccountResource;
+import org.sonicx.protos.Protocol.Account.Builder;
 import org.sonicx.protos.Protocol.Account.Frozen;
 import org.sonicx.protos.Protocol.AccountType;
 import org.sonicx.protos.Protocol.Key;
@@ -339,6 +340,15 @@ public class AccountCapsule implements ProtoCapsule<Account>, Comparable<Account
 
   public long getAcquiredDelegatedFrozenBalanceForEnergy() {
     return getAccountResource().getAcquiredDelegatedFrozenBalanceForEnergy();
+  }
+
+  public void setAcquiredDelegatedFrozenBalanceForEnergy(long balance) {
+    AccountResource newAccountResource = getAccountResource().toBuilder()
+            .setAcquiredDelegatedFrozenBalanceForEnergy(balance).build();
+
+    this.account = this.account.toBuilder()
+            .setAccountResource(newAccountResource)
+            .build();
   }
 
   public long getDelegatedFrozenBalanceForEnergy() {
@@ -983,6 +993,20 @@ public class AccountCapsule implements ProtoCapsule<Account>, Comparable<Account
       Permission permission = actives.get(i).toBuilder().setId(i + 2).build();
       builder.addActivePermission(permission);
     }
+    this.account = builder.build();
+  }
+
+  public void updateAccountType(AccountType accountType) {
+    this.account = this.account.toBuilder().setType(accountType).build();
+  }
+
+  // just for vm create2 instruction
+  public void clearDelegatedResource() {
+    Builder builder = account.toBuilder();
+    AccountResource newAccountResource = getAccountResource().toBuilder()
+        .setAcquiredDelegatedFrozenBalanceForEnergy(0L).build();
+    builder.setAccountResource(newAccountResource);
+    builder.setAcquiredDelegatedFrozenBalanceForBandwidth(0L);
     this.account = builder.build();
   }
 

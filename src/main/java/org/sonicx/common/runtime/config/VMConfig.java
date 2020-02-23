@@ -46,7 +46,14 @@ public class VMConfig {
   private static boolean ALLOW_SVM_TRANSFER_SRC10 = false;
 
   @Setter
+  private static boolean ALLOW_SVM_CONSTANTINOPLE = false;
+
+  @Setter
   private static boolean ALLOW_MULTI_SIGN = false;
+
+  @Setter
+  private static boolean ALLOW_SVM_SOLIDITY_059 = false;
+
 
   private VMConfig() {
   }
@@ -74,11 +81,19 @@ public class VMConfig {
   }
 
   public static void initAllowMultiSign(long allow) {
-    ALLOW_MULTI_SIGN = allow ==1;
+    ALLOW_MULTI_SIGN = allow == 1;
   }
 
   public static void initAllowSvmTransferSrc10(long allow) {
     ALLOW_SVM_TRANSFER_SRC10 = allow == 1;
+  }
+
+  public static void initAllowSvmConstantinople(long allow) {
+    ALLOW_SVM_CONSTANTINOPLE = allow == 1;
+  }
+
+  public static void initAllowSvmSolidity059(long allow) {
+    ALLOW_SVM_SOLIDITY_059 = allow == 1;
   }
 
   public static boolean getEnergyLimitHardFork() {
@@ -89,8 +104,15 @@ public class VMConfig {
     return ALLOW_SVM_TRANSFER_SRC10;
   }
 
+  public static boolean allowSvmConstantinople() {
+    return ALLOW_SVM_CONSTANTINOPLE;
+  }
+
   public static boolean allowMultiSign() {
     return ALLOW_MULTI_SIGN;
   }
 
+  public static boolean allowSvmSolidity059() {
+    return ALLOW_SVM_SOLIDITY_059;
+  }
 }

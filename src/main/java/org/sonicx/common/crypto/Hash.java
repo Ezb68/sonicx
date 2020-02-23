@@ -19,6 +19,7 @@
 package org.sonicx.common.crypto;
 
 import static java.util.Arrays.copyOfRange;
+import static org.sonicx.common.utils.ByteUtil.EMPTY_BYTE_ARRAY;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -27,6 +28,7 @@ import java.security.Security;
 import lombok.extern.slf4j.Slf4j;
 import org.sonicx.common.crypto.jce.SonicxCastleProvider;
 import org.sonicx.core.Wallet;
+import org.sonicx.core.capsule.utils.RLP;
 
 @Slf4j(topic = "crypto")
 public class Hash {
@@ -36,11 +38,14 @@ public class Hash {
   private static final String HASH_256_ALGORITHM_NAME;
   private static final String HASH_512_ALGORITHM_NAME;
 
+  public static final byte[] EMPTY_TRIE_HASH;
+
   static {
     Security.addProvider(SonicxCastleProvider.getInstance());
     CRYPTO_PROVIDER = Security.getProvider("SC");
     HASH_256_ALGORITHM_NAME = "SONICX-KECCAK-256";
     HASH_512_ALGORITHM_NAME = "SONICX-KECCAK-512";
+    EMPTY_TRIE_HASH = sha3(RLP.encodeElement(EMPTY_BYTE_ARRAY));
   }
 
   public static byte[] sha3(byte[] input) {

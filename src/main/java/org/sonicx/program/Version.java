@@ -1,9 +1,10 @@
 package org.sonicx.program;
 
 public class Version {
-  private static final String version = "3.5.1";
-  public static final String versionName = "Odyssey-v3.5.0.1-318-gc6864f595";
-  public static final String versionCode = "9911";
+
+  private static final String version = "3.6.6";
+  public static final String versionName = "Odyssey-v3.6.5-15-g6405454d0";
+  public static final String versionCode = "11188";
 
   public static String getVersion() {
     return version;

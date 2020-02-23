@@ -1,20 +1,3 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.sonicx.common.overlay.server;
 
 import static org.sonicx.common.overlay.message.StaticMessages.PING_MESSAGE;
@@ -50,16 +33,10 @@ public class P2pHandler extends SimpleChannelInboundHandler<P2pMessage> {
 
   private volatile boolean hasPing = false;
 
-  private volatile long sendPingTime;
-
-  private ChannelHandlerContext ctx;
-
   @Override
-  public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
-    this.ctx = ctx;
+  public void handlerAdded(ChannelHandlerContext ctx) {
     pingTask = pingTimer.scheduleAtFixedRate(() -> {
       if (!hasPing) {
-        sendPingTime = System.currentTimeMillis();
         hasPing = msgQueue.sendMessage(PING_MESSAGE);
       }
     }, 10, 10, TimeUnit.SECONDS);
@@ -93,7 +70,6 @@ public class P2pHandler extends SimpleChannelInboundHandler<P2pMessage> {
         }
         hasPing = false;
         channel.getNodeStatistics().lastPongReplyTime.set(System.currentTimeMillis());
-        channel.getPeerStats().pong(sendPingTime);
         break;
       case P2P_DISCONNECT:
         channel.getNodeStatistics()

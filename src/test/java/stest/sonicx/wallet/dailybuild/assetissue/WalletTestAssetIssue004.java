@@ -43,11 +43,11 @@ public class WalletTestAssetIssue004 {
 
   //testng001、testng002、testng003、testng004
   /*  private static final byte[] fromAddress = Base58
-      .decodeFromBase58Check("THph9K2M2nLvkianrMGswRhz5hjSA9fuH7");*/
+      .decodeFromBase58Check("SX2urn6u95nhGBSKonf8bPkZvo9ghpkaNq");*/
   private static final byte[] NO_ASSET_ADDRESS = Base58
-      .decodeFromBase58Check("27XeWZUtufGk8jdjF3m1tuPnnRqqKgzS3pT");
+      .decodeFromBase58Check("SX2urn6u95nhGBSKonf8bPkZvo9ghpkaNq");
   private static final byte[] INVALID_ADDRESS = Base58
-      .decodeFromBase58Check("27cu1ozb4mX3m2afY68FSAqn3HmMp815d48");
+      .decodeFromBase58Check("SXYtFv2ax2oVixWdrz2tMiF1mjucBXEqJt");
 
   private static final long now = System.currentTimeMillis();
   private static final String name = "testAssetIssue004_" + Long.toString(now);

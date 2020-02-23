@@ -1,3 +1,9 @@
+/*
+ * Copyright (c) [2019] SONICX
+ *
+ * It has been added for MasterNode
+ */
+
 package org.sonicx.core.masternode;
 
 import com.google.protobuf.ByteString;
@@ -10,7 +16,7 @@ import org.sonicx.api.GrpcAPI;
 import org.sonicx.common.application.ApplicationFactory;
 import org.sonicx.common.application.SonicxApplicationContext;
 import org.sonicx.common.runtime.Runtime;
-import org.sonicx.common.runtime.SVMTestUtils;
+import org.sonicx.common.runtime.SvmTestUtils;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.runtime.vm.DataWord;
 import org.sonicx.common.runtime.vm.program.ProgramResult;
@@ -123,7 +129,7 @@ public class MasterNodeControllerTest {
 
         Runtime runtime = null;
         try {
-            runtime = SVMTestUtils.processTransactionAndReturnRuntime(aTx, rootDeposit, null);
+            runtime = SvmTestUtils.processTransactionAndReturnRuntime(aTx, rootDeposit, null);
         } catch (ContractExeException | VMIllegalException | ReceiptCheckErrException | ContractValidateException e) {
             Assert.assertNull(e);
         }

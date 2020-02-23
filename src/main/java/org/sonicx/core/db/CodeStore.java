@@ -25,16 +25,6 @@ public class CodeStore extends SonicxStoreWithRevoking<CodeCapsule> {
     return Streams.stream(revokingDB.iterator()).count();
   }
 
-  private static CodeStore instance;
-
-  public static void destory() {
-    instance = null;
-  }
-
-  void destroy() {
-    instance = null;
-  }
-
   public byte[] findCodeByHash(byte[] hash) {
     return revokingDB.getUnchecked(hash);
   }

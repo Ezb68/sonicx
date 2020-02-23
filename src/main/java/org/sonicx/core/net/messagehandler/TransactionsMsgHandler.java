@@ -1,5 +1,6 @@
 package org.sonicx.core.net.messagehandler;
 
+import com.googlecode.cqengine.query.simple.In;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

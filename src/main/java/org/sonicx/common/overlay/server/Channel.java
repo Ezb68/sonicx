@@ -1,20 +1,3 @@
-/*
- * Copyright (c) [2016] [ <ether.camp> ]
- * This file is part of the ethereumJ library.
- *
- * The ethereumJ library is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * The ethereumJ library is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with the ethereumJ library. If not, see <http://www.gnu.org/licenses/>.
- */
 package org.sonicx.common.overlay.server;
 
 import io.netty.channel.ChannelHandlerContext;
@@ -32,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.overlay.discover.node.Node;
+import org.sonicx.common.overlay.discover.node.NodeHandler;
 import org.sonicx.common.overlay.discover.node.NodeManager;
 import org.sonicx.common.overlay.discover.node.statistics.NodeStatistics;
 import org.sonicx.common.overlay.message.DisconnectMessage;
@@ -90,10 +74,6 @@ public class Channel {
 
   private volatile boolean isDisconnect;
 
-  private String remoteId;
-
-  private PeerStatistics peerStats = new PeerStatistics();
-
   private boolean isTrustPeer;
 
   private boolean isFastForwardPeer;
@@ -103,8 +83,6 @@ public class Channel {
 
     this.channelManager = channelManager;
 
-    this.remoteId = remoteId;
-
     isActive = remoteId != null && !remoteId.isEmpty();
 
     startTime = System.currentTimeMillis();
@@ -113,7 +91,7 @@ public class Channel {
     pipeline.addLast("readTimeoutHandler", new ReadTimeoutHandler(60, TimeUnit.SECONDS));
     pipeline.addLast(stats.tcp);
     pipeline.addLast("protoPender", new ProtobufVarint32LengthFieldPrepender());
-    pipeline.addLast("lengthDecode", new ProtobufVarint32FrameDecoder(this));
+    pipeline.addLast("lengthDecode", new SoxProtobufVarint32FrameDecoder(this));
 
     //handshake first
     pipeline.addLast("handshakeHandler", handshakeHandler);
@@ -129,7 +107,7 @@ public class Channel {
   }
 
   public void publicHandshakeFinished(ChannelHandlerContext ctx, HelloMessage msg) {
-    isTrustPeer = channelManager.getTrustNodes().containsKey(getInetAddress());
+    isTrustPeer = channelManager.getTrustNodes().getIfPresent(getInetAddress()) != null;
     isFastForwardPeer = channelManager.getFastForwardNodes().containsKey(getInetAddress());
     ctx.pipeline().remove(handshakeHandler);
     msgQueue.activate(ctx);
@@ -146,9 +124,11 @@ public class Channel {
    * Set node and register it in NodeManager if it is not registered yet.
    */
   public void initNode(byte[] nodeId, int remotePort) {
-    node = new Node(nodeId, inetSocketAddress.getHostString(), remotePort);
-    nodeStatistics = nodeManager.getNodeStatistics(node);
-    nodeManager.getNodeHandler(node).setNode(node);
+    Node n = new Node(nodeId, inetSocketAddress.getHostString(), remotePort);
+    NodeHandler handler = nodeManager.getNodeHandler(n);
+    node = handler.getNode();
+    nodeStatistics = handler.getNodeStatistics();
+    handler.getNode().setId(nodeId);
   }
 
   public void disconnect(ReasonCode reason) {
@@ -195,10 +175,6 @@ public class Channel {
     SYNCING,
     SYNC_COMPLETED,
     SYNC_FAILED
-  }
-
-  public PeerStatistics getPeerStats() {
-    return peerStats;
   }
 
   public Node getNode() {

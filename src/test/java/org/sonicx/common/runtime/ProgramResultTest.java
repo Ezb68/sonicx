@@ -94,8 +94,8 @@ public class ProgramResultTest {
     byte[] calledContractAddress = deployCalledContractAndGetItsAddress();
     byte[] contractAAddress = deployContractAAndGetItsAddress(calledContractAddress);
     /* =================================== CALL create() =================================== */
-    byte[] triggerData1 = SVMTestUtils.parseABI("create()", "");
-    runtime = SVMTestUtils
+    byte[] triggerData1 = SvmTestUtils.parseAbi("create()", "");
+    runtime = SvmTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             contractAAddress, triggerData1,
             0, 100000000, deposit, null);
@@ -130,7 +130,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return SvmTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -205,7 +205,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return SvmTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -236,12 +236,12 @@ public class ProgramResultTest {
             "0000000000000000000000000000000000000000000000000000000000000000";
 
     // ======================================= Test Success =======================================
-    byte[] triggerData1 = SVMTestUtils.parseABI("transfer(address,bool)",
+    byte[] triggerData1 = SvmTestUtils.parseAbi("transfer(address,bool)",
         params);
-    Transaction trx1 = SVMTestUtils
+    Transaction trx1 = SvmTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
             triggerData1, 0, 100000000);
-    TransactionTrace traceSuccess = SVMTestUtils
+    TransactionTrace traceSuccess = SvmTestUtils
         .processTransactionAndReturnTrace(trx1, deposit, null);
     runtime = traceSuccess.getRuntime();
     byte[] bContract = runtime.getResult().getHReturn();
@@ -280,12 +280,12 @@ public class ProgramResultTest {
     // set revert == true
     params = Hex.toHexString(new DataWord(new DataWord(cContract).getLast20Bytes()).getData()) +
         "0000000000000000000000000000000000000000000000000000000000000001";
-    byte[] triggerData2 = SVMTestUtils.parseABI("transfer(address,bool)",
+    byte[] triggerData2 = SvmTestUtils.parseAbi("transfer(address,bool)",
         params);
-    Transaction trx2 = SVMTestUtils
+    Transaction trx2 = SvmTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), aContract,
             triggerData2, 0, 100000000);
-    TransactionTrace traceFailed = SVMTestUtils
+    TransactionTrace traceFailed = SvmTestUtils
         .processTransactionAndReturnTrace(trx2, deposit, null);
     runtime = traceFailed.getRuntime();
     byte[] bContract2 = Wallet
@@ -336,7 +336,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return SvmTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -377,7 +377,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return SvmTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -399,12 +399,12 @@ public class ProgramResultTest {
         .toHexString(new DataWord(new DataWord(TRANSFER_TO).getLast20Bytes()).getData());
 
     // ======================================= Test Suicide =======================================
-    byte[] triggerData1 = SVMTestUtils.parseABI("suicide(address)",
+    byte[] triggerData1 = SvmTestUtils.parseAbi("suicide(address)",
         params);
-    Transaction trx = SVMTestUtils
+    Transaction trx = SvmTestUtils
         .generateTriggerSmartContractAndGetTransaction(Hex.decode(OWNER_ADDRESS), suicideContract,
             triggerData1, 0, 100000000);
-    TransactionTrace trace = SVMTestUtils.processTransactionAndReturnTrace(trx, deposit, null);
+    TransactionTrace trace = SvmTestUtils.processTransactionAndReturnTrace(trx, deposit, null);
     runtime = trace.getRuntime();
     List<InternalTransaction> internalTransactionsList = runtime.getResult()
         .getInternalTransactions();
@@ -439,7 +439,7 @@ public class ProgramResultTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return SvmTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);

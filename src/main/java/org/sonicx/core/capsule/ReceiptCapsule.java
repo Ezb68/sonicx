@@ -1,11 +1,13 @@
 package org.sonicx.core.capsule;
 
+import java.util.Objects;
 import lombok.Getter;
 import lombok.Setter;
 import org.sonicx.common.runtime.config.VMConfig;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.common.utils.StringUtil;
 import org.sonicx.core.Constant;
+import org.sonicx.core.config.Parameter;
 import org.sonicx.core.db.EnergyProcessor;
 import org.sonicx.core.db.Manager;
 import org.sonicx.core.exception.BalanceInsufficientException;
@@ -105,6 +107,11 @@ public class ReceiptCapsule {
       return;
     }
 
+    if (Objects.isNull(origin) && VMConfig.allowSvmConstantinople()) {
+      payEnergyBill(manager, caller, receipt.getEnergyUsageTotal(), energyProcessor, now);
+      return;
+    }
+
     if (caller.getAddress().equals(origin.getAddress())) {
       payEnergyBill(manager, caller, receipt.getEnergyUsageTotal(), energyProcessor, now);
     } else {
@@ -142,6 +149,13 @@ public class ReceiptCapsule {
       this.setEnergyUsage(usage);
     } else {
       energyProcessor.useEnergy(account, accountEnergyLeft, now);
+
+      if(manager.getForkController().pass(Parameter.ForkBlockVersionEnum.VERSION_3_6_5) &&
+              manager.getDynamicPropertiesStore().getAllowAdaptiveEnergy() == 1) {
+          long blockEnergyUsage = manager.getDynamicPropertiesStore().getBlockEnergyUsage() + (usage - accountEnergyLeft);
+          manager.getDynamicPropertiesStore().saveBlockEnergyUsage(blockEnergyUsage);
+      }
+
       long dolePerEnergy = Constant.DOLE_PER_ENERGY;
       long dynamicEnergyFee = manager.getDynamicPropertiesStore().getEnergyFee();
       if (dynamicEnergyFee > 0) {

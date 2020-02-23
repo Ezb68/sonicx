@@ -130,7 +130,7 @@ public class Memory implements ProgramListenerAware {
     toAllocate = newSize - softSize;
     if (toAllocate > 0) {
       toAllocate = (int) ceil((double) toAllocate / WORD_SIZE) * WORD_SIZE;
-      softSize = Math.addExact(softSize, toAllocate );
+      softSize = Math.addExact(softSize, toAllocate);
 
       if (programListener != null) {
         programListener.onMemoryExtend(toAllocate);

@@ -27,7 +27,6 @@ public class AssetIssueStore extends SonicxStoreWithRevoking<AssetIssueCapsule> 
     return super.getUnchecked(key);
   }
 
-
   /**
    * get all asset issues.
    */

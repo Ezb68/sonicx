@@ -10,7 +10,7 @@ import org.sonicx.core.config.Parameter.NetConstants;
 import org.sonicx.core.net.SonicxNetDelegate;
 import org.sonicx.protos.Protocol.ReasonCode;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class PeerStatusCheck {
 
@@ -20,7 +20,7 @@ public class PeerStatusCheck {
   private ScheduledExecutorService peerStatusCheckExecutor = Executors
       .newSingleThreadScheduledExecutor();
 
-  private int blockUpdateTimeout = 20_000;
+  private int blockUpdateTimeout = 30_000;
 
   public void init() {
     peerStatusCheckExecutor.scheduleWithFixedDelay(() -> {

@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.overlay.discover.node.Node;
+import org.sonicx.common.storage.DbSourceInter;
+import org.sonicx.common.storage.leveldb.LevelDbDataSourceImpl;
 
 @Component
 public class PeersStore extends SonicxDatabase<Set<Node>> {

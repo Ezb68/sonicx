@@ -81,15 +81,15 @@ public class InternalTransactionComplexTest {
     byte[] callerContractAddress = deployCallerContractAndGetItsAddress(calledContractAddress);
 
     /* =================================== CALL makeTheCall =================================== */
-    byte[] triggerData1 = SVMTestUtils.parseABI("makeTheCall()", "");
-    runtime = SVMTestUtils
+    byte[] triggerData1 = SvmTestUtils.parseAbi("makeTheCall()", "");
+    runtime = SvmTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             callerContractAddress, triggerData1,
             0, 100000000, deposit, null);
 
     /* =================================== CALL testCallbackReturns_ to check data =================================== */
-    byte[] triggerData2 = SVMTestUtils.parseABI("testCallbackReturns_()", "");
-    runtime = SVMTestUtils
+    byte[] triggerData2 = SvmTestUtils.parseAbi("testCallbackReturns_()", "");
+    runtime = SvmTestUtils
         .triggerContractWholeProcessReturnContractAddress(Hex.decode(OWNER_ADDRESS),
             callerContractAddress, triggerData2,
             0, 100000000, deposit, null);
@@ -125,7 +125,7 @@ public class InternalTransactionComplexTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return SvmTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);
@@ -159,7 +159,7 @@ public class InternalTransactionComplexTest {
     long feeLimit = 1000000000;
     long consumeUserResourcePercent = 0;
 
-    return SVMTestUtils
+    return SvmTestUtils
         .deployContractWholeProcessReturnContractAddress(contractName, address, ABI, code, value,
             feeLimit, consumeUserResourcePercent, null,
             deposit, null);

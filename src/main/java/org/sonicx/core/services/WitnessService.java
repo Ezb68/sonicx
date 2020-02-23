@@ -2,11 +2,14 @@ package org.sonicx.core.services;
 
 import static org.sonicx.core.witness.BlockProductionCondition.NOT_MY_TURN;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Maps;
 import com.google.protobuf.ByteString;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicLong;
 import lombok.Getter;
@@ -36,6 +39,7 @@ import org.sonicx.core.exception.ValidateScheduleException;
 import org.sonicx.core.exception.ValidateSignatureException;
 import org.sonicx.core.net.SonicxNetService;
 import org.sonicx.core.net.message.BlockMessage;
+import org.sonicx.core.net.peer.Item;
 import org.sonicx.core.witness.BlockProductionCondition;
 import org.sonicx.core.witness.WitnessController;
 
@@ -54,6 +58,7 @@ public class WitnessService implements Service {
       .newHashMap(); //  <witnessAccountAddress,WitnessCapsule>
   private Thread generateThread;
 
+  @Getter
   private volatile boolean isRunning = false;
   private Map<ByteString, byte[]> privateKeyMap = Maps
       .newHashMap();//<witnessAccountAddress,privateKey>
@@ -76,6 +81,7 @@ public class WitnessService implements Service {
   private AtomicLong dupBlockTime = new AtomicLong(0);
   private long blockCycle =
       ChainConstant.BLOCK_PRODUCED_INTERVAL * ChainConstant.MAX_ACTIVE_WITNESS_NUM;
+  private Cache<ByteString, Long> blocks = CacheBuilder.newBuilder().maximumSize(10).build();
 
   /**
    * Construction method.
@@ -129,10 +135,6 @@ public class WitnessService implements Service {
               Thread.sleep(timeToNextSecond);
             }
             this.blockProductionLoop();
-          } catch (InterruptedException ex) {
-            logger.info("ProductionLoop interrupted");
-          } catch (Exception ex) {
-            logger.error("unknown exception happened in witness loop", ex);
           } catch (Throwable throwable) {
             logger.error("unknown throwable happened in witness loop", throwable);
           }
@@ -259,23 +261,23 @@ public class WitnessService implements Service {
 
         block = generateBlock(scheduledTime, scheduledWitness,
             controller.lastHeadBlockIsMaintenance());
-      }
 
-      if (block == null) {
-        logger.warn("exception when generate block");
-        return BlockProductionCondition.EXCEPTION_PRODUCING_BLOCK;
-      }
+        if (block == null) {
+          logger.warn("exception when generate block");
+          return BlockProductionCondition.EXCEPTION_PRODUCING_BLOCK;
+        }
 
-      int blockProducedTimeOut = Args.getInstance().getBlockProducedTimeOut();
+        int blockProducedTimeOut = Args.getInstance().getBlockProducedTimeOut();
 
-      long timeout = Math
-          .min(ChainConstant.BLOCK_PRODUCED_INTERVAL * blockProducedTimeOut / 100 + 500,
-              ChainConstant.BLOCK_PRODUCED_INTERVAL);
-      if (DateTime.now().getMillis() - now > timeout) {
-        logger.warn("Task timeout ( > {}ms)，startTime:{},endTime:{}", timeout, new DateTime(now),
-            DateTime.now());
-        sonicxApp.getDbManager().eraseBlock();
-        return BlockProductionCondition.TIME_OUT;
+        long timeout = Math
+            .min(ChainConstant.BLOCK_PRODUCED_INTERVAL * blockProducedTimeOut / 100 + 500,
+                ChainConstant.BLOCK_PRODUCED_INTERVAL);
+        if (DateTime.now().getMillis() - now > timeout) {
+          logger.warn("Task timeout ( > {}ms)，startTime:{},endTime:{}", timeout, new DateTime(now),
+              DateTime.now());
+          sonicxApp.getDbManager().eraseBlock();
+          return BlockProductionCondition.TIME_OUT;
+        }
       }
 
       logger.info(
@@ -341,6 +343,11 @@ public class WitnessService implements Service {
 
   public void checkDupWitness(BlockCapsule block) {
     if (block.generatedByMyself) {
+      blocks.put(block.getBlockId().getByteString(), System.currentTimeMillis());
+      return;
+    }
+
+    if (blocks.getIfPresent(block.getBlockId().getByteString()) != null) {
       return;
     }
 

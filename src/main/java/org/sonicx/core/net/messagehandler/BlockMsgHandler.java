@@ -3,8 +3,9 @@ package org.sonicx.core.net.messagehandler;
 import static org.sonicx.core.config.Parameter.ChainConstant.BLOCK_PRODUCED_INTERVAL;
 import static org.sonicx.core.config.Parameter.ChainConstant.BLOCK_SIZE;
 
+import com.google.protobuf.ByteString;
 import lombok.extern.slf4j.Slf4j;
-import org.sonicx.core.net.SonicxNetDelegate;
+import org.spongycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.core.capsule.BlockCapsule;
@@ -12,6 +13,7 @@ import org.sonicx.core.capsule.BlockCapsule.BlockId;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.exception.P2pException;
 import org.sonicx.core.exception.P2pException.TypeEnum;
+import org.sonicx.core.net.SonicxNetDelegate;
 import org.sonicx.core.net.message.BlockMessage;
 import org.sonicx.core.net.message.SonicxMessage;
 import org.sonicx.core.net.peer.Item;
@@ -21,7 +23,7 @@ import org.sonicx.core.net.service.SyncService;
 import org.sonicx.core.services.WitnessProductBlockService;
 import org.sonicx.protos.Protocol.Inventory.InventoryType;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class BlockMsgHandler implements SonicxMsgHandler {
 
@@ -45,17 +47,30 @@ public class BlockMsgHandler implements SonicxMsgHandler {
   public void processMessage(PeerConnection peer, SonicxMessage msg) throws P2pException {
 
     BlockMessage blockMessage = (BlockMessage) msg;
-
-    check(peer, blockMessage);
-
     BlockId blockId = blockMessage.getBlockId();
-    Item item = new Item(blockId, InventoryType.BLOCK);
+
+    if (!fastForward && !peer.isFastForwardPeer()) {
+      check(peer, blockMessage);
+    }
+
     if (peer.getSyncBlockRequested().containsKey(blockId)) {
       peer.getSyncBlockRequested().remove(blockId);
       syncService.processBlock(peer, blockMessage);
     } else {
-      peer.getAdvInvRequest().remove(item);
+      Long time = peer.getAdvInvRequest().remove(new Item(blockId, InventoryType.BLOCK));
+      long now = System.currentTimeMillis();
+      long interval = blockId.getNum() - sonicxNetDelegate.getHeadBlockId().getNum();
       processBlock(peer, blockMessage.getBlockCapsule());
+      logger.info(
+          "Receive block/interval {}/{} from {} fetch/delay {}/{}ms, txs/process {}/{}ms, witness: {}",
+          blockId.getNum(),
+          interval,
+          peer.getInetAddress(),
+          time == null ? 0 : now - time,
+          now - blockMessage.getBlockCapsule().getTimeStamp(),
+          ((BlockMessage) msg).getBlockCapsule().getTransactions().size(),
+          System.currentTimeMillis() - now,
+          Hex.toHexString(blockMessage.getBlockCapsule().getWitnessAddress().toByteArray()));
     }
   }
 
@@ -79,14 +94,27 @@ public class BlockMsgHandler implements SonicxMsgHandler {
     BlockId blockId = block.getBlockId();
     if (!sonicxNetDelegate.containBlock(block.getParentBlockId())) {
       logger.warn("Get unlink block {} from {}, head is {}.", blockId.getString(),
-          peer.getInetAddress(), sonicxNetDelegate
-              .getHeadBlockId().getString());
+          peer.getInetAddress(), sonicxNetDelegate.getHeadBlockId().getString());
       syncService.startSync(peer);
       return;
     }
 
-    if (fastForward && sonicxNetDelegate.validBlock(block)) {
-      advService.broadcast(new BlockMessage(block));
+    Item item = new Item(blockId, InventoryType.BLOCK);
+    if (fastForward || peer.isFastForwardPeer()) {
+      peer.getAdvInvReceive().put(item, System.currentTimeMillis());
+      advService.addInvToCache(item);
+    }
+
+    if (fastForward) {
+      if (block.getNum() < sonicxNetDelegate.getHeadBlockId().getNum()) {
+        logger.warn("Receive a low block {}, head {}",
+            blockId.getString(), sonicxNetDelegate.getHeadBlockId().getString());
+        return;
+      }
+      if (sonicxNetDelegate.validBlock(block)) {
+        advService.fastForward(new BlockMessage(block));
+        sonicxNetDelegate.trustNode(peer);
+      }
     }
 
     sonicxNetDelegate.processBlock(block);

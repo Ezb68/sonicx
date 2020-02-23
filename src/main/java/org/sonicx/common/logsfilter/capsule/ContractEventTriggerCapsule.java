@@ -3,7 +3,7 @@ package org.sonicx.common.logsfilter.capsule;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.sonicx.common.logsfilter.ContractEventParser;
+import org.sonicx.common.logsfilter.ContractEventParserAbi;
 import org.sonicx.common.logsfilter.EventPluginLoader;
 import org.sonicx.common.logsfilter.FilterQuery;
 import org.sonicx.common.logsfilter.trigger.ContractEventTrigger;
@@ -54,8 +54,9 @@ public class ContractEventTriggerCapsule extends TriggerCapsule {
 
   @Override
   public void processTrigger() {
-    contractEventTrigger.setTopicMap(ContractEventParser.parseTopics(topicList, abiEntry));
-    contractEventTrigger.setDataMap(ContractEventParser.parseEventData(data, topicList, abiEntry));
+    contractEventTrigger.setTopicMap(ContractEventParserAbi.parseTopics(topicList, abiEntry));
+    contractEventTrigger
+        .setDataMap(ContractEventParserAbi.parseEventData(data, topicList, abiEntry));
 
     if (FilterQuery.matchFilter(contractEventTrigger)) {
       EventPluginLoader.getInstance().postContractEventTrigger(contractEventTrigger);

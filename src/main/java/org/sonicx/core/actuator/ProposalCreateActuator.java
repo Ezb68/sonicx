@@ -14,13 +14,11 @@ import org.sonicx.common.utils.StringUtil;
 import org.sonicx.core.Wallet;
 import org.sonicx.core.capsule.ProposalCapsule;
 import org.sonicx.core.capsule.TransactionResultCapsule;
-import org.sonicx.core.config.Parameter.ChainParameters;
-import org.sonicx.core.config.Parameter.ForkBlockVersionConsts;
-import org.sonicx.core.config.Parameter.ForkBlockVersionEnum;
 import org.sonicx.core.config.args.Args;
 import org.sonicx.core.db.Manager;
 import org.sonicx.core.exception.ContractExeException;
 import org.sonicx.core.exception.ContractValidateException;
+import org.sonicx.core.services.ProposalService;
 import org.sonicx.protos.Contract.ProposalCreateContract;
 import org.sonicx.protos.Protocol.Transaction.Result.code;
 
@@ -130,9 +128,6 @@ public class ProposalCreateActuator extends AbstractActuator {
     }
 
     for (Map.Entry<Long, Long> entry : contract.getParametersMap().entrySet()) {
-      if (!validKey(entry.getKey())) {
-        throw new ContractValidateException("Bad chain parameter id");
-      }
       validateValue(entry);
     }
 
@@ -140,157 +135,7 @@ public class ProposalCreateActuator extends AbstractActuator {
   }
 
   private void validateValue(Map.Entry<Long, Long> entry) throws ContractValidateException {
-
-    switch (entry.getKey().intValue()) {
-      case (0): {
-        if (entry.getValue() < 3 * 27 * 1000 || entry.getValue() > 24 * 3600 * 1000) {
-          throw new ContractValidateException(
-              "Bad chain parameter value,valid range is [3 * 27 * 1000,24 * 3600 * 1000]");
-        }
-        return;
-      }
-      case (1):
-      case (2):
-      case (3):
-      case (4):
-      case (5):
-      case (6):
-      case (7):
-      case (8): {
-        if (entry.getValue() < 0 || entry.getValue() > 100_000_000_000_000_000L) {
-          throw new ContractValidateException(
-              "Bad chain parameter value,valid range is [0,100_000_000_000_000_000L]");
-        }
-        break;
-      }
-      case (9): {
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[ALLOW_CREATION_OF_CONTRACTS] is only allowed to be 1");
-        }
-        break;
-      }
-      case (10): {
-        if (dbManager.getDynamicPropertiesStore().getRemoveThePowerOfTheGr() == -1) {
-          throw new ContractValidateException(
-              "This proposal has been executed before and is only allowed to be executed once");
-        }
-
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[REMOVE_THE_POWER_OF_THE_GR] is only allowed to be 1");
-        }
-        break;
-      }
-      case (11):
-        break;
-      case (12):
-        break;
-      case (13):
-        if (entry.getValue() < 10 || entry.getValue() > 100) {
-          throw new ContractValidateException(
-              "Bad chain parameter value,valid range is [10,100]");
-        }
-        break;
-      case (14): {
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[ALLOW_UPDATE_ACCOUNT_NAME] is only allowed to be 1");
-        }
-        break;
-      }
-      case (15): {
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[ALLOW_SAME_TOKEN_NAME] is only allowed to be 1");
-        }
-        break;
-      }
-      case (16): {
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[ALLOW_DELEGATE_RESOURCE] is only allowed to be 1");
-        }
-        break;
-      }
-      case (17): { // deprecated
-        if (!dbManager.getForkController().pass(ForkBlockVersionConsts.ENERGY_LIMIT)) {
-          throw new ContractValidateException("Bad chain parameter id");
-        }
-        if (dbManager.getForkController().pass(ForkBlockVersionEnum.VERSION_3_2_2)) {
-          throw new ContractValidateException("Bad chain parameter id");
-        }
-        if (entry.getValue() < 0 || entry.getValue() > 100_000_000_000_000_000L) {
-          throw new ContractValidateException(
-              "Bad chain parameter value,valid range is [0,100_000_000_000_000_000L]");
-        }
-        break;
-      }
-      case (18): {
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[ALLOW_SVM_TRANSFER_SRC10] is only allowed to be 1");
-        }
-        if (dbManager.getDynamicPropertiesStore().getAllowSameTokenName() == 0) {
-          throw new ContractValidateException("[ALLOW_SAME_TOKEN_NAME] proposal must be approved "
-              + "before [ALLOW_SVM_TRANSFER_SRC10] can be proposed");
-        }
-        break;
-      }
-      case (19): {
-        if (!dbManager.getForkController().pass(ForkBlockVersionEnum.VERSION_3_2_2)) {
-          throw new ContractValidateException("Bad chain parameter id");
-        }
-        if (entry.getValue() < 0 || entry.getValue() > 100_000_000_000_000_000L) {
-          throw new ContractValidateException(
-              "Bad chain parameter value,valid range is [0,100_000_000_000_000_000L]");
-        }
-        break;
-      }
-      case (20): {
-        if (!dbManager.getForkController().pass(ForkBlockVersionEnum.VERSION_3_5)) {
-          throw new ContractValidateException("Bad chain parameter id: ALLOW_MULTI_SIGN");
-        }
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[ALLOW_MULTI_SIGN] is only allowed to be 1");
-        }
-        break;
-      }
-      case (21): {
-        if (!dbManager.getForkController().pass(ForkBlockVersionEnum.VERSION_3_5)) {
-          throw new ContractValidateException("Bad chain parameter id: ALLOW_ADAPTIVE_ENERGY");
-        }
-        if (entry.getValue() != 1) {
-          throw new ContractValidateException(
-              "This value[ALLOW_ADAPTIVE_ENERGY] is only allowed to be 1");
-        }
-        break;
-      }
-      case (22): {
-        if (!dbManager.getForkController().pass(ForkBlockVersionEnum.VERSION_3_5)) {
-          throw new ContractValidateException(
-              "Bad chain parameter id: UPDATE_ACCOUNT_PERMISSION_FEE");
-        }
-        if (entry.getValue() < 0 || entry.getValue() > 100_000_000_000L) {
-          throw new ContractValidateException(
-              "Bad chain parameter value,valid range is [0,100_000_000_000L]");
-        }
-        break;
-      }
-      case (23): {
-        if (!dbManager.getForkController().pass(ForkBlockVersionEnum.VERSION_3_5)) {
-          throw new ContractValidateException("Bad chain parameter id: MULTI_SIGN_FEE");
-        }
-        if (entry.getValue() < 0 || entry.getValue() > 100_000_000_000L) {
-          throw new ContractValidateException(
-              "Bad chain parameter value,valid range is [0,100_000_000_000L]");
-        }
-        break;
-      }
-      default:
-        break;
-    }
+    ProposalService.validator(dbManager, entry.getKey(), entry.getValue());
   }
 
   @Override
@@ -301,10 +146,6 @@ public class ProposalCreateActuator extends AbstractActuator {
   @Override
   public long calcFee() {
     return 0;
-  }
-
-  private boolean validKey(long idx) {
-    return idx >= 0 && idx < ChainParameters.values().length;
   }
 
 }

@@ -2,22 +2,22 @@ package org.sonicx.core.net;
 
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.List;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.spongycastle.util.encoders.Hex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.sonicx.common.overlay.message.Message;
+import org.sonicx.common.overlay.server.ChannelManager;
 import org.sonicx.common.overlay.server.SyncPool;
 import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
 import org.sonicx.core.capsule.TransactionCapsule;
-import org.sonicx.core.capsule.WitnessCapsule;
 import org.sonicx.core.db.Manager;
-import org.sonicx.core.db.WitnessStore;
+import org.sonicx.core.db.WitnessScheduleStore;
 import org.sonicx.core.exception.AccountResourceInsufficientException;
 import org.sonicx.core.exception.BadBlockException;
 import org.sonicx.core.exception.BadItemException;
@@ -46,7 +46,7 @@ import org.sonicx.core.net.message.TransactionMessage;
 import org.sonicx.core.net.peer.PeerConnection;
 import org.sonicx.protos.Protocol.Inventory.InventoryType;
 
-@Slf4j
+@Slf4j(topic = "net")
 @Component
 public class SonicxNetDelegate {
 
@@ -54,10 +54,13 @@ public class SonicxNetDelegate {
   private SyncPool syncPool;
 
   @Autowired
+  private ChannelManager channelManager;
+
+  @Autowired
   private Manager dbManager;
 
   @Autowired
-  private WitnessStore witnessStore;
+  private WitnessScheduleStore witnessScheduleStore;
 
   @Getter
   private Object blockLock = new Object();
@@ -73,6 +76,10 @@ public class SonicxNetDelegate {
       return super.offer(blockId);
     }
   };
+
+  public void trustNode (PeerConnection peer) {
+    channelManager.getTrustNodes().put(peer.getInetAddress(), peer.getNode());
+  }
 
   public Collection<PeerConnection> getActivePeer() {
     return syncPool.getActivePeers();
@@ -155,7 +162,7 @@ public class SonicxNetDelegate {
         case TRX:
           TransactionCapsule tx = dbManager.getTransactionStore().get(hash.getBytes());
           if (tx != null) {
-            return new TransactionMessage(tx.getData());
+            return new TransactionMessage(tx.getInstance());
           }
           throw new StoreException();
         default:
@@ -171,6 +178,12 @@ public class SonicxNetDelegate {
     synchronized (blockLock) {
       try {
         if (!freshBlockId.contains(block.getBlockId())) {
+          if (block.getNum() <= getHeadBlockId().getNum()) {
+            logger.warn("Receive a fork block {} witness {}, head {}",
+                block.getBlockId().getString(),
+                Hex.toHexString(block.getWitnessAddress().toByteArray()),
+                getHeadBlockId().getString());
+          }
           dbManager.pushBlock(block);
           freshBlockId.add(block.getBlockId());
           logger.info("Success process block {}.", block.getBlockId().getString());
@@ -218,18 +231,8 @@ public class SonicxNetDelegate {
 
   public boolean validBlock(BlockCapsule block) throws P2pException {
     try {
-      if (!block.validateSignature(dbManager)) {
-        return false;
-      }
-      boolean flag = false;
-      List<WitnessCapsule> witnesses = witnessStore.getAllWitnesses();
-      for (WitnessCapsule witness : witnesses) {
-        if (witness.getAddress().equals(block.getWitnessAddress())) {
-          flag = true;
-          break;
-        }
-      }
-      return flag;
+      return witnessScheduleStore.getActiveWitnesses().contains(block.getWitnessAddress())
+          && block.validateSignature(dbManager);
     } catch (ValidateSignatureException e) {
       throw new P2pException(TypeEnum.BAD_BLOCK, e);
     }
