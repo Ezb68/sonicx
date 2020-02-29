@@ -413,48 +413,48 @@ public class Wallet {
     TransactionCapsule trx = new TransactionCapsule(signaturedTransaction);
 
 	// TEMP: To block the speicified addresses
-	try {
-		Contract contract = signaturedTransaction.getRawData().getContract(0);
-		byte[] owner = TransactionCapsule.getOwner(contract);
-		String ownerAddress = ByteArray.toHexString(owner);
-		// logger.info("addSign ownerAddress=" + ownerAddress);
-		if (
-				/* 21 SonicX Wallet */
-				ownerAddress.equalsIgnoreCase("3F8AD9C2E2F473FCA8CFDDCEA4D984DE02BDEB8476") 
-				|| ownerAddress.equalsIgnoreCase("3F4C8085B0C573AB4F75750559B8D22E30BFAA90B5")
-				|| ownerAddress.equalsIgnoreCase("3F41995B85EF301DFE884D8BA88A4F20BBE2E20C40")
-				|| ownerAddress.equalsIgnoreCase("3FF3F86E762B44D6B0A9050EECE33671603EA44D10")
-				|| ownerAddress.equalsIgnoreCase("3F858F25399401F4DA8589588240996DC4291D4E8B")
-				|| ownerAddress.equalsIgnoreCase("3FAAD996826C1CDEB67ECD61F7164C8F79239B2C4D")
-				|| ownerAddress.equalsIgnoreCase("3F3A916AA4B7A484DFCF3394886EF72A324AD141AB")
-				|| ownerAddress.equalsIgnoreCase("3FD7618265E31CC5181A51A79B711958A0CAD8C3CF")
-				|| ownerAddress.equalsIgnoreCase("3F3A86264DA05C658CBD6D96F77B93976565738551")
-				|| ownerAddress.equalsIgnoreCase("3F5A66871E7DBBA2DEEAB36A7071B165FAEA34A124")
-				|| ownerAddress.equalsIgnoreCase("3F32ACDB701A3F79572FFB40AAC2845951C2B4E4C6")
-				|| ownerAddress.equalsIgnoreCase("3F347683FC070029E7987593EC5A75CD38ACCC3828")
-				|| ownerAddress.equalsIgnoreCase("3FF3B1303A8F342745A155A18150E8586E8D918B97")
-				|| ownerAddress.equalsIgnoreCase("3F65EA44CF5A611A5A9B1B579D44B4FD0EE0B10F0B")
-				|| ownerAddress.equalsIgnoreCase("3FFED1FB79A3654EB621EEE29FCAAF1914242ECAB3")
-				|| ownerAddress.equalsIgnoreCase("3F603AFE6DC818BB6D224E3AF8DFF8C54F6B48CE29")
-				|| ownerAddress.equalsIgnoreCase("3F9650BBB8C96BDCD701501D4B6045AC83DE2E676F")
-				|| ownerAddress.equalsIgnoreCase("3FF219724558189422BEC8FD296F9A078560078B3F")
-				|| ownerAddress.equalsIgnoreCase("3F94CF06B099E885C6DD84850483FF98F797F50FD4")
-				|| ownerAddress.equalsIgnoreCase("3F0D49A86FABC0FC7D4CBCC63EE099B7C569789AB3")
-				|| ownerAddress.equalsIgnoreCase("3F51E16428B557603462FCA7EF00FE24EC8DC312D5")
-
-				/* Other wallets for SonicX */
-				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
-				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
-				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
-				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
-		) {
-			// logger.warn("=== Blocked address: " + ownerAddress);
-			return builder.setResult(false).setCode(response_code.OTHER_ERROR)
-				.setMessage(ByteString.copyFromUtf8("Not allowed"))
-				.build();
-		}
-	} catch (Exception ex) {
-	}
+//	try {
+//		Contract contract = signaturedTransaction.getRawData().getContract(0);
+//		byte[] owner = TransactionCapsule.getOwner(contract);
+//		String ownerAddress = ByteArray.toHexString(owner);
+//		// logger.info("addSign ownerAddress=" + ownerAddress);
+//		if (
+//				/* 21 SonicX Wallet */
+//				ownerAddress.equalsIgnoreCase("3F8AD9C2E2F473FCA8CFDDCEA4D984DE02BDEB8476") 
+//				|| ownerAddress.equalsIgnoreCase("3F4C8085B0C573AB4F75750559B8D22E30BFAA90B5")
+//				|| ownerAddress.equalsIgnoreCase("3F41995B85EF301DFE884D8BA88A4F20BBE2E20C40")
+//				|| ownerAddress.equalsIgnoreCase("3FF3F86E762B44D6B0A9050EECE33671603EA44D10")
+//				|| ownerAddress.equalsIgnoreCase("3F858F25399401F4DA8589588240996DC4291D4E8B")
+//				|| ownerAddress.equalsIgnoreCase("3FAAD996826C1CDEB67ECD61F7164C8F79239B2C4D")
+//				|| ownerAddress.equalsIgnoreCase("3F3A916AA4B7A484DFCF3394886EF72A324AD141AB")
+//				|| ownerAddress.equalsIgnoreCase("3FD7618265E31CC5181A51A79B711958A0CAD8C3CF")
+//				|| ownerAddress.equalsIgnoreCase("3F3A86264DA05C658CBD6D96F77B93976565738551")
+//				|| ownerAddress.equalsIgnoreCase("3F5A66871E7DBBA2DEEAB36A7071B165FAEA34A124")
+//				|| ownerAddress.equalsIgnoreCase("3F32ACDB701A3F79572FFB40AAC2845951C2B4E4C6")
+//				|| ownerAddress.equalsIgnoreCase("3F347683FC070029E7987593EC5A75CD38ACCC3828")
+//				|| ownerAddress.equalsIgnoreCase("3FF3B1303A8F342745A155A18150E8586E8D918B97")
+//				|| ownerAddress.equalsIgnoreCase("3F65EA44CF5A611A5A9B1B579D44B4FD0EE0B10F0B")
+//				|| ownerAddress.equalsIgnoreCase("3FFED1FB79A3654EB621EEE29FCAAF1914242ECAB3")
+//				|| ownerAddress.equalsIgnoreCase("3F603AFE6DC818BB6D224E3AF8DFF8C54F6B48CE29")
+//				|| ownerAddress.equalsIgnoreCase("3F9650BBB8C96BDCD701501D4B6045AC83DE2E676F")
+//				|| ownerAddress.equalsIgnoreCase("3FF219724558189422BEC8FD296F9A078560078B3F")
+//				|| ownerAddress.equalsIgnoreCase("3F94CF06B099E885C6DD84850483FF98F797F50FD4")
+//				|| ownerAddress.equalsIgnoreCase("3F0D49A86FABC0FC7D4CBCC63EE099B7C569789AB3")
+//				|| ownerAddress.equalsIgnoreCase("3F51E16428B557603462FCA7EF00FE24EC8DC312D5")
+//
+//				/* Other wallets for SonicX */
+//				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
+//				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
+//				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
+//				|| ownerAddress.equalsIgnoreCase("3FD10C0B21C181777B2DB82D6BD1E72F4C88C5C4A2")
+//		) {
+//			// logger.warn("=== Blocked address: " + ownerAddress);
+//			return builder.setResult(false).setCode(response_code.OTHER_ERROR)
+//				.setMessage(ByteString.copyFromUtf8("Not allowed"))
+//				.build();
+//		}
+//	} catch (Exception ex) {
+//	}
 
     try {
       Message message = new TransactionMessage(signaturedTransaction.toByteArray());
