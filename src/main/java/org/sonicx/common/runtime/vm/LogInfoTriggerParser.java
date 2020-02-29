@@ -106,4 +106,22 @@ public class LogInfoTriggerParser {
     signature += builder.toString() + ")";
     return signature;
   }
+
+  public static String getEntrySignatureFull(ABI.Entry entry) {
+    String signatureFull = entry.getName() + "(";
+    StringBuilder signFullBuilder = new StringBuilder();
+    for (ABI.Entry.Param param : entry.getInputsList()) {
+      if (signFullBuilder.length() > 0) {
+        signFullBuilder.append(",");
+      }
+      String type = param.getType();
+      String name = param.getName();
+      signFullBuilder.append(type);
+      if (StringUtils.isNotEmpty(name)) {
+        signFullBuilder.append(" ").append(name);
+      }
+    }
+    signatureFull += signFullBuilder.toString() + ")";
+    return signatureFull;
+  }
 }

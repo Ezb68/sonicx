@@ -39,6 +39,11 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.sonicx.common.logsfilter.capsule.ContractTriggerCapsule;
+import org.sonicx.common.logsfilter.trigger.ContractEventTrigger;
+import org.sonicx.common.logsfilter.trigger.ContractTrigger;
+import org.sonicx.core.capsule.*;
+import org.sonicx.core.db.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.util.CollectionUtils;
@@ -80,27 +85,9 @@ import org.sonicx.common.utils.Sha256Hash;
 import org.sonicx.common.utils.Utils;
 import org.sonicx.core.actuator.Actuator;
 import org.sonicx.core.actuator.ActuatorFactory;
-import org.sonicx.core.capsule.AccountCapsule;
-import org.sonicx.core.capsule.AssetIssueCapsule;
-import org.sonicx.core.capsule.BlockCapsule;
 import org.sonicx.core.capsule.BlockCapsule.BlockId;
-import org.sonicx.core.capsule.ContractCapsule;
-import org.sonicx.core.capsule.DelegatedResourceAccountIndexCapsule;
-import org.sonicx.core.capsule.DelegatedResourceCapsule;
-import org.sonicx.core.capsule.ExchangeCapsule;
-import org.sonicx.core.capsule.ProposalCapsule;
-import org.sonicx.core.capsule.TransactionCapsule;
-import org.sonicx.core.capsule.TransactionInfoCapsule;
-import org.sonicx.core.capsule.TransactionResultCapsule;
-import org.sonicx.core.capsule.WitnessCapsule;
 import org.sonicx.core.config.Parameter.ChainConstant;
 import org.sonicx.core.config.args.Args;
-import org.sonicx.core.db.AccountIdIndexStore;
-import org.sonicx.core.db.AccountStore;
-import org.sonicx.core.db.BandwidthProcessor;
-import org.sonicx.core.db.ContractStore;
-import org.sonicx.core.db.EnergyProcessor;
-import org.sonicx.core.db.Manager;
 import org.sonicx.core.exception.AccountResourceInsufficientException;
 import org.sonicx.core.exception.BadItemException;
 import org.sonicx.core.exception.ContractExeException;
@@ -1286,6 +1273,12 @@ public class Wallet {
     try {
       transactionCapsule = dbManager.getTransactionStore()
           .get(transactionId.toByteArray());
+      TriggerSmartContract triggerSmartContract = transactionCapsule.getTriggerSmartContract();
+      if (triggerSmartContract != null) {
+        ContractCapsule contractCapsule = dbManager.getContractStore().get(triggerSmartContract.getContractAddress().toByteArray());
+        TriggerSmartContractCapsule triggerSmartContractCapsule = new TriggerSmartContractCapsule(contractCapsule.getInstance(), triggerSmartContract);
+        transactionCapsule.setTriggerSmartContract(triggerSmartContractCapsule.getInstance());
+      }
     } catch (StoreException e) {
       return null;
     }

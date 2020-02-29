@@ -219,6 +219,39 @@ public class TransactionCapsule implements ProtoCapsule<Transaction> {
         .build();
   }
 
+  public TriggerSmartContract getTriggerSmartContract() {
+    try {
+      if (this.transaction.getRawData().getContractCount() > 0) {
+        Transaction.Contract contract = this.transaction.getRawData().getContract(0);
+        ContractType contractType = contract.getType();
+        if (contractType == ContractType.TriggerSmartContract) {
+          Any contractParameter = contract.getParameter();
+          TriggerSmartContract triggerSmartContract = contractParameter.unpack(Contract.TriggerSmartContract.class);
+          return triggerSmartContract;
+        }
+      }
+    } catch (Exception ex) {
+      logger.error(ex.getMessage());
+    }
+    return null;
+  }
+
+  public void setTriggerSmartContract(TriggerSmartContract triggerSmartContract) {
+    try {
+      if (this.transaction.getRawData().getContractCount() > 0) {
+        Transaction.Contract contract = this.transaction.getRawData().getContract(0);
+        ContractType contractType = contract.getType();
+        if (contractType == ContractType.TriggerSmartContract) {
+          contract = contract.toBuilder().setParameter(Any.pack(triggerSmartContract)).build();
+          raw r = this.transaction.getRawData().toBuilder().setContract(0, contract).build();
+          this.transaction = this.transaction.toBuilder().setRawData(r).build();
+        } 
+      }
+    } catch (Exception ex) {
+      logger.error(ex.getMessage());
+    }
+  }
+
   public void setReference(long blockNum, byte[] blockHash) {
     byte[] refBlockNum = ByteArray.fromLong(blockNum);
     Transaction.raw rawData = this.transaction.getRawData().toBuilder()
