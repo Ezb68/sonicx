@@ -15,6 +15,9 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.jetty.util.StringUtil;
 import org.pf4j.util.StringUtils;
+import org.sonicx.core.capsule.ContractCapsule;
+import org.sonicx.core.capsule.TriggerSmartContractCapsule;
+import org.sonicx.core.db.Manager;
 import org.spongycastle.util.encoders.Hex;
 import org.sonicx.api.GrpcAPI.BlockList;
 import org.sonicx.api.GrpcAPI.EasyTransferResponse;
@@ -108,7 +111,7 @@ public class Util {
     JSONObject jsonObject = JSONObject.parseObject(JsonFormat.printToString(list, selfType));
     JSONArray jsonArray = new JSONArray();
     transactions.stream().forEach(transaction -> {
-      jsonArray.add(printTransactionToJSON(transaction, selfType));
+      jsonArray.add(printTransactionToJSON(transaction, selfType, null));
     });
     jsonObject.put(TRANSACTION, jsonArray);
 
@@ -119,23 +122,23 @@ public class Util {
       boolean selfType) {
     JSONArray transactions = new JSONArray();
     list.stream().forEach(transactionCapsule -> {
-      transactions.add(printTransactionToJSON(transactionCapsule.getInstance(), selfType));
+      transactions.add(printTransactionToJSON(transactionCapsule.getInstance(), selfType, null));
     });
     return transactions;
   }
 
   public static String printEasyTransferResponse(EasyTransferResponse response, boolean selfType) {
     JSONObject jsonResponse = JSONObject.parseObject(JsonFormat.printToString(response, selfType));
-    jsonResponse.put(TRANSACTION, printTransactionToJSON(response.getTransaction(), selfType));
+    jsonResponse.put(TRANSACTION, printTransactionToJSON(response.getTransaction(), selfType, null));
     return jsonResponse.toJSONString();
   }
 
-  public static String printTransaction(Transaction transaction, boolean selfType) {
-    return printTransactionToJSON(transaction, selfType).toJSONString();
+  public static String printTransaction(Transaction transaction, boolean selfType, Manager dbManager) {
+    return printTransactionToJSON(transaction, selfType, dbManager).toJSONString();
   }
 
   public static String printCreateTransaction(Transaction transaction, boolean selfType) {
-    JSONObject jsonObject = printTransactionToJSON(transaction, selfType);
+    JSONObject jsonObject = printTransactionToJSON(transaction, selfType, null);
     jsonObject.put(VISIBLE, selfType);
     return jsonObject.toJSONString();
   }
@@ -146,7 +149,7 @@ public class Util {
     JSONObject jsonObject = JSONObject.parseObject(string);
     if (transactionExtention.getResult().getResult()) {
       JSONObject transactionOjbect = printTransactionToJSON(
-          transactionExtention.getTransaction(), selfType);
+          transactionExtention.getTransaction(), selfType, null);
       transactionOjbect.put(VISIBLE, selfType);
       jsonObject.put(TRANSACTION, transactionOjbect);
     }
@@ -161,7 +164,7 @@ public class Util {
     jsonObjectExt
         .put(TRANSACTION,
             printTransactionToJSON(transactionSignWeight.getTransaction().getTransaction(),
-                selfType));
+                selfType, null));
     jsonObject.put(TRANSACTION, jsonObjectExt);
     return jsonObject.toJSONString();
   }
@@ -173,7 +176,7 @@ public class Util {
     JSONObject jsonObjectExt = jsonObject.getJSONObject(TRANSACTION);
     jsonObjectExt.put(TRANSACTION,
         printTransactionToJSON(transactionApprovedList.getTransaction().getTransaction(),
-            selfType));
+            selfType, null));
     jsonObject.put(TRANSACTION, jsonObjectExt);
     return jsonObject.toJSONString();
   }
@@ -190,7 +193,7 @@ public class Util {
     return Hash.sha3omit12(combined);
   }
 
-  public static JSONObject printTransactionToJSON(Transaction transaction, boolean selfType) {
+  public static JSONObject printTransactionToJSON(Transaction transaction, boolean selfType, Manager dbManager) {
     JSONObject jsonTransaction = JSONObject.parseObject(JsonFormat.printToString(transaction,
         selfType));
     JSONArray contracts = new JSONArray();
@@ -323,6 +326,11 @@ public class Util {
           case TriggerSmartContract:
             TriggerSmartContract triggerSmartContract = contractParameter
                 .unpack(TriggerSmartContract.class);
+            if (dbManager != null) {
+              ContractCapsule contractCapsule = dbManager.getContractStore().get(triggerSmartContract.getContractAddress().toByteArray());
+              TriggerSmartContractCapsule triggerSmartContractCapsule = new TriggerSmartContractCapsule(contractCapsule.getInstance(), triggerSmartContract);
+              triggerSmartContract = triggerSmartContractCapsule.getInstance();
+            }
             contractJson = JSONObject.parseObject(JsonFormat.printToString(triggerSmartContract,
                 selfType));
             break;

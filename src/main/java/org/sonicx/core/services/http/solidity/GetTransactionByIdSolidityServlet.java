@@ -33,7 +33,7 @@ public class GetTransactionByIdSolidityServlet extends HttpServlet {
       Transaction reply = wallet
           .getTransactionById(ByteString.copyFrom(ByteArray.fromHexString(input)));
       if (reply != null) {
-        response.getWriter().println(Util.printTransaction(reply, visible));
+        response.getWriter().println(Util.printTransaction(reply, visible, wallet.getDbManager()));
       } else {
         response.getWriter().println("{}");
       }
@@ -57,7 +57,7 @@ public class GetTransactionByIdSolidityServlet extends HttpServlet {
       JsonFormat.merge(input, build, visible);
       Transaction reply = wallet.getTransactionById(build.build().getValue());
       if (reply != null) {
-        response.getWriter().println(Util.printTransaction(reply, visible));
+        response.getWriter().println(Util.printTransaction(reply, visible, wallet.getDbManager()));
       } else {
         response.getWriter().println("{}");
       }

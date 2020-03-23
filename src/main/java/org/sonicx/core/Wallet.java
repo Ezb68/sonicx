@@ -1273,12 +1273,6 @@ public class Wallet {
     try {
       transactionCapsule = dbManager.getTransactionStore()
           .get(transactionId.toByteArray());
-      TriggerSmartContract triggerSmartContract = transactionCapsule.getTriggerSmartContract();
-      if (triggerSmartContract != null) {
-        ContractCapsule contractCapsule = dbManager.getContractStore().get(triggerSmartContract.getContractAddress().toByteArray());
-        TriggerSmartContractCapsule triggerSmartContractCapsule = new TriggerSmartContractCapsule(contractCapsule.getInstance(), triggerSmartContract);
-        transactionCapsule.setTriggerSmartContract(triggerSmartContractCapsule.getInstance());
-      }
     } catch (StoreException e) {
       return null;
     }
@@ -1625,5 +1619,9 @@ public class Wallet {
         .forEach(exchangeCapsule -> builder.addExchanges(exchangeCapsule.getInstance()));
     return builder.build();
   }
+  public Manager getDbManager() {
+    return dbManager;
+  }
+
 }
 
