@@ -124,4 +124,8 @@ public class LogInfoTriggerParser {
     signatureFull += signFullBuilder.toString() + ")";
     return signatureFull;
   }
+
+  public static String getEntryName(ABI.Entry entry) {
+    return entry.getName();
+  }
 }

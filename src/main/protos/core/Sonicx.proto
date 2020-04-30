@@ -344,10 +344,19 @@ message TransactionInfo {
     SUCESS = 0;
     FAILED = 1;
   }
+  message ParsedLog {
+    string event_signature = 1;
+    map<string, string> topic_map = 2;
+    map<string, string> data_map = 3;
+    string event_name = 4;
+    string event_signature_full = 5;
+    string contract_address = 6;
+  }
   message Log {
     bytes address = 1;
     repeated bytes topics = 2;
     bytes data = 3;
+    ParsedLog parsedLog = 4;
   }
   bytes id = 1;
   int64 fee = 2;

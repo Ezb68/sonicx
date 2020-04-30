@@ -1299,10 +1299,10 @@ public class Wallet {
     try {
       transactionInfoCapsule = dbManager.getTransactionRetStore()
           .getTransactionInfo(transactionId.toByteArray());
+      transactionInfoCapsule.parseLogs(dbManager);
     } catch (BadItemException e) {
       return null;
     }
-
     return transactionInfoCapsule == null ? null : transactionInfoCapsule.getInstance();
   }
 

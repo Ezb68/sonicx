@@ -2,21 +2,35 @@ package org.sonicx.core.capsule;
 
 import com.google.protobuf.ByteString;
 import com.google.protobuf.InvalidProtocolBufferException;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import lombok.extern.slf4j.Slf4j;
+import org.sonicx.common.logsfilter.ContractEventParserAbi;
+import org.sonicx.common.runtime.utils.MUtil;
+import org.sonicx.common.runtime.vm.LogInfoTriggerParser;
+import org.sonicx.common.utils.ByteArray;
+import org.sonicx.core.Constant;
+import org.sonicx.core.Wallet;
+import org.spongycastle.util.encoders.Hex;
 import org.apache.commons.lang3.StringUtils;
+import org.sonicx.common.crypto.Hash;
 import org.sonicx.common.runtime.vm.LogInfo;
 import org.sonicx.common.runtime.vm.program.InternalTransaction;
 import org.sonicx.common.runtime.vm.program.ProgramResult;
 import org.sonicx.core.config.args.Args;
+import org.sonicx.core.db.Manager;
 import org.sonicx.core.db.TransactionTrace;
 import org.sonicx.core.exception.BadItemException;
 import org.sonicx.protos.Protocol;
 import org.sonicx.protos.Protocol.TransactionInfo;
 import org.sonicx.protos.Protocol.TransactionInfo.Log;
 import org.sonicx.protos.Protocol.TransactionInfo.code;
+import org.sonicx.protos.Protocol.SmartContract.ABI;
 
 @Slf4j(topic = "capsule")
 public class TransactionInfoCapsule implements ProtoCapsule<TransactionInfo> {
@@ -131,6 +145,80 @@ public class TransactionInfoCapsule implements ProtoCapsule<TransactionInfo> {
     this.transactionInfo = this.transactionInfo.toBuilder()
         .addAllLog(logs)
         .build();
+  }
+
+  public void parseLogs(Manager dbManager) {
+    List<Log> logs = this.transactionInfo.getLogList();
+    List<Log> newLogs = new ArrayList<>();
+    logs.forEach(log -> {
+      byte[] contractAddressBytes = log.getAddress().toByteArray();
+      String contractAddress =  Wallet.encode58Check(MUtil.convertToSonicxAddress(contractAddressBytes));
+      List<ByteString>  topics = log.getTopicsList();
+      List<byte[]>  topicsList = new ArrayList<>();
+      topics.forEach(topic -> {
+        topicsList.add(topic.toByteArray());
+      });
+      byte[] data = log.getData().toByteArray();
+
+      byte[] addressPrefix = {Constant.ADD_PRE_FIX_BYTE_MAINNET};
+      try {
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        output.write(addressPrefix);
+        output.write(contractAddressBytes);
+        contractAddressBytes = output.toByteArray();
+      } catch (IOException e) {
+        e.printStackTrace();
+      }
+      log = log.toBuilder().setAddress(ByteString.copyFrom(contractAddressBytes)).build();
+
+      TransactionInfo.ParsedLog parsedLog = log.getParsedLog();
+      ContractCapsule contractCapsule = dbManager.getContractStore().get(contractAddressBytes);
+      ABI abi = contractCapsule.getInstance().getAbi();
+      String logHash = ByteArray.toHexString(topics.get(0).toByteArray());
+      ABI.Entry entry = findEntry(abi, logHash);
+      Map<String, String> topicMap = ContractEventParserAbi.parseTopics(topicsList, entry);
+      Map<String, String> dataMap = ContractEventParserAbi.parseEventData(data, topicsList, entry);
+
+      parsedLog = parsedLog.toBuilder().setContractAddress(contractAddress).build();
+      parsedLog = parsedLog.toBuilder().setEventName(LogInfoTriggerParser.getEntryName(entry)).build();
+      parsedLog = parsedLog.toBuilder().setEventSignature(LogInfoTriggerParser.getEntrySignature(entry)).build();
+      parsedLog = parsedLog.toBuilder().setEventSignatureFull(LogInfoTriggerParser.getEntrySignatureFull(entry)).build();
+      parsedLog = parsedLog.toBuilder().putAllTopicMap(topicMap).build();
+      parsedLog = parsedLog.toBuilder().putAllDataMap(dataMap).build();
+      log = log.toBuilder().setParsedLog(parsedLog).build();
+
+      newLogs.add(log);
+    });
+    this.transactionInfo = this.transactionInfo.toBuilder().clearLog().build();
+    this.transactionInfo = this.transactionInfo.toBuilder().addAllLog(newLogs).build();
+    ;
+  }
+
+  ABI.Entry findEntry(ABI abi, String logHash) {
+    ABI.Entry event = null;
+    if (abi == null || abi.getEntrysCount() == 0)
+      return event;
+    for (ABI.Entry entry : abi.getEntrysList()) {
+      if (entry.getType() != ABI.Entry.EntryType.Event || entry.getAnonymous()) {
+        continue;
+      }
+      String signature = entry.getName() + "(";
+      StringBuilder signBuilder = new StringBuilder();
+      for (ABI.Entry.Param param : entry.getInputsList()) {
+        if (signBuilder.length() > 0) {
+          signBuilder.append(",");
+        }
+        String type = param.getType();
+        signBuilder.append(type);
+      }
+      signature += signBuilder.toString() + ")";
+      String sha3 = Hex.toHexString(Hash.sha3(signature.getBytes()));
+      if (sha3.equals(logHash)) {
+        event = entry;
+        break;
+      }
+    }
+    return event;
   }
 
   @Override
