@@ -164,6 +164,7 @@ public class ProposalCapsule implements ProtoCapsule<Proposal> {
     if (activeWitnesses.size() != ChainConstant.MAX_ACTIVE_WITNESS_NUM) {
       logger.info("activeWitnesses size = {}", activeWitnesses.size());
     }
-    return count >= activeWitnesses.size() * 7 / 10;
+	// 2020.8.29: It has been changed from 70% to 60%
+    return count >= activeWitnesses.size() * 6 / 10;
   }
 }
